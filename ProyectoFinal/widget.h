@@ -2,6 +2,8 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include <QGraphicsScene>
+#include <players.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -14,8 +16,11 @@ class Widget : public QWidget
 public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
+    Players *players;
 
 private:
     Ui::Widget *ui;
+    QGraphicsScene *scene;
+
 };
 #endif // WIDGET_H
