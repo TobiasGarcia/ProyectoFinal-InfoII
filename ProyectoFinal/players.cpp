@@ -57,10 +57,10 @@ void Players::move() {
     if (move_dir1[0] and (y() > 15)) setY(y() - 15);
     if (move_dir1[1] and (x() > 15)) setX(x() - 15);
     if (move_dir1[2] and (y() < 585)) setY(y() + 15);
-    if (move_dir1[3] and (x() < 780)) setX(x() + 15);
+    if (move_dir1[3] and (x() < 765)) setX(x() + 15);
 
     if (move_dir2[0] and (multi->y() > 15)) multi->setY(multi->y() - 15);
     if (move_dir2[1] and (multi->x() > 15)) multi->setX(multi->x() - 15);
     if (move_dir2[2] and (multi->y() < 585)) multi->setY(multi->y() + 15);
-    if (move_dir2[3] and (multi->x() < 780)) multi->setX(multi->x() + 15);
+    if (move_dir2[3] and (multi->x() < 765)) multi->setX(multi->x() + 15);
 }

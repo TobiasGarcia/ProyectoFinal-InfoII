@@ -8,7 +8,7 @@ Widget::Widget(QWidget *parent)
     ui->setupUi(this);
 
     layout()->setMargin(0);
-    setFixedSize(797, 602); //Dos pixeles de desface para que la escena quede a la medida.
+    setFixedSize(782, 602); //Dos pixeles de desface para que la escena quede a la medida.
 
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

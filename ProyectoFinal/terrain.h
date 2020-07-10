@@ -6,12 +6,12 @@
 //Clase Terrain para que pueda tener sus propios métodos.
 
 class Terrain {
-private:
+public:
     //0: Nada
     //1: Pared
     //2: Ralentizador
-    std::array<std::array<short, 53>, 40> grid;
-public:
+    std::array<std::array<short, 13>, 10> grid;
+
     Terrain();
 };
 
