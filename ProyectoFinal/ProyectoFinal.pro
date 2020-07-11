@@ -21,14 +21,17 @@ SOURCES += \
     main.cpp \
     players.cpp \
     terrain.cpp \
+    terrainobject.cpp \
+    utilities.cpp \
     widget.cpp
 
 HEADERS += \
     enemy.h \
     level.h \
-    obstacle.h \
     players.h \
     terrain.h \
+    terrainobject.h \
+    utilities.h \
     widget.h
 
 FORMS += \

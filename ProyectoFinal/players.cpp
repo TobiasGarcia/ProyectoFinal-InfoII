@@ -26,16 +26,19 @@ void Players::keyReleaseEvent(QKeyEvent *event) {
 
 Players::Players(short x1, short y1, short x2, short y2) {
 
+
     pix1 = new QPixmap(":/images/resources/images/neptune.png");
     setOffset(-15, -15);
     setPixmap(*pix1);
     setPos(x1, y1);
+    setZValue(3);
 
     multi = new QGraphicsPixmapItem;
     pix2 = new QPixmap(":/images/resources/images/mars.png");
     multi->setOffset(-15, -15);
     multi->setPixmap(*pix2);
     multi->setPos(x2, y2);
+    multi->setZValue(3);
 
     move_dir1.fill(false);
     move_dir2.fill(false);

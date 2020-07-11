@@ -4,5 +4,7 @@
         <file>resources/images/neptune.png</file>
         <file>resources/images/roca.png</file>
         <file>resources/images/enemy.png</file>
+        <file>resources/images/fluido.png</file>
+        <file>resources/images/fluido_caracol.png</file>
     </qresource>
 </RCC>

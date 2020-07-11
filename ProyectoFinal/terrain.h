@@ -8,9 +8,10 @@
 class Terrain {
 public:
     //0: Nada
-    //1: Pared
-    //2: Ralentizador
-    std::array<std::array<short, 13>, 10> grid;
+    //1: Roca
+    //2: Caracol
+    //3: Ralentizador
+    std::array<std::array<short, 13>, 10> tiles;
 
     Terrain();
 };

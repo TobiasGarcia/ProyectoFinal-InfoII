@@ -4,6 +4,7 @@
 #include <QGraphicsScene>
 #include <players.h>
 #include <terrain.h>
+#include <terrainobject.h>
 #include <enemy.h>
 
 class Level: public QGraphicsScene {
