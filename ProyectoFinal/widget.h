@@ -2,13 +2,14 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include <level.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
 QT_END_NAMESPACE
 
-class Widget : public QWidget
-{
+class Widget : public QWidget {
+
     Q_OBJECT
 
 public:
@@ -17,5 +18,6 @@ public:
 
 private:
     Ui::Widget *ui;
+    Level *level;
 };
 #endif // WIDGET_H
