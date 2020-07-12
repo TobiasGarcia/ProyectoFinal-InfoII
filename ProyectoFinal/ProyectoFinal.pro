@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     enemy.cpp \
+    fireball.cpp \
     level.cpp \
     main.cpp \
     players.cpp \
@@ -27,6 +28,7 @@ SOURCES += \
 
 HEADERS += \
     enemy.h \
+    fireball.h \
     level.h \
     players.h \
     terrain.h \

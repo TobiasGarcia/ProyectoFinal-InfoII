@@ -24,7 +24,7 @@ private:
     Terrain *terrain;
     QQueue<QVector2D> targets;
     QVector2D dir, speed, speed_aux;
-    QTimer *move_timer, *lapse_timer;
+    QTimer *move_timer, *delay_timer;
     QPixmap *pix;
     short spd, width_half, height_half;
     QList<QGraphicsItem*> collisions;
@@ -41,9 +41,13 @@ private:
     void hit(short tile[2]);
     void update_target();
 
+    QPainterPath shape() const;
+
 public:
     Enemy(short i, short j, Terrain *_terrain);
     ~Enemy();
+
+    void reduces_health();
 
 public slots:
     void move();

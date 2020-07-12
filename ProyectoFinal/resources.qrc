@@ -1,10 +1,12 @@
 <RCC>
     <qresource prefix="/images">
-        <file>resources/images/mars.png</file>
-        <file>resources/images/neptune.png</file>
         <file>resources/images/roca.png</file>
         <file>resources/images/enemy.png</file>
         <file>resources/images/fluido.png</file>
         <file>resources/images/fluido_caracol.png</file>
+        <file>resources/images/blue_scope.png</file>
+        <file>resources/images/fire_ball1.png</file>
+        <file>resources/images/fire_ball2.png</file>
+        <file>resources/images/purple_scope.png</file>
     </qresource>
 </RCC>

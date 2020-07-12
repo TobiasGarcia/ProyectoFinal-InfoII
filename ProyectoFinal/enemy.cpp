@@ -12,7 +12,7 @@ Enemy::Enemy(short i, short j, Terrain *_terrain) : terrain(_terrain) {
     setPos(tiles2pixels(i, j).toPoint());
     //setPos(j, i);
 
-    spd = 70;
+    spd = 30;
     set_targets(i, j);
     update_target();
     rotated = false;
@@ -20,17 +20,22 @@ Enemy::Enemy(short i, short j, Terrain *_terrain) : terrain(_terrain) {
     move_timer = new QTimer;
     connect(move_timer, &QTimer::timeout, this, &Enemy::move);
 
-    lapse_timer = new QTimer;
-    lapse_timer->setSingleShot(true);
-    connect(lapse_timer, &QTimer::timeout, this, &Enemy::finish_lapse);
+    delay_timer = new QTimer;
+    delay_timer->setSingleShot(true);
+    connect(delay_timer, &QTimer::timeout, this, &Enemy::finish_lapse);
 
     move_timer->start(50);
 }
 
 Enemy::~Enemy() {
     delete pix;
-    delete lapse_timer;
+    delete delay_timer;
     delete move_timer;
+}
+
+void Enemy::reduces_health() {
+
+    qDebug() << "I'm dying";
 }
 
 void Enemy::move() {
@@ -50,7 +55,7 @@ void Enemy::move() {
                 set_targets(tile[0], tile[1]);
 
                 move_timer->stop();
-                lapse_timer->start(300);
+                delay_timer->start(300);
 
                 return;
             }
@@ -170,6 +175,14 @@ void Enemy::update_target() {
     speed = spd*dir.normalized();
     speed_aux = speed;
     setRotation(90 - (atan2(-dir[1], dir[0])*180/M_PI));
+}
+
+//Colocar formas más acertadas.
+
+QPainterPath Enemy::shape() const {
+    QPainterPath path;
+    path.addRect(boundingRect());
+    return path;
 }
 
 void Enemy::middle_steps(short k, short probe[4]) {

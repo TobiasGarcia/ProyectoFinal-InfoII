@@ -11,9 +11,12 @@ class Players: public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
 private:
+    bool shot1, shot2;
     std::array<bool, 4> move_dir1, move_dir2;
-    QTimer *move_timer;
+    QTimer *move_timer, *delay_timer1, *delay_timer2;
     QPixmap *pix1, *pix2;
+
+    void shoting(bool player);
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
 public:
@@ -22,6 +25,10 @@ public:
     ~Players();
 public slots:
     void move();
+    void ready_shot1() {shot1 = true;};
+    void ready_shot2() {shot2 = true;};
+signals:
+    void add_fire_ball(short x, short y);
 };
 
 #endif // PLAYERS_H

@@ -22,9 +22,11 @@ Level::Level() {
     carlos = new Enemy(0, 13, terrain);
     addItem(carlos);
 
+    carlos = new Enemy(4, 1, terrain);
+    addItem(carlos);
+
     terrain->tiles[4][9] = 1;
     terrain->tiles[3][3] = 1;
-
 
 //    carlos = new Enemy(439, 270, terrain);
 //    addItem(carlos);
@@ -33,6 +35,7 @@ Level::Level() {
 //    addItem(carlos);
 
     players = new Players(390, 285, 495, 285); //Colocarlos en múltiplos de 15.
+    connect(players, &Players::add_fire_ball, this, &Level::add_fire_ball);
 
     players->setFlag(QGraphicsItem::ItemIsFocusable);
     players->setFocus();
@@ -72,6 +75,12 @@ void Level::display_terrain() {
 //        line = new QGraphicsLineItem(60*(j + 1) - 1, 0, 60*(j + 1) - 1, 599);
 //        addItem(line);
 //    }
+}
+
+void Level::add_fire_ball(short x, short y) {
+    fire_ball = new FireBall(x, y);
+    addItem(fire_ball);
+    fire_ball->test_collisions();
 }
 
 
