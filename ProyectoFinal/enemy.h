@@ -24,30 +24,37 @@ private:
     //de llegada. Utilizamos QQueue en lugar de std::queue para
     //facilitar la interacción con los QVector2D.
 
-    QGraphicsRectItem *health_bar;
-    QGraphicsScene *level;
-    Terrain *terrain;
-    QQueue<QVector2D> targets;
-    QVector2D dir, speed, speed_aux;
-    QTimer *move_timer, *delay_timer, *health_on_timer;
+    QVector2D dir;
+    QTimer *health_on_timer;
     QPixmap *pix;
     short spd, width_half, height_half, type, health, max_health;
-    QList<QGraphicsItem*> collisions;
-    bool rotated, health_bar_on;
 
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    QVector2D tiles2pixels(short i, short j);
     QVector2D tiles2pixels(QPoint point);
-    void set_targets(short i, short j);
     bool entrance_exists(short side, short tile[2]);
     void middle_steps(short k, short probe[4]);
     QPoint sides2point(short side1, short side2);
-    void hit(short tile[2]);
-    void update_target();
     void initialize_health_bar();
-
+    void initialize();
     QPainterPath shape() const;
+
+protected:
+    QQueue<QVector2D> targets;
+    QGraphicsRectItem *health_bar;
+    bool rotated, health_bar_on;
+    QVector2D speed, speed_aux;
+    QTimer *move_timer, *delay_timer;
+    QGraphicsScene *level;
+    Terrain *terrain;
+
+    void update_target();
+    void recalculate_initial_tile(short tile[2]);
+    void set_targets(short i, short j);
+    QVector2D tiles2pixels(short i, short j);
+
+    virtual    void rock_collision();
+    virtual bool collisions_handler(QList<QGraphicsItem*> collisions);
 
 public:
     QTimer *bite_timer;
@@ -60,7 +67,7 @@ public:
 
 public slots:
     void move();
-    void finish_lapse();
+    void finish_delay();
     void health_off();
 signals:
     void first_bite();

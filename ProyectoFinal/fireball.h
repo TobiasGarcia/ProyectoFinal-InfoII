@@ -4,6 +4,7 @@
 #include <QGraphicsPixmapItem>
 #include <QTimer>
 #include <enemy.h>
+#include <special_enemies.h>
 
 class FireBall: public QObject, public QGraphicsPixmapItem {
 private:

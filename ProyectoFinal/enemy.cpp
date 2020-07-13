@@ -2,30 +2,9 @@
 #include <QDebug>
 
 Enemy::Enemy(short i, short j, short _type, QGraphicsScene *_level, Terrain *_terrain) :
-    level(_level), terrain(_terrain), type(_type) {
+    type(_type), level(_level), terrain(_terrain) {
 
-    if (type == 0) {
-
-        //36 x 36 pixeles;
-        width_half = 18;
-        height_half = 18;
-
-        spd = 30;
-        max_health = 400;
-
-        pix = new QPixmap(":/images/resources/images/enemy0.png");
-    }
-    else if (type == 1) {
-
-        //40 x 50 pixeles;
-        width_half = 20;
-        height_half = 25;
-
-        spd = 20;
-        max_health = 600;
-
-        pix = new QPixmap(":/images/resources/images/enemy1.png");
-    }
+    initialize();
 
     setZValue(1);
 
@@ -52,7 +31,7 @@ Enemy::Enemy(short i, short j, short _type, QGraphicsScene *_level, Terrain *_te
 
     delay_timer = new QTimer;
     delay_timer->setSingleShot(true);
-    connect(delay_timer, &QTimer::timeout, this, &Enemy::finish_lapse);
+    connect(delay_timer, &QTimer::timeout, this, &Enemy::finish_delay);
 
     move_timer->start(50);
 }
@@ -85,41 +64,12 @@ void Enemy::reduces_health() {
 void Enemy::move() {
 
     speed = speed_aux;
-    collisions = collidingItems(Qt::IntersectsItemBoundingRect);
-    for (short i = 0; i < collisions.size(); i++) {
-        QGraphicsItem *item = collisions[i];
-        if (typeid(*item) == typeid(TerrainObject)) {
-            TerrainObject *terrain_object = dynamic_cast<TerrainObject*>(item);
-            if ((terrain_object->get_type() == 1) and !rotated) {
-                setPos(x() - speed[0]*0.2, y() - speed[1]*0.2);
-                if (health_bar_on) {
-                    health_bar->setPos(health_bar->x() - speed[0]*0.2, health_bar->y() - speed[1]*0.2);
-                }
+    if (collisions_handler(collidingItems(Qt::IntersectsItemBoundingRect))) return;
 
-                short tile[2];
-                targets.clear();
-                hit(tile);
-                set_targets(tile[0], tile[1]);
-
-                move_timer->stop();
-                delay_timer->start(300);
-
-                return;
-            }
-            else if (terrain_object->get_type() == 3) speed = 0.6*speed_aux;
-        }
-        else if (typeid(*item) == typeid(Base)) {
-            move_timer->stop();
-
-            //No se puede emitir la señal timeout manualmente,
-            //por lo cual definimos una señal auxiliar para
-            //enviar al comenzar el timer.
-            emit first_bite();
-            bite_timer->start(1000);
-            return;
-        }
-    }
-
+    //Le damos un "empujonsito" aumentado su rapidez para poder
+    //evitar que los enemigos más lentos se atasquen al girar
+    //por una esquina.
+    if (rotated) speed = 1.4*speed;
     setPos(x() + speed[0]*0.1, y() + speed[1]*0.1);
     if (health_bar_on) health_bar->setPos(health_bar->x() + speed[0]*0.1, health_bar->y() + speed[1]*0.1);
 
@@ -128,17 +78,23 @@ void Enemy::move() {
 
     if (dir.length() < 5) {
         targets.dequeue();
-        if (targets.empty()) move_timer->stop();
-        else {
-            update_target();
-            rotated = true;
-        }
+        //En caso de problemas descomentar lo de abajo
+        //y borrar las dos lineas siguientes.
+        //-----------------
+        update_target();
+        rotated = true;
+        //-----------------
+//        if (targets.empty()) move_timer->stop();
+//        else {
+//            update_target();
+//            rotated = true;
+//        }
     }
 }
 
-void Enemy::finish_lapse() {
-    move_timer->start(50);
+void Enemy::finish_delay() {
     update_target();
+    move_timer->start(50);
 }
 
 void Enemy::health_off() {
@@ -218,7 +174,7 @@ QPoint Enemy::sides2point(short side1, short side2) {
     else return QPoint(7, 10);
 }
 
-void Enemy::hit(short tile[2]) {
+void Enemy::recalculate_initial_tile(short tile[2]) {
 
     //Aproxima la posición a una de salida.
 
@@ -256,12 +212,138 @@ void Enemy::initialize_health_bar() {
     (health_bar + 1)->setRect(1, 1, 38, 5);
 }
 
+void Enemy::initialize() {
+    if (type == 0) {
+        //36 x 36 pixeles;
+        width_half = 18;
+        height_half = 18;
+        spd = 30;
+        max_health = 400;
+        pix = new QPixmap(":/enemies/resources/images/enemies/enemy0.png");
+    }
+    else if (type == 1) {
+        //40 x 50 pixeles;
+        width_half = 20;
+        height_half = 25;
+        spd = 20;
+        max_health = 600;
+        pix = new QPixmap(":/enemies/resources/images/enemies/enemy1.png");
+    }
+    else if (type == 2) {
+        //40 x 50 pixeles;
+        width_half = 20;
+        height_half = 25;
+        spd = 20;
+        max_health = 600;
+        pix = new QPixmap(":/enemies/resources/images/enemies/enemy1.png");
+    }
+    else if (type == 3) {
+        //40 x 50 pixeles;
+        width_half = 20;
+        height_half = 25;
+        spd = 35;
+        max_health = 400;
+        pix = new QPixmap(":/enemies/resources/images/enemies/snail.png");
+    }
+    else if (type == 4) {
+        //40 x 50 pixeles;
+        width_half = 20;
+        height_half = 25;
+        spd = 40;
+        max_health = 300;
+        pix = new QPixmap(":/enemies/resources/images/enemies/porcupine.png");
+    }
+    else if (type == 5) {
+        //40 x 50 pixeles;
+        width_half = 20;
+        height_half = 25;
+        spd = 25;
+        max_health = 300;
+        pix = new QPixmap(":/enemies/resources/images/enemies/owl.png");
+    }
+    else if (type == 6) {
+        //40 x 50 pixeles;
+        width_half = 20;
+        height_half = 25;
+        spd = 20;
+        max_health = 500;
+        pix = new QPixmap(":/enemies/resources/images/enemies/chamaleon.png");
+    }
+    else if (type == 7) {
+        //40 x 50 pixeles;
+        width_half = 20;
+        height_half = 25;
+        spd = 20;
+        max_health = 600;
+        pix = new QPixmap(":/enemies/resources/images/enemies/enemy1.png");
+    }
+    else {
+        //40 x 50 pixeles;
+        width_half = 20;
+        height_half = 25;
+        spd = 20;
+        max_health = 600;
+        pix = new QPixmap(":/enemies/resources/images/enemies/enemy1.png");
+    }
+}
+
+void Enemy::rock_collision() {
+
+    setPos(x() - speed[0]*0.2, y() - speed[1]*0.2);
+    if (health_bar_on) health_bar->setPos(health_bar->x() - speed[0]*0.2, health_bar->y() - speed[1]*0.2);
+
+    short tile[2];
+    targets.clear();
+    recalculate_initial_tile(tile);
+    set_targets(tile[0], tile[1]);
+
+    move_timer->stop();
+    delay_timer->start(300);
+}
+
+bool Enemy::collisions_handler(QList<QGraphicsItem*> collisions) {
+
+    //Retornamos true si necesitamos dejar de ejecutar el slot move().
+
+    for (short i = 0; i < collisions.size(); i++) {
+        QGraphicsItem *item = collisions[i];
+        if (typeid(*item) == typeid(TerrainObject)) {
+
+            TerrainObject *terrain_object = dynamic_cast<TerrainObject*>(item);
+            if ((terrain_object->get_type() == 1) and !rotated) {
+                rock_collision();
+                return true;
+            }
+            else if (terrain_object->get_type() == 2) speed = 1.4*speed_aux;
+            else if (terrain_object->get_type() == 3) speed = 0.6*speed_aux;
+        }
+        else if (typeid(*item) == typeid(Base)) {
+            move_timer->stop();
+
+            //No se puede emitir la señal timeout manualmente,
+            //por lo cual definimos una señal auxiliar para
+            //enviar al comenzar el timer.
+            emit first_bite();
+            bite_timer->start(1000);
+            return true;
+        }
+    }
+    return false;
+}
+
 //Colocar formas más acertadas.
 
 QPainterPath Enemy::shape() const {
     QPainterPath path;
     if (type == 0) path.addEllipse(QRect(7-width_half, 1-height_half, 22, 34));
     else if (type == 1) path.addRect(QRect(4-width_half, 2-height_half, 32, 36));
+    else if (type == 2) path.addRect(QRect(4-width_half, 2-height_half, 32, 36));
+    else if (type == 3) path.addRect(QRect(4-width_half, 2-height_half, 32, 36));
+    else if (type == 4) path.addRect(QRect(4-width_half, 2-height_half, 32, 36));
+    else if (type == 5) path.addRect(QRect(4-width_half, 2-height_half, 32, 36));
+    else if (type == 6) path.addRect(QRect(4-width_half, 2-height_half, 32, 36));
+    else if (type == 7) path.addRect(QRect(4-width_half, 2-height_half, 32, 36));
+    else path.addRect(QRect(4-width_half, 2-height_half, 32, 36));
     return path;
 }
 

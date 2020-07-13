@@ -7,11 +7,20 @@
         <file>resources/images/fire_ball0.png</file>
         <file>resources/images/fire_ball1.png</file>
         <file>resources/images/purple_scope.png</file>
-        <file>resources/images/enemy1.png</file>
-        <file>resources/images/enemy0.png</file>
         <file>resources/images/hud.png</file>
         <file>resources/images/base.png</file>
         <file>resources/images/bitten.png</file>
         <file>resources/images/normal.png</file>
+    </qresource>
+    <qresource prefix="/enemies">
+        <file>resources/images/enemies/chamaleon.png</file>
+        <file>resources/images/enemies/enemy0.png</file>
+        <file>resources/images/enemies/enemy1.png</file>
+        <file>resources/images/enemies/enemy2.png</file>
+        <file>resources/images/enemies/mole.png</file>
+        <file>resources/images/enemies/owl.png</file>
+        <file>resources/images/enemies/porcupine.png</file>
+        <file>resources/images/enemies/snail.png</file>
+        <file>resources/images/enemies/vulture.png</file>
     </qresource>
 </RCC>

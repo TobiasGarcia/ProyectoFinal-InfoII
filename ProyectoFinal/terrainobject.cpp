@@ -6,6 +6,10 @@ TerrainObject::TerrainObject(short x, short y, short _type) : type(_type) {
         pix = new QPixmap(":/images/resources/images/rock.png");
         *pix = pix->transformed(QTransform().translate(-30, -30).rotate(90*(rand()%4)).translate(30, 30));
     }
+    else if (type == 2) {
+        pix = new QPixmap(":/images/resources/images/snail_fluid.png");
+        *pix = pix->transformed(QTransform().translate(-30, -30).rotate(90*(rand()%4)).translate(30, 30));
+    }
     else if (type == 3) {
         pix = new QPixmap(":/images/resources/images/fluid.png");
         *pix = pix->transformed(QTransform().translate(-30, -30).rotate(90*(rand()%4)).translate(30, 30));

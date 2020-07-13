@@ -28,7 +28,15 @@ void FireBall::test_collisions() {
     collisions = collidingItems(Qt::IntersectsItemShape);
     for (short i = 0; i < collisions.size(); i++) {
         QGraphicsItem *item = collisions[i];
-        if (typeid(*item) == typeid(Enemy)) {
+//        if ((typeid(*item) == typeid(Enemy)) or (typeid(*item) == typeid(Snail)) or (typeid(*item) == typeid(Enemy))
+//         or (typeid(*item) == typeid(Enemy)) or (typeid(*item) == typeid(Enemy)) or (typeid(*item) == typeid(Enemy))
+//         or (typeid(*item) == typeid(Enemy)) or (typeid(*item) == typeid(Enemy)) or (typeid(*item) == typeid(Enemy))) {
+//            Enemy *enemy = dynamic_cast<Enemy*>(item);
+//            enemy->reduces_health();
+//            return;
+//        }
+        if ((typeid(*item) == typeid(Enemy)) or (typeid(*item) == typeid(Snail)) or (typeid(*item) == typeid(Porcupine))
+         or (typeid(*item) == typeid(Owl)) or (typeid(*item) == typeid(Chamaleon))) {
             Enemy *enemy = dynamic_cast<Enemy*>(item);
             enemy->reduces_health();
             return;

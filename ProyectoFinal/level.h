@@ -8,6 +8,7 @@
 #include <enemy.h>
 #include <fireball.h>
 #include <base.h>
+#include <special_enemies.h>
 
 class Level: public QGraphicsScene {
 
@@ -17,16 +18,16 @@ private:
     Base *base;
     FireBall *fire_ball;
     Enemy *carlos;
-    Terrain *terrain;
     Players *players;
     short initial_health;
-
 
     QGraphicsRectItem *health_bar;
 
 public:
     Level();
     ~Level();
+    Terrain *terrain;
+
     void display_terrain();
     void display_hud();
 public slots:

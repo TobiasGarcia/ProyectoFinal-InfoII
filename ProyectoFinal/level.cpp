@@ -23,7 +23,7 @@ Level::Level() {
     connect(carlos, &Enemy::first_bite, base, &Base::bitten);
     connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
 
-    carlos = new Enemy(-1, 6, 0, this, terrain);
+    carlos = new Chamaleon(-1, 6, 6, this, terrain);
     addItem(carlos);
     connect(carlos, &Enemy::first_bite, base, &Base::bitten);
     connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
@@ -33,19 +33,25 @@ Level::Level() {
     connect(carlos, &Enemy::first_bite, base, &Base::bitten);
     connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
 
-    carlos = new Enemy(0, 13, 0, this, terrain);
+    carlos = new Snail(0, 13, 3, this, terrain);
     addItem(carlos);
     connect(carlos, &Enemy::first_bite, base, &Base::bitten);
     connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
 
-    carlos = new Enemy(4, 1, 0, this, terrain);
+    carlos = new Porcupine(4, 1, 4, this, terrain);
     addItem(carlos);
     connect(carlos, &Enemy::first_bite, base, &Base::bitten);
     connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
-    //addItem(carlos->re);
+
+    carlos = new Owl(-1, 6, 5, this, terrain);
+    addItem(carlos);
+    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
+    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
 
     terrain->tiles[4][9] = 1;
     terrain->tiles[3][3] = 1;
+    terrain->tiles[4][3] = 1;
+    terrain->tiles[5][3] = 1;
 
 //    carlos = new Enemy(439, 270, terrain);
 //    addItem(carlos);
@@ -85,6 +91,12 @@ void Level::display_terrain() {
     addItem(terrain_object);
 
     terrain_object = new TerrainObject(60*3, 60*3, 1);
+    addItem(terrain_object);
+
+    terrain_object = new TerrainObject(60*3, 60*4, 1);
+    addItem(terrain_object);
+
+    terrain_object = new TerrainObject(60*3, 60*5, 1);
     addItem(terrain_object);
 
 //    QGraphicsLineItem *line;
