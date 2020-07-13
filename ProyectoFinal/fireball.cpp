@@ -6,11 +6,12 @@ FireBall::FireBall(short x, short y) {
     erase = false;
 
     pix = new QPixmap[2];
-    pix[0] = QPixmap(":/images/resources/images/fire_ball1.png");
-    pix[1] = QPixmap(":/images/resources/images/fire_ball2.png");
+    pix[0] = QPixmap(":/images/resources/images/fire_ball0.png");
+    pix[1] = QPixmap(":/images/resources/images/fire_ball1.png");
 
     setPos(x - 17.5, y - 17.5);
     setPixmap(pix[0]);
+    setZValue(2);
 
     update_timer = new QTimer;
     connect(update_timer, &QTimer::timeout, this, &FireBall::update);
@@ -30,6 +31,7 @@ void FireBall::test_collisions() {
         if (typeid(*item) == typeid(Enemy)) {
             Enemy *enemy = dynamic_cast<Enemy*>(item);
             enemy->reduces_health();
+            return;
         }
     }
 }
@@ -40,7 +42,7 @@ QRectF FireBall::boundingRect() const {
 
 QPainterPath FireBall::shape() const {
     QPainterPath path;
-    path.addEllipse(QRect(10, 10, 15, 15));
+    path.addEllipse(QRect(5, 5, 25, 25));
     return path;
 }
 

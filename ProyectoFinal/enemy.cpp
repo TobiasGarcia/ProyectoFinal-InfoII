@@ -1,21 +1,51 @@
 #include "enemy.h"
 #include <QDebug>
 
-Enemy::Enemy(short i, short j, Terrain *_terrain) : terrain(_terrain) {
+Enemy::Enemy(short i, short j, short _type, QGraphicsScene *_level, Terrain *_terrain) :
+    level(_level), terrain(_terrain), type(_type) {
 
-    //50 x 40 pixeles;
-    width_half = 20;
-    height_half = 25;
+    if (type == 0) {
 
-    pix = new QPixmap(":/images/resources/images/enemy.png");
+        //36 x 36 pixeles;
+        width_half = 18;
+        height_half = 18;
+
+        spd = 30;
+        max_health = 400;
+
+        pix = new QPixmap(":/images/resources/images/enemy0.png");
+    }
+    else if (type == 1) {
+
+        //40 x 50 pixeles;
+        width_half = 20;
+        height_half = 25;
+
+        spd = 20;
+        max_health = 600;
+
+        pix = new QPixmap(":/images/resources/images/enemy1.png");
+    }
+
+    setZValue(1);
+
     setPixmap(*pix);
     setPos(tiles2pixels(i, j).toPoint());
-    //setPos(j, i);
 
-    spd = 30;
+    health = max_health;
+    health_bar_on = false;
+
+    initialize_health_bar();
+
     set_targets(i, j);
     update_target();
     rotated = false;
+
+    bite_timer = new QTimer;
+
+    health_on_timer = new QTimer;
+    health_on_timer->setSingleShot(true);
+    connect(health_on_timer, &QTimer::timeout, this, &Enemy::health_off);
 
     move_timer = new QTimer;
     connect(move_timer, &QTimer::timeout, this, &Enemy::move);
@@ -31,11 +61,25 @@ Enemy::~Enemy() {
     delete pix;
     delete delay_timer;
     delete move_timer;
+    delete bite_timer;
+    delete health_on_timer;
+    delete[] health_bar;
 }
 
 void Enemy::reduces_health() {
 
-    qDebug() << "I'm dying";
+    health -= 100;
+    if (health == 0) delete this;
+    else {
+
+        (health_bar + 1)->setRect(1, 1, 38*(health/float(max_health)), 5);
+        if (!health_bar_on) {
+            health_bar_on = true;
+            health_bar->setPos(x() - 20, y() - 35);
+            level->addItem(health_bar);
+        }
+        health_on_timer->start(1000);
+    }
 }
 
 void Enemy::move() {
@@ -47,7 +91,10 @@ void Enemy::move() {
         if (typeid(*item) == typeid(TerrainObject)) {
             TerrainObject *terrain_object = dynamic_cast<TerrainObject*>(item);
             if ((terrain_object->get_type() == 1) and !rotated) {
-                setPos(x() - speed[0]*0.1, y() - speed[1]*0.1);
+                setPos(x() - speed[0]*0.2, y() - speed[1]*0.2);
+                if (health_bar_on) {
+                    health_bar->setPos(health_bar->x() - speed[0]*0.2, health_bar->y() - speed[1]*0.2);
+                }
 
                 short tile[2];
                 targets.clear();
@@ -61,9 +108,21 @@ void Enemy::move() {
             }
             else if (terrain_object->get_type() == 3) speed = 0.6*speed_aux;
         }
+        else if (typeid(*item) == typeid(Base)) {
+            move_timer->stop();
+
+            //No se puede emitir la señal timeout manualmente,
+            //por lo cual definimos una señal auxiliar para
+            //enviar al comenzar el timer.
+            emit first_bite();
+            bite_timer->start(1000);
+            return;
+        }
     }
 
     setPos(x() + speed[0]*0.1, y() + speed[1]*0.1);
+    if (health_bar_on) health_bar->setPos(health_bar->x() + speed[0]*0.1, health_bar->y() + speed[1]*0.1);
+
     dir = targets.head() - QVector2D(pos());
     rotated = false;
 
@@ -80,6 +139,11 @@ void Enemy::move() {
 void Enemy::finish_lapse() {
     move_timer->start(50);
     update_target();
+}
+
+void Enemy::health_off() {
+    health_bar_on = false;
+    level->removeItem(health_bar);
 }
 
 QRectF Enemy::boundingRect() const {
@@ -177,11 +241,27 @@ void Enemy::update_target() {
     setRotation(90 - (atan2(-dir[1], dir[0])*180/M_PI));
 }
 
+void Enemy::initialize_health_bar() {
+
+    //Cuando se elimina la escena se deletea rect, por lo cual
+    //no lo podemos colocar en el destructor de Enemy.
+    health_bar = new QGraphicsRectItem[2];
+    health_bar->setBrush(QColor(86, 86, 86));
+    health_bar->setPen(QColor(66, 66, 66));
+    health_bar->setRect(0, 0, 40, 7);
+
+    (health_bar + 1)->setParentItem(health_bar);
+    (health_bar + 1)->setBrush(QColor(54, 104, 195));
+    (health_bar + 1)->setPen(QColor(54, 104, 195));
+    (health_bar + 1)->setRect(1, 1, 38, 5);
+}
+
 //Colocar formas más acertadas.
 
 QPainterPath Enemy::shape() const {
     QPainterPath path;
-    path.addRect(boundingRect());
+    if (type == 0) path.addEllipse(QRect(7-width_half, 1-height_half, 22, 34));
+    else if (type == 1) path.addRect(QRect(4-width_half, 2-height_half, 32, 36));
     return path;
 }
 

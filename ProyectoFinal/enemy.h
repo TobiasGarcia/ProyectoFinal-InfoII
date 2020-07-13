@@ -9,6 +9,9 @@
 #include <QPainter>
 #include <terrain.h>
 #include <terrainobject.h>
+#include <base.h>
+#include <roundrect.h>
+#include <QGraphicsScene>
 
 class Enemy: public QObject, public QGraphicsPixmapItem {
 
@@ -21,14 +24,16 @@ private:
     //de llegada. Utilizamos QQueue en lugar de std::queue para
     //facilitar la interacción con los QVector2D.
 
+    QGraphicsRectItem *health_bar;
+    QGraphicsScene *level;
     Terrain *terrain;
     QQueue<QVector2D> targets;
     QVector2D dir, speed, speed_aux;
-    QTimer *move_timer, *delay_timer;
+    QTimer *move_timer, *delay_timer, *health_on_timer;
     QPixmap *pix;
-    short spd, width_half, height_half;
+    short spd, width_half, height_half, type, health, max_health;
     QList<QGraphicsItem*> collisions;
-    bool rotated;
+    bool rotated, health_bar_on;
 
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -40,11 +45,15 @@ private:
     QPoint sides2point(short side1, short side2);
     void hit(short tile[2]);
     void update_target();
+    void initialize_health_bar();
 
     QPainterPath shape() const;
 
 public:
-    Enemy(short i, short j, Terrain *_terrain);
+    QTimer *bite_timer;
+    //RoundRect *re;
+
+    Enemy(short i, short j, short _type, QGraphicsScene *_level, Terrain *_terrain);
     ~Enemy();
 
     void reduces_health();
@@ -52,6 +61,9 @@ public:
 public slots:
     void move();
     void finish_lapse();
+    void health_off();
+signals:
+    void first_bite();
 };
 
 #endif // ENEMY_H

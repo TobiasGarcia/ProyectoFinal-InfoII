@@ -1,12 +1,17 @@
 <RCC>
     <qresource prefix="/images">
-        <file>resources/images/roca.png</file>
-        <file>resources/images/enemy.png</file>
-        <file>resources/images/fluido.png</file>
-        <file>resources/images/fluido_caracol.png</file>
+        <file>resources/images/rock.png</file>
+        <file>resources/images/fluid.png</file>
+        <file>resources/images/snail_fluid.png</file>
         <file>resources/images/blue_scope.png</file>
+        <file>resources/images/fire_ball0.png</file>
         <file>resources/images/fire_ball1.png</file>
-        <file>resources/images/fire_ball2.png</file>
         <file>resources/images/purple_scope.png</file>
+        <file>resources/images/enemy1.png</file>
+        <file>resources/images/enemy0.png</file>
+        <file>resources/images/hud.png</file>
+        <file>resources/images/base.png</file>
+        <file>resources/images/bitten.png</file>
+        <file>resources/images/normal.png</file>
     </qresource>
 </RCC>
