@@ -50,10 +50,10 @@ protected:
 
     void update_target();
     void recalculate_initial_tile(short tile[2]);
-    void set_targets(short i, short j);
     QVector2D tiles2pixels(short i, short j);
 
-    virtual    void rock_collision();
+    virtual void set_targets(short i, short j);
+    virtual void rock_collision();
     virtual bool collisions_handler(QList<QGraphicsItem*> collisions);
 
 public:
@@ -66,7 +66,7 @@ public:
     void reduces_health();
 
 public slots:
-    void move();
+    virtual void move();
     void finish_delay();
     void health_off();
 signals:

@@ -18,32 +18,37 @@ Level::Level() {
     addItem(base);
     //addItem(base->center);
 
-    carlos = new Enemy(3, -1, 1, this, terrain);
+    carlos = new Enemy(9, 3, 1, this, terrain);
     addItem(carlos);
     connect(carlos, &Enemy::first_bite, base, &Base::bitten);
     connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
 
-    carlos = new Chamaleon(-1, 6, 6, this, terrain);
+    carlos = new Chamaleon(-1, 6, this, terrain);
     addItem(carlos);
     connect(carlos, &Enemy::first_bite, base, &Base::bitten);
     connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
 
-    carlos = new Enemy(9, 4, 1, this, terrain);
+    carlos = new Mole(9, 4, this, terrain);
     addItem(carlos);
     connect(carlos, &Enemy::first_bite, base, &Base::bitten);
     connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
 
-    carlos = new Snail(0, 13, 3, this, terrain);
+    carlos = new Snail(0, 13, this, terrain);
     addItem(carlos);
     connect(carlos, &Enemy::first_bite, base, &Base::bitten);
     connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
 
-    carlos = new Porcupine(4, 1, 4, this, terrain);
+    carlos = new Porcupine(9, 12, this, terrain);
     addItem(carlos);
     connect(carlos, &Enemy::first_bite, base, &Base::bitten);
     connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
 
-    carlos = new Owl(-1, 6, 5, this, terrain);
+    carlos = new Owl(-1, 6, this, terrain);
+    addItem(carlos);
+    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
+    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
+
+    carlos = new Vulture(9, 4, this, terrain);
     addItem(carlos);
     connect(carlos, &Enemy::first_bite, base, &Base::bitten);
     connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
@@ -108,6 +113,9 @@ void Level::display_terrain() {
 //        line = new QGraphicsLineItem(60*(j + 1) - 1, 0, 60*(j + 1) - 1, 599);
 //        addItem(line);
 //    }
+
+//    QGraphicsEllipseItem *elli =  new QGraphicsEllipseItem(QRectF(60, 60, 659, 419));
+//    addItem(elli);
 }
 
 void Level::display_hud() {

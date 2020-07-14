@@ -36,7 +36,8 @@ void FireBall::test_collisions() {
 //            return;
 //        }
         if ((typeid(*item) == typeid(Enemy)) or (typeid(*item) == typeid(Snail)) or (typeid(*item) == typeid(Porcupine))
-         or (typeid(*item) == typeid(Owl)) or (typeid(*item) == typeid(Chamaleon))) {
+         or (typeid(*item) == typeid(Owl)) or (typeid(*item) == typeid(Chamaleon)) or (typeid(*item) == typeid(Mole))
+         or (typeid(*item) == typeid(Vulture))) {
             Enemy *enemy = dynamic_cast<Enemy*>(item);
             enemy->reduces_health();
             return;

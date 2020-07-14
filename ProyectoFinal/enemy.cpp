@@ -69,14 +69,14 @@ void Enemy::move() {
     //Le damos un "empujonsito" aumentado su rapidez para poder
     //evitar que los enemigos más lentos se atasquen al girar
     //por una esquina.
-    if (rotated) speed = 1.4*speed;
+    if (rotated) speed = 1.6*speed;
     setPos(x() + speed[0]*0.1, y() + speed[1]*0.1);
     if (health_bar_on) health_bar->setPos(health_bar->x() + speed[0]*0.1, health_bar->y() + speed[1]*0.1);
 
     dir = targets.head() - QVector2D(pos());
     rotated = false;
 
-    if (dir.length() < 5) {
+    if (dir.length() < 7) {
         targets.dequeue();
         //En caso de problemas descomentar lo de abajo
         //y borrar las dos lineas siguientes.
@@ -274,16 +274,16 @@ void Enemy::initialize() {
         width_half = 20;
         height_half = 25;
         spd = 20;
-        max_health = 600;
-        pix = new QPixmap(":/enemies/resources/images/enemies/enemy1.png");
+        max_health = 300;
+        pix = new QPixmap(":/enemies/resources/images/enemies/mole.png");
     }
     else {
         //40 x 50 pixeles;
         width_half = 20;
         height_half = 25;
-        spd = 20;
-        max_health = 600;
-        pix = new QPixmap(":/enemies/resources/images/enemies/enemy1.png");
+        spd = 140;
+        max_health = 500;
+        pix = new QPixmap(":/enemies/resources/images/enemies/vulture.png");
     }
 }
 
