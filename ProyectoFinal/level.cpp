@@ -1,9 +1,39 @@
 #include "level.h"
 #include "QDebug"
 
-//void Level::keyPressEvent(QKeyEvent *event) {
-//    qDebug() << "asda";
-//}
+void Level::keyPressEvent(QKeyEvent *event) {
+
+    if ((event->key() == Qt::Key_Up) and !event->isAutoRepeat()) player1->move_dir[0] = true;
+    else if ((event->key() == Qt::Key_Left) and !event->isAutoRepeat()) player1->move_dir[1] = true;
+    else if ((event->key() == Qt::Key_Down) and !event->isAutoRepeat()) player1->move_dir[2] = true;
+    else if ((event->key() == Qt::Key_Right) and !event->isAutoRepeat()) player1->move_dir[3] = true;
+
+    else if ((event->key() == Qt::Key_W) and !event->isAutoRepeat()) player2->move_dir[0] = true;
+    else if ((event->key() == Qt::Key_A) and !event->isAutoRepeat()) player2->move_dir[1] = true;
+    else if ((event->key() == Qt::Key_S) and !event->isAutoRepeat()) player2->move_dir[2] = true;
+    else if ((event->key() == Qt::Key_D) and !event->isAutoRepeat()) player2->move_dir[3] = true;
+
+    //Qt::Key_Return es el enter cercano a las flechas, Qt::Key_Enter es el del Numeric Keypad.
+
+    else if (!player1->delay_timer->isActive() and (event->key() == Qt::Key_Return) and !event->isAutoRepeat()) {
+        add_fire_ball(player1->x(), player1->y());
+    }
+    else if (!player2->delay_timer->isActive() and (event->key() == Qt::Key_Space) and !event->isAutoRepeat()) {
+        add_fire_ball(player2->x(), player2->y());
+    }
+}
+
+void Level::keyReleaseEvent(QKeyEvent *event) {
+    if ((event->key() == Qt::Key_Up) and !event->isAutoRepeat()) player1->move_dir[0] = false;
+    else if ((event->key() == Qt::Key_Left) and !event->isAutoRepeat()) player1->move_dir[1] = false;
+    else if ((event->key() == Qt::Key_Down) and !event->isAutoRepeat()) player1->move_dir[2] = false;
+    else if ((event->key() == Qt::Key_Right) and !event->isAutoRepeat()) player1->move_dir[3] = false;
+
+    else if ((event->key() == Qt::Key_W) and !event->isAutoRepeat()) player2->move_dir[0] = false;
+    else if ((event->key() == Qt::Key_A) and !event->isAutoRepeat()) player2->move_dir[1] = false;
+    else if ((event->key() == Qt::Key_S) and !event->isAutoRepeat()) player2->move_dir[2] = false;
+    else if ((event->key() == Qt::Key_D) and !event->isAutoRepeat()) player2->move_dir[3] = false;
+}
 
 Level::Level() {
 
@@ -61,28 +91,20 @@ Level::Level() {
     terrain->tiles[4][3] = 1;
     terrain->tiles[5][3] = 1;
 
-//    carlos = new Enemy(439, 270, terrain);
-//    addItem(carlos);
-
-//    carlos = new Enemy(330, 161, terrain);
-//    addItem(carlos);
-
     power_up = new PowerUp(0, 0);
     addItem(power_up);
 
-    players = new Players(330, 330, 450, 330); //Colocarlos en múltiplos de 15.
-    connect(players, &Players::add_fire_ball, this, &Level::add_fire_ball);
+    player1 = new Player(5, 5);
+    addItem(player1);
 
-    players->setFlag(QGraphicsItem::ItemIsFocusable);
-    players->setFocus();
-
-    addItem(players->multi);
-    addItem(players);
+    player2 =  new Player(5, 7, false);
+    addItem(player2);
 }
 
 Level::~Level() {
     //delete carlos;
-    delete players;
+    delete player1;
+    delete player2;
     delete terrain;
     delete health_bar;
     delete base;
@@ -152,6 +174,8 @@ void Level::display_hud() {
 void Level::add_fire_ball(short x, short y) {
     fire_ball = new FireBall(x, y);
     addItem(fire_ball);
+    //Tiene que ser después de que se agregó a la escena,
+    //por eso va como un método público.
     fire_ball->test_collisions();
 }
 
