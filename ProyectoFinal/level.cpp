@@ -48,50 +48,50 @@ Level::Level() {
     initial_health = 1000;
     display_hud();
 
-    base = new Base(health_bar);
-    addItem(base);
+//    base = new Base(health_bar);
+//    addItem(base);
 
-    carlos = new Enemy(9, 3, 0, this, terrain);
-    addItem(carlos);
-    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
-    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
+//    carlos = new Enemy(9, 3, 0, this, terrain);
+//    addItem(carlos);
+//    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
+//    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
 
-    carlos = new Chamaleon(-1, 6, this, terrain);
-    addItem(carlos);
-    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
-    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
+//    carlos = new Chamaleon(-1, 6, this, terrain);
+//    addItem(carlos);
+//    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
+//    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
 
-    carlos = new Mole(9, 4, this, terrain);
-    addItem(carlos);
-    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
-    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
+//    carlos = new Mole(9, 4, this, terrain);
+//    addItem(carlos);
+//    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
+//    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
 
-    carlos = new Snail(0, 13, this, terrain);
-    addItem(carlos);
-    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
-    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
+//    carlos = new Snail(0, 13, this, terrain);
+//    addItem(carlos);
+//    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
+//    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
 
-    carlos = new Porcupine(9, 12, this, terrain);
-    addItem(carlos);
-    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
-    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
+//    carlos = new Porcupine(9, 12, this, terrain);
+//    addItem(carlos);
+//    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
+//    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
 
-    carlos = new Owl(-1, 6, this, terrain);
-    addItem(carlos);
-    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
-    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
+//    carlos = new Owl(-1, 6, this, terrain);
+//    addItem(carlos);
+//    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
+//    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
 
-    carlos = new Vulture(9, 4, this, terrain);
-    addItem(carlos);
-    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
-    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
+//    carlos = new Vulture(9, 4, this, terrain);
+//    addItem(carlos);
+//    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
+//    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
 
     terrain->tiles[4][9] = 1;
     terrain->tiles[3][3] = 1;
     terrain->tiles[4][3] = 1;
     terrain->tiles[5][3] = 1;
 
-    power_up = new PowerUp(0, 0);
+    power_up = new PowerUp(1, 0);
     addItem(power_up);
 
     player1 = new Player(5, 5);
@@ -107,7 +107,7 @@ Level::~Level() {
     delete player2;
     delete terrain;
     delete health_bar;
-    delete base;
+    //delete base;
     delete power_up;
 }
 

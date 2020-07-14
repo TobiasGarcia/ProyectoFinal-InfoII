@@ -10,7 +10,6 @@
 #include <terrain.h>
 #include <terrainobject.h>
 #include <base.h>
-#include <roundrect.h>
 #include <QGraphicsScene>
 
 class Enemy: public QObject, public QGraphicsPixmapItem {
