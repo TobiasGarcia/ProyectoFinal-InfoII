@@ -11,7 +11,7 @@ FireBall::FireBall(short x, short y) {
 
     setPos(x - 17.5, y - 17.5);
     setPixmap(pix[0]);
-    setZValue(2);
+    setZValue(3);
 
     update_timer = new QTimer;
     connect(update_timer, &QTimer::timeout, this, &FireBall::update);

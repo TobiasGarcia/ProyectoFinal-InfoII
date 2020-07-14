@@ -8,6 +8,7 @@
 #include <enemy.h>
 #include <fireball.h>
 #include <base.h>
+#include <powerup.h>
 #include <special_enemies.h>
 
 class Level: public QGraphicsScene {
@@ -20,8 +21,10 @@ private:
     Enemy *carlos;
     Players *players;
     short initial_health;
+    PowerUp *power_up;
 
     QGraphicsRectItem *health_bar;
+    //void keyPressEvent(QKeyEvent *event);
 
 public:
     Level();

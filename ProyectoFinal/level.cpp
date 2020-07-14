@@ -1,6 +1,10 @@
 #include "level.h"
 #include "QDebug"
 
+//void Level::keyPressEvent(QKeyEvent *event) {
+//    qDebug() << "asda";
+//}
+
 Level::Level() {
 
     srand(time(nullptr));
@@ -16,9 +20,8 @@ Level::Level() {
 
     base = new Base(health_bar);
     addItem(base);
-    //addItem(base->center);
 
-    carlos = new Enemy(9, 3, 1, this, terrain);
+    carlos = new Enemy(9, 3, 0, this, terrain);
     addItem(carlos);
     connect(carlos, &Enemy::first_bite, base, &Base::bitten);
     connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
@@ -64,6 +67,9 @@ Level::Level() {
 //    carlos = new Enemy(330, 161, terrain);
 //    addItem(carlos);
 
+    power_up = new PowerUp(0, 0);
+    addItem(power_up);
+
     players = new Players(330, 330, 450, 330); //Colocarlos en múltiplos de 15.
     connect(players, &Players::add_fire_ball, this, &Level::add_fire_ball);
 
@@ -80,6 +86,7 @@ Level::~Level() {
     delete terrain;
     delete health_bar;
     delete base;
+    delete power_up;
 }
 
 void Level::display_terrain() {
@@ -116,25 +123,28 @@ void Level::display_terrain() {
 
 //    QGraphicsEllipseItem *elli =  new QGraphicsEllipseItem(QRectF(60, 60, 659, 419));
 //    addItem(elli);
+
+//    QGraphicsEllipseItem *elli =  new QGraphicsEllipseItem(QRectF(389 - 20, 269 - 20, 40, 40));
+//    addItem(elli);
 }
 
 void Level::display_hud() {
 
     QGraphicsRectItem *rect = new QGraphicsRectItem(221, 544, 337, 51);
     rect->setBrush(QColor(86, 86, 86));
-    rect->setZValue(3);
+    rect->setZValue(4);
     addItem(rect);
 
     health_bar = new QGraphicsRectItem(221, 544, 337*(initial_health/1000.0), 51);
     health_bar->setBrush(QColor(54, 104, 195));
     health_bar->setPen(QColor(54, 104, 195));
-    health_bar->setZValue(3);
+    health_bar->setZValue(4);
     addItem(health_bar);
 
     QGraphicsPixmapItem *pix_map = new QGraphicsPixmapItem;
     pix_map->setPixmap(QPixmap(":/images/resources/images/hud.png"));
     pix_map->setPos(0, 540);
-    pix_map->setZValue(3);
+    pix_map->setZValue(4);
     addItem(pix_map);
 
 }

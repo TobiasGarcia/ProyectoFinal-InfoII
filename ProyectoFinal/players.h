@@ -19,6 +19,8 @@ private:
     void shoting(bool player);
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
+    QRectF boundingRect() const;
+
 public:
     QGraphicsPixmapItem *multi;
     Players(short x1, short y1, short x2, short y2);

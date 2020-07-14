@@ -205,11 +205,13 @@ void Enemy::initialize_health_bar() {
     health_bar->setBrush(QColor(86, 86, 86));
     health_bar->setPen(QColor(66, 66, 66));
     health_bar->setRect(0, 0, 40, 7);
+    health_bar->setZValue(2);
 
     (health_bar + 1)->setParentItem(health_bar);
     (health_bar + 1)->setBrush(QColor(54, 104, 195));
     (health_bar + 1)->setPen(QColor(54, 104, 195));
     (health_bar + 1)->setRect(1, 1, 38, 5);
+    (health_bar + 1)->setZValue(2);
 }
 
 void Enemy::initialize() {
