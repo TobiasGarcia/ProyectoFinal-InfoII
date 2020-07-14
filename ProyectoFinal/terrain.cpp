@@ -14,13 +14,16 @@ Terrain::Terrain() {
     //tiles[6][6] = 0;
     tiles[5][3] = 0;
     tiles[3][3] = 0;
+    tiles[4][3] = 0;
 
     //tiles[2][4] = 0;
     tiles[4][9] = 0;
+    tiles[6][4] = 0;
 
-    tiles[4][10] = 3;
-    tiles[3][11] = 3;
-    tiles[4][11] = 3;
+//    tiles[3][2] = 3;
+//    tiles[3][1] = 3;
+//    tiles[3][11] = 3;
+//    tiles[4][11] = 3;
     //tiles[3][9] = 0;
     //tiles[5][3] = 0;
 
