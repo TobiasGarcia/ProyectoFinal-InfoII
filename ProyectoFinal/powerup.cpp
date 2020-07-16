@@ -16,7 +16,7 @@ void PowerUp::initialize() {
     else if (path_type == 1) {
         a = 260; spd = 15;
 
-        angle = 1;
+        angle = ((rand()%31 + 30) + 90*(rand()%4))*M_PI/180;
         period = 2*M_PI;
         r = radio();
 
@@ -69,21 +69,31 @@ QPainterPath PowerUp::shape() const{
     return path;
 }
 
+//Este método es para no tener que conectar siempre todas las fireballs al slot
+//del nivel, pues las fireballs como tal casi nunca lanzarian la señal pues muchas
+//se usan es para los enemigos o para tirarlas a la nada, mientras que el power_up
+//si es mucho más probable que lance la señal, pues está diseñado para que lo haga.
+
+void PowerUp::emit_give_power() {
+    emit give_power(power_type);
+}
+
 PowerUp::PowerUp(short _path_type, short _power_type) : path_type(_path_type), power_type(_power_type) {
 
-   pix = new QPixmap(":/images/resources/images/normal.png");
-   setPixmap(*pix);
-   setOffset(-11, -11);
-   setZValue(2);
+    pix = new QPixmap(":/power_ups/resources/images/power_ups/power" + QString::number(power_type) + ".png");
 
-   initialize();
+    setPixmap(*pix);
+    setOffset(-11, -11);
+    setZValue(2);
 
-   move_timer = new QTimer;
+    initialize();
 
-   if (path_type != 3) connect(move_timer, &QTimer::timeout, this, &PowerUp::move);
-   else connect(move_timer, &QTimer::timeout, this, &PowerUp::lemniscate_move);
+    move_timer = new QTimer;
 
-   move_timer->start(50);
+    if (path_type != 3) connect(move_timer, &QTimer::timeout, this, &PowerUp::move);
+    else connect(move_timer, &QTimer::timeout, this, &PowerUp::lemniscate_move);
+
+    move_timer->start(50);
 }
 
 PowerUp::~PowerUp() {

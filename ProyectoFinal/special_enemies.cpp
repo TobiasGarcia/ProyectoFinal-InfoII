@@ -62,6 +62,7 @@ bool Porcupine::collisions_handler(QList<QGraphicsItem*> collisions) {
                 level->removeItem(terrain_object);
                 delete terrain_object;
 
+                emit remove_enemy(list_index);
                 delete this;
                 return true;
             }
@@ -82,8 +83,8 @@ bool Porcupine::collisions_handler(QList<QGraphicsItem*> collisions) {
     return false;
 }
 
-Porcupine::Porcupine(short i, short j, QGraphicsScene *_level, Terrain *_terrain) :
-    Enemy(i, j, 4, _level, _terrain) {
+Porcupine::Porcupine(short i, short j, QGraphicsScene *_level, Terrain *_terrain, short _list_index) :
+    Enemy(i, j, 4, _level, _terrain, _list_index) {
 
     targets.clear();
     targets.enqueue(QVector2D(389, 269));
@@ -110,8 +111,8 @@ bool Owl::collisions_handler(QList<QGraphicsItem *> collisions) {
     return false;
 }
 
-Owl::Owl(short i, short j, QGraphicsScene *_level, Terrain *_terrain) :
-    Enemy(i, j, 5, _level, _terrain) {
+Owl::Owl(short i, short j, QGraphicsScene *_level, Terrain *_terrain, short _list_index) :
+    Enemy(i, j, 5, _level, _terrain, _list_index) {
 
     targets.clear();
     targets.enqueue(QVector2D(389, 269));
@@ -188,8 +189,8 @@ bool Chamaleon::collisions_handler(QList<QGraphicsItem *> collisions) {
     return false;
 }
 
-Chamaleon::Chamaleon(short i, short j, QGraphicsScene *_level, Terrain *_terrain) :
-    Enemy(i, j, 6, _level, _terrain) {
+Chamaleon::Chamaleon(short i, short j, QGraphicsScene *_level, Terrain *_terrain, short _list_index) :
+    Enemy(i, j, 6, _level, _terrain, _list_index) {
 
     visible = true;
     camouflage_timer = new QTimer;
@@ -197,8 +198,8 @@ Chamaleon::Chamaleon(short i, short j, QGraphicsScene *_level, Terrain *_terrain
     camouflage_timer->start(3000);
 }
 
-Mole::Mole(short i, short j, QGraphicsScene *_level, Terrain *_terrain) :
-    Enemy(i, j, 7, _level, _terrain) {
+Mole::Mole(short i, short j, QGraphicsScene *_level, Terrain *_terrain, short _list_index) :
+    Enemy(i, j, 7, _level, _terrain, _list_index) {
 
     move_timer->stop();
 
@@ -278,8 +279,8 @@ bool Vulture::collisions_handler(QList<QGraphicsItem *> collisions) {
     return false;
 }
 
-Vulture::Vulture(short i, short j, QGraphicsScene *_level, Terrain *_terrain) :
-    Enemy(i, j, 8, _level, _terrain) {
+Vulture::Vulture(short i, short j, QGraphicsScene *_level, Terrain *_terrain, short _list_index) :
+    Enemy(i, j, 8, _level, _terrain, _list_index) {
 
     targets.clear();
     set_targets(i, j);

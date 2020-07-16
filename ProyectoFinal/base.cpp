@@ -4,6 +4,7 @@
 Base::Base(QGraphicsRectItem *_health_bar) : health_bar(_health_bar) {
 
     health = 1000;
+    vulnerable = true;
 
     pix = new QPixmap(":/images/resources/images/base.png");
     setPos(360, 240);
@@ -29,10 +30,12 @@ Base::~Base() {
 }
 
 void Base::bitten() {
-    health -= 10;
-    health_bar->setRect(221, 544, 337*(health/1000.0), 51);
-    center->setPixmap(pix[1]);
-    bitten_timer->start(500);
+    if (vulnerable) {
+        health -= 10;
+        health_bar->setRect(221, 544, 337*(health/1000.0), 51);
+        center->setPixmap(pix[1]);
+        bitten_timer->start(500);
+    }
 }
 
 void Base::return_normal() {

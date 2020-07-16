@@ -23,6 +23,15 @@ private:
     //de llegada. Utilizamos QQueue en lugar de std::queue para
     //facilitar la interacción con los QVector2D.
 
+    //La variable defeated es para poder hacer que la barra de vida del enemigo
+    //aparezca un momento más justo después de que el enemigo fue derrotado, esto
+    //es una forma de indicarle a los jugadores que han acabado con el enemigo.
+    //Parece algo redundante, pero en realidad resulta útil cuando los
+    //jugadores golpean a un enemigo invisible mediante un power up,
+    //además de que sin esta opción parecía que los enemigos
+    //simplemente desaparecían.
+
+    bool defeated, freez;
     QVector2D dir;
     QTimer *health_on_timer;
     QPixmap *pix;
@@ -44,8 +53,13 @@ protected:
     bool rotated, health_bar_on;
     QVector2D speed, speed_aux;
     QTimer *move_timer, *delay_timer;
+    //Necesitamos la varible level para tener un puntero a la escena y poder modificarla
+    //desde dentro de los métodos del enemigo, prescindimos de utilizar la función scene()
+    //como en la clase fireball porque presentaba problemas al utilizarla dentro de los
+    //enemigos especiales.
     QGraphicsScene *level;
     Terrain *terrain;
+    short list_index;
 
     void update_target();
     void recalculate_initial_tile(short tile[2]);
@@ -57,19 +71,23 @@ protected:
 
 public:
     QTimer *bite_timer;
-    //RoundRect *re;
 
-    Enemy(short i, short j, short _type, QGraphicsScene *_level, Terrain *_terrain);
+    short get_type() {return type;};
+    void set_freez(bool _freez) {freez = _freez;};
+    Enemy(short i, short j, short _type, QGraphicsScene *_level, Terrain *_terrain, short _list_index);
     ~Enemy();
 
-    void reduces_health();
+    void reduces_health(short hit);
 
 public slots:
     virtual void move();
     void finish_delay();
     void health_off();
+    void update_index(short removed_index);
+
 signals:
     void first_bite();
+    void remove_enemy(short list_index);
 };
 
 #endif // ENEMY_H

@@ -48,50 +48,55 @@ Level::Level() {
     initial_health = 1000;
     display_hud();
 
-//    base = new Base(health_bar);
-//    addItem(base);
+    freez_timer = new QTimer;
+    freez_timer->setSingleShot(true);
+    connect(freez_timer, &QTimer::timeout, this, &Level::defrost);
 
-//    carlos = new Enemy(9, 3, 0, this, terrain);
-//    addItem(carlos);
-//    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
-//    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
+    base = new Base(health_bar);
+    addItem(base);
 
-//    carlos = new Chamaleon(-1, 6, this, terrain);
-//    addItem(carlos);
-//    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
-//    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
+    carlos = new Enemy(9, 3, 0, this, terrain, 0);
+    make_connections(carlos);
+    enemies.append(carlos);
+    addItem(carlos);
 
-//    carlos = new Mole(9, 4, this, terrain);
-//    addItem(carlos);
-//    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
-//    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
+    carlos = new Chamaleon(-1, 6, this, terrain, 1);
+    make_connections(carlos);
+    enemies.append(carlos);
+    addItem(carlos);
 
-//    carlos = new Snail(0, 13, this, terrain);
-//    addItem(carlos);
-//    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
-//    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
+    carlos = new Mole(9, 4, this, terrain, 2);
+    make_connections(carlos);
+    enemies.append(carlos);
+    addItem(carlos);
 
-//    carlos = new Porcupine(9, 12, this, terrain);
-//    addItem(carlos);
-//    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
-//    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
+    carlos = new Snail(0, 13, this, terrain, 3);
+    make_connections(carlos);
+    enemies.append(carlos);
+    addItem(carlos);
 
-//    carlos = new Owl(-1, 6, this, terrain);
-//    addItem(carlos);
-//    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
-//    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
+    carlos = new Porcupine(9, 12, this, terrain, 4);
+    make_connections(carlos);
+    enemies.append(carlos);
+    addItem(carlos);
 
-//    carlos = new Vulture(9, 4, this, terrain);
-//    addItem(carlos);
-//    connect(carlos, &Enemy::first_bite, base, &Base::bitten);
-//    connect(carlos->bite_timer, &QTimer::timeout, base, &Base::bitten);
+    carlos = new Owl(-1, 6, this, terrain, 5);
+    make_connections(carlos);
+    enemies.append(carlos);
+    addItem(carlos);
+
+    carlos = new Vulture(9, 4, this, terrain, 6);
+    make_connections(carlos);
+    enemies.append(carlos);
+    addItem(carlos);
 
     terrain->tiles[4][9] = 1;
     terrain->tiles[3][3] = 1;
     terrain->tiles[4][3] = 1;
     terrain->tiles[5][3] = 1;
 
-    power_up = new PowerUp(1, 0);
+    power_up = new PowerUp(1, 1);
+    connect(power_up, &PowerUp::give_power, this, &Level::give_power);
     addItem(power_up);
 
     player1 = new Player(5, 5);
@@ -107,8 +112,27 @@ Level::~Level() {
     delete player2;
     delete terrain;
     delete health_bar;
+    delete freez_timer;
     //delete base;
-    delete power_up;
+    //delete power_up;
+}
+
+void Level::give_power(short power_type) {
+    qDebug() << "Given power " << power_type;
+    if (power_type == 0) hit_all_enemies();
+    else if (power_type == 1) {
+        set_freez(true);
+        freez_timer->start(3000);
+    }
+}
+
+void Level::remove_enemy(short list_index) {
+    enemies.removeAt(list_index);
+    emit update_index(list_index);
+}
+
+void Level::defrost() {
+    set_freez(false);
 }
 
 void Level::display_terrain() {
@@ -169,6 +193,52 @@ void Level::display_hud() {
     pix_map->setZValue(4);
     addItem(pix_map);
 
+}
+
+void Level::hit_all_enemies() {
+
+    short index = 0, size = enemies.size();
+    while (index < size) {
+
+        //El topo coloca un agujero antes de aparecer, por lo cual tarda un poco
+        //en entrar al campo visual y por tanto no se le deberá aplicar ningún efecto
+        //de los power ups hasta que entre, no obstante, como él ya está en la lista de
+        //enemigos, utilizamos el condicional para que el power up no le afecte a él
+        //en caso de que aún no haya aparecido.
+
+        if (enemies.at(index)->get_type() == 7) {
+            Mole *mole = dynamic_cast<Mole*>(enemies.at(index));
+            if (mole->dig_timer->isActive()) {
+                index++;
+                continue;
+            }
+        }
+
+        enemies.at(index)->reduces_health(300);
+        if (size == enemies.size()) index++;
+        else size--;
+    }
+}
+
+void Level::make_connections(Enemy *enemy) {
+    connect(enemy, &Enemy::first_bite, base, &Base::bitten);
+    connect(enemy->bite_timer, &QTimer::timeout, base, &Base::bitten);
+    connect(enemy, &Enemy::remove_enemy, this, &Level::remove_enemy);
+    connect(this, &Level::update_index, enemy, &Enemy::update_index);
+}
+
+void Level::set_freez(bool freez) {
+
+    base->set_vulnerable(!freez);
+    for (short i = 0; i < enemies.size(); i++) {
+
+        if (enemies.at(i)->get_type() == 7) {
+            Mole *mole = dynamic_cast<Mole*>(enemies.at(i));
+            if (mole->dig_timer->isActive()) continue;
+        }
+
+        enemies.at(i)->set_freez(freez);
+    }
 }
 
 void Level::add_fire_ball(short x, short y) {

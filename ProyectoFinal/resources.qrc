@@ -23,4 +23,11 @@
         <file>resources/images/enemies/snail.png</file>
         <file>resources/images/enemies/vulture.png</file>
     </qresource>
+    <qresource prefix="/power_ups">
+        <file>resources/images/power_ups/power0.png</file>
+        <file>resources/images/power_ups/power1.png</file>
+        <file>resources/images/power_ups/power2.png</file>
+        <file>resources/images/power_ups/power3.png</file>
+        <file>resources/images/power_ups/power4.png</file>
+    </qresource>
 </RCC>

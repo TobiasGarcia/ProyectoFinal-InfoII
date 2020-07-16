@@ -33,12 +33,15 @@ private:
     QPainterPath shape() const;
 
 public:
+    void emit_give_power();
     PowerUp(short _path_type, short _power_type);
     ~PowerUp();
 
 public slots:
     void move();
     void lemniscate_move();
+signals:
+    void give_power(short power_type);
 };
 
 #endif // POWERUP_H

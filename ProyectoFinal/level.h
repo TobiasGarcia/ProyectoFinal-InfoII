@@ -23,6 +23,8 @@ private:
     Player *player1, *player2;
     short initial_health;
     PowerUp *power_up;
+    QList<Enemy*> enemies;
+    QTimer *freez_timer;
 
     QGraphicsRectItem *health_bar;
     void add_fire_ball(short x, short y);
@@ -31,11 +33,21 @@ private:
 
     void display_terrain();
     void display_hud();
+    void hit_all_enemies();
+    void make_connections(Enemy *enemy);
+    void set_freez(bool freez);
 
 public:
     Level();
     ~Level();
     Terrain *terrain;
+public slots:
+    void give_power(short power_type);
+    void remove_enemy(short list_index);
+    void defrost();
+
+signals:
+    void update_index(short removed_index);
 
 };
 
