@@ -29,7 +29,7 @@ private:
     //se debe retirar la plantialla, de otro modo es porque hay algún jugador que
     //la necesita.
 
-    short initial_health, rock_index, fluid_index, template_on[2];
+    short initial_health, rock_index, fluid_index, template_on;
     PowerUp *power_up;
     QList<Enemy*> enemies;
     QGraphicsPixmapItem *rock_powers, *fluid_powers, *power_template;
@@ -49,7 +49,7 @@ private:
     void hit_all_enemies();
     void make_connections(Enemy *enemy);
     void set_freez(bool freez);
-    void initialize_templates();
+    void initialize_template();
     void add_rock(short i, short j);
     void add_fluid(short i, short j);
 

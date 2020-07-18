@@ -21,12 +21,8 @@ void Level::keyPressEvent(QKeyEvent *event) {
     else if (!player2->delay_timer->isActive() and (event->key() == Qt::Key_Space)) add_fire_ball(player2->x(), player2->y());
 
     else if ((event->key() == Qt::Key_Backspace) or (event->key() == Qt::Key_V)) {
-        if (template_on[0] == 0) addItem(power_template);
-        template_on[0]++;
-    }
-    else if ((event->key() == Qt::Key_Shift) or (event->key() == Qt::Key_B)) {
-        if (template_on[1] == 0) addItem(power_template + 1);
-        template_on[1]++;
+        if (template_on == 0) addItem(power_template);
+        template_on++;
     }
 }
 
@@ -45,46 +41,17 @@ void Level::keyReleaseEvent(QKeyEvent *event) {
     else if (event->key() == Qt::Key_D) player2->move_dir[3] = false;
 
     else if (event->key() == Qt::Key_Backspace) {
-        template_on[0]--;
-        if (template_on[0] == 0) removeItem(power_template);
+        template_on--;
+        if (template_on == 0) removeItem(power_template);
         add_rock(player1->y()/60, player1->x()/60);
     }
     else if (event->key() == Qt::Key_V) {
-        template_on[0]--;
-        if (template_on[0] == 0) removeItem(power_template);
+        template_on--;
+        if (template_on == 0) removeItem(power_template);
         add_rock(player2->y()/60, player2->x()/60);
     }
-    else if (event->key() == Qt::Key_Shift) {
-        template_on[1]--;
-        if (template_on[1] == 0) removeItem(power_template + 1);
-        add_fluid(player1->y()/60, player1->x()/60);
-    }
-    else if (event->key() == Qt::Key_B) {
-        template_on[1]--;
-        if (template_on[1] == 0) removeItem(power_template + 1);
-        add_fluid(player2->y()/60, player2->x()/60);
-    }
-
-//    else if ((event->key() == Qt::Key_Backspace) and !event->isAutoRepeat()) {
-//        template_on[0]--;
-//        if (template_on[0] == 0) removeItem(power_template);
-//        //add_rock(player1->x(), player1->y());
-//    }
-//    else if ((event->key() == Qt::Key_Shift) and !event->isAutoRepeat()) {
-//        template_on[1]--;
-//        if (template_on[1] == 0) removeItem(power_template + 1);
-//        //add_fluid(player1->x(), player1->y());
-//    }
-//    else if ((event->key() == Qt::Key_V) and !event->isAutoRepeat()) {
-//        template_on[0]--;
-//        if (template_on[0] == 0) removeItem(power_template);
-//        //add_rock(player1->x(), player1->y());
-//    }
-//    else if ((event->key() == Qt::Key_B) and !event->isAutoRepeat()) {
-//        template_on[1]--;
-//        if (template_on[1] == 0) removeItem(power_template + 1);
-//        //add_fluid(player1->x(), player1->y());
-//    }
+    else if (event->key() == Qt::Key_Shift) add_fluid(player1->y()/60, player1->x()/60);
+    else if (event->key() == Qt::Key_B) add_fluid(player2->y()/60, player2->x()/60);
 }
 
 Level::Level() {
@@ -97,12 +64,12 @@ Level::Level() {
     display_terrain();
 
     //Se mide en porcentaje, pero como 100.0, con una cifra decimal.
-    rock_index = 2;
-    fluid_index = 0;
+    rock_index = 3;
+    fluid_index = -1;
     initial_health = 1000;
     display_hud();
 
-    initialize_templates();
+    initialize_template();
 
     //Un poco más grande para evitar hacer contacto con los enemigos
     //cuando sea colocada.
@@ -155,9 +122,9 @@ Level::Level() {
 //    terrain->tiles[4][3] = new TerrainObject(180, 240, 1);
 //    terrain->tiles[5][3] = new TerrainObject(180, 300, 1);
 
-//    power_up = new PowerUp(1, 2);
-//    connect(power_up, &PowerUp::give_power, this, &Level::give_power);
-//    addItem(power_up);
+    power_up = new PowerUp(1, 4);
+    connect(power_up, &PowerUp::give_power, this, &Level::give_power);
+    addItem(power_up);
 
     player1 = new Player(5, 5);
     addItem(player1);
@@ -175,20 +142,32 @@ Level::~Level() {
     delete freez_timer;
     delete[] rock_powers;
     delete[] fluid_powers;
-    delete[] power_template;
+    delete power_template;
     delete ghost_rock;
     //delete base;
     //delete power_up;
 }
 
 void Level::give_power(short power_type) {
-    qDebug() << "Given power " << power_type;
+
     if (power_type == 0) hit_all_enemies();
     else if (power_type == 1) {
         set_freez(true);
         freez_timer->start(3000);
     }
     else if (power_type == 2) base->increase_health(200);
+    else if (power_type == 3) {
+        while (fluid_index < 3) {
+            fluid_index++;
+            addItem(fluid_powers + fluid_index);
+        }
+    }
+    else {
+        while ((rock_index < 3) and ((terrain->rocks_num + (rock_index + 1)) < 15)) {
+            rock_index++;
+            addItem(rock_powers + rock_index);
+        }
+    }
 }
 
 void Level::remove_enemy(short list_index) {
@@ -317,20 +296,14 @@ void Level::set_freez(bool freez) {
     }
 }
 
-void Level::initialize_templates() {
+void Level::initialize_template() {
 
-    template_on[0] = 0;
-    template_on[1] = 0;
+    template_on = 0;
 
-    power_template = new QGraphicsPixmapItem[2];
-    power_template[0].setPixmap(QPixmap(":/interface/resources/images/interface/available.png"));
-    power_template[1].setPixmap(QPixmap(":/interface/resources/images/interface/not_available.png"));
-
-    power_template[0].setPos(180, 120);
-    power_template[1].setPos(180, 120);
-
-    power_template[0].setZValue(0);
-    power_template[1].setZValue(0);
+    power_template = new QGraphicsPixmapItem;
+    power_template->setPixmap(QPixmap(":/interface/resources/images/interface/available.png"));
+    power_template->setPos(180, 120);
+    power_template->setZValue(0);
 }
 
 void Level::add_rock(short i, short j) {
@@ -383,21 +356,21 @@ void Level::add_rock(short i, short j) {
 
         removeItem(rock_powers + rock_index);
         rock_index--;
+
+        terrain->rocks_num++;
     }
 }
 
 void Level::add_fluid(short i, short j) {
 
     if (fluid_index == -1) return;
-    else if (((i == 2) or (i == 6)) and (3 < j) and (j < 9)) return;
-    else if (((j == 3) or (j == 9)) and (2 < i) and (i < 6)) return;
     else if ((i == 4) and (j == 6)) return;
     else if (terrain->tiles[i][j] == nullptr) {
         terrain->tiles[i][j] = new TerrainObject(i, j, 3);
         addItem(terrain->tiles[i][j]);
 
-//        removeItem(fluid_powers + fluid_index);
-//        fluid_index--;
+        removeItem(fluid_powers + fluid_index);
+        fluid_index--;
     }
     else if (terrain->tiles[i][j]->get_type() == 2) {
         removeItem(terrain->tiles[i][j]);
@@ -406,11 +379,12 @@ void Level::add_fluid(short i, short j) {
         terrain->tiles[i][j] = new TerrainObject(i, j, 3);
         addItem(terrain->tiles[i][j]);
 
-//        removeItem(fluid_powers + fluid_index);
-//        fluid_index--;
+        removeItem(fluid_powers + fluid_index);
+        fluid_index--;
     }
 
-    //Simplemente salimo si hay un fluido colocado por los jugadores.
+    //Simplemente salimo si hay un fluido colocado por los jugadores
+    //o una roca.
 
 }
 

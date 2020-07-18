@@ -70,6 +70,7 @@ bool Porcupine::collisions_handler(QList<QGraphicsItem*> collisions) {
 
                 level->removeItem(terrain_object);
                 delete terrain_object;
+                terrain->rocks_num--;
 
                 emit remove_enemy(list_index);
                 delete this;
