@@ -1,21 +1,23 @@
 #include "enemy.h"
 #include <QDebug>
 
-Enemy::Enemy(short i, short j, short _type, QGraphicsScene *_level, Terrain *_terrain) :
-    type(_type), level(_level), terrain(_terrain) {
+Enemy::Enemy(short i, short j, short _type, QGraphicsScene *_level, Terrain *_terrain, short _list_index) :
+    type(_type), level(_level), terrain(_terrain), list_index(_list_index) {
 
     initialize();
 
-    setZValue(1);
+    setZValue(2);
 
     setPixmap(*pix);
     setPos(tiles2pixels(i, j).toPoint());
 
+    defeated = false;
     health = max_health;
     health_bar_on = false;
 
     initialize_health_bar();
 
+    freez = false;
     set_targets(i, j);
     update_target();
     rotated = false;
@@ -45,23 +47,33 @@ Enemy::~Enemy() {
     delete[] health_bar;
 }
 
-void Enemy::reduces_health() {
+void Enemy::reduces_health(short hit) {
 
-    health -= 100;
-    if (health == 0) delete this;
-    else {
+    health -= hit;
+    if (health < 0) health = 0;
 
-        (health_bar + 1)->setRect(1, 1, 38*(health/float(max_health)), 5);
-        if (!health_bar_on) {
-            health_bar_on = true;
-            health_bar->setPos(x() - 20, y() - 35);
-            level->addItem(health_bar);
-        }
-        health_on_timer->start(1000);
+    (health_bar + 1)->setRect(1, 1, 38*(health/float(max_health)), 5);
+    if (!health_bar_on) {
+        health_bar_on = true;
+        health_bar->setPos(x() - 20, y() - 35);
+        level->addItem(health_bar);
+    }
+    health_on_timer->start(700);
+
+    //El <= 0 es porque pueden llegar a tener vida negativa cuando
+    //los jugadores toma el power_up para golpearlos a todos.
+
+    if (health == 0) {
+        emit remove_enemy(list_index);
+        if (scene() != NULL) level->removeItem(this);
+        defeated = true;
+        freez = true;
     }
 }
 
 void Enemy::move() {
+
+    if (freez) return;
 
     speed = speed_aux;
     if (collisions_handler(collidingItems(Qt::IntersectsItemBoundingRect))) return;
@@ -100,6 +112,11 @@ void Enemy::finish_delay() {
 void Enemy::health_off() {
     health_bar_on = false;
     level->removeItem(health_bar);
+    if (defeated) delete this;
+}
+
+void Enemy::update_index(short removed_index) {
+    if (list_index > removed_index) list_index--;
 }
 
 QRectF Enemy::boundingRect() const {
@@ -205,11 +222,13 @@ void Enemy::initialize_health_bar() {
     health_bar->setBrush(QColor(86, 86, 86));
     health_bar->setPen(QColor(66, 66, 66));
     health_bar->setRect(0, 0, 40, 7);
+    health_bar->setZValue(2);
 
     (health_bar + 1)->setParentItem(health_bar);
     (health_bar + 1)->setBrush(QColor(54, 104, 195));
     (health_bar + 1)->setPen(QColor(54, 104, 195));
     (health_bar + 1)->setRect(1, 1, 38, 5);
+    (health_bar + 1)->setZValue(2);
 }
 
 void Enemy::initialize() {
@@ -305,8 +324,9 @@ bool Enemy::collisions_handler(QList<QGraphicsItem*> collisions) {
 
     //Retornamos true si necesitamos dejar de ejecutar el slot move().
 
+    QGraphicsItem *item;
     for (short i = 0; i < collisions.size(); i++) {
-        QGraphicsItem *item = collisions[i];
+        item = collisions[i];
         if (typeid(*item) == typeid(TerrainObject)) {
 
             TerrainObject *terrain_object = dynamic_cast<TerrainObject*>(item);
@@ -370,11 +390,12 @@ bool Enemy::entrance_exists(short side, short tile[2]) {
 
     if (side%2) {
 
-        //Vamos por arriba o por abajo
+        //Vamos por los costados.
 
         index = 3*side;
-        for (short k = 0; k < 3; k++) {
-            if (terrain->tiles[k + 3][index] != 1) entrances_index.push_back(k + 3);
+        for (short i = 3; i < 6; i++) {
+            if ((terrain->tiles[i][index] == nullptr)
+             or (terrain->tiles[i][index]->get_type() != 1)) entrances_index.push_back(i);
         }
 
         //Si no hay entradas retornamos falso, o en caso contrario
@@ -389,11 +410,12 @@ bool Enemy::entrance_exists(short side, short tile[2]) {
     }
     else {
 
-        //Vamos por los costados.
+        //Vamos por arriba o por abajo
 
         index = 2*side + 2;
-        for (short k = 0; k < 5; k++) {
-            if (terrain->tiles[index][k + 4] != 1) entrances_index.push_back(k + 4);
+        for (short j = 4; j < 9; j++) {
+            if ((terrain->tiles[index][j] == nullptr)
+             or (terrain->tiles[index][j]->get_type() != 1)) entrances_index.push_back(j);
         }
 
         if (entrances_index.isEmpty()) return false;

@@ -2,8 +2,18 @@
 #include <QDebug>
 
 void Snail::add_fluid() {
-    fluid = new TerrainObject(x() - short(x())%60, y() - short(y())%60, 2);
-    level->addItem(fluid);
+    short i = y()/60, j = x()/60;
+
+    //Es suficiente con verificar que no sea nulo pues este método no se llamará
+    //sobre fluido de caracol y nunca estará sobre una roca.
+
+    if (terrain->tiles[i][j] != nullptr) {
+        level->removeItem(terrain->tiles[i][j]);
+        delete terrain->tiles[i][j];
+    }
+
+    terrain->tiles[i][j] = new TerrainObject(i, j, 2);
+    level->addItem(terrain->tiles[i][j]);
 }
 
 bool Snail::collisions_handler(QList<QGraphicsItem*> collisions) {
@@ -25,7 +35,6 @@ bool Snail::collisions_handler(QList<QGraphicsItem*> collisions) {
             //ya se debe haber puesto el fluido.
 
             else if (terrain_object->get_type() == 2) in_fluid = true;
-            else if (terrain_object->get_type() == 3) speed = 0.6*speed_aux;
         }
         else if (typeid(*item) == typeid(Base)) {
             move_timer->stop();
@@ -57,11 +66,13 @@ bool Porcupine::collisions_handler(QList<QGraphicsItem*> collisions) {
             TerrainObject *terrain_object = dynamic_cast<TerrainObject*>(item);
             if ((terrain_object->get_type() == 1) and !rotated) {
 
-                terrain->tiles[short(terrain_object->y()/60)][short(terrain_object->x()/60)] = 0;
+                terrain->tiles[short(terrain_object->y()/60)][short(terrain_object->x()/60)] = nullptr;
 
                 level->removeItem(terrain_object);
                 delete terrain_object;
+                terrain->rocks_num--;
 
+                emit remove_enemy(list_index);
                 delete this;
                 return true;
             }
@@ -82,8 +93,8 @@ bool Porcupine::collisions_handler(QList<QGraphicsItem*> collisions) {
     return false;
 }
 
-Porcupine::Porcupine(short i, short j, QGraphicsScene *_level, Terrain *_terrain) :
-    Enemy(i, j, 4, _level, _terrain) {
+Porcupine::Porcupine(short i, short j, QGraphicsScene *_level, Terrain *_terrain, short _list_index) :
+    Enemy(i, j, 4, _level, _terrain, _list_index) {
 
     targets.clear();
     targets.enqueue(QVector2D(389, 269));
@@ -110,8 +121,8 @@ bool Owl::collisions_handler(QList<QGraphicsItem *> collisions) {
     return false;
 }
 
-Owl::Owl(short i, short j, QGraphicsScene *_level, Terrain *_terrain) :
-    Enemy(i, j, 5, _level, _terrain) {
+Owl::Owl(short i, short j, QGraphicsScene *_level, Terrain *_terrain, short _list_index) :
+    Enemy(i, j, 5, _level, _terrain, _list_index) {
 
     targets.clear();
     targets.enqueue(QVector2D(389, 269));
@@ -188,8 +199,8 @@ bool Chamaleon::collisions_handler(QList<QGraphicsItem *> collisions) {
     return false;
 }
 
-Chamaleon::Chamaleon(short i, short j, QGraphicsScene *_level, Terrain *_terrain) :
-    Enemy(i, j, 6, _level, _terrain) {
+Chamaleon::Chamaleon(short i, short j, QGraphicsScene *_level, Terrain *_terrain, short _list_index) :
+    Enemy(i, j, 6, _level, _terrain, _list_index) {
 
     visible = true;
     camouflage_timer = new QTimer;
@@ -197,8 +208,8 @@ Chamaleon::Chamaleon(short i, short j, QGraphicsScene *_level, Terrain *_terrain
     camouflage_timer->start(3000);
 }
 
-Mole::Mole(short i, short j, QGraphicsScene *_level, Terrain *_terrain) :
-    Enemy(i, j, 7, _level, _terrain) {
+Mole::Mole(short i, short j, QGraphicsScene *_level, Terrain *_terrain, short _list_index) :
+    Enemy(i, j, 7, _level, _terrain, _list_index) {
 
     move_timer->stop();
 
@@ -278,8 +289,8 @@ bool Vulture::collisions_handler(QList<QGraphicsItem *> collisions) {
     return false;
 }
 
-Vulture::Vulture(short i, short j, QGraphicsScene *_level, Terrain *_terrain) :
-    Enemy(i, j, 8, _level, _terrain) {
+Vulture::Vulture(short i, short j, QGraphicsScene *_level, Terrain *_terrain, short _list_index) :
+    Enemy(i, j, 8, _level, _terrain, _list_index) {
 
     targets.clear();
     set_targets(i, j);

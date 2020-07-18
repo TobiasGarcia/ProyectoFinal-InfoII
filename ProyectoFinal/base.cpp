@@ -1,9 +1,10 @@
 #include "base.h"
 #include <QDebug>
 
-Base::Base(QGraphicsRectItem *_health_bar) : health_bar(_health_bar) {
+Base::Base(QGraphicsRectItem *_health_bar, short initial_health) : health_bar(_health_bar) {
 
-    health = 1000;
+    health = initial_health;
+    vulnerable = true;
 
     pix = new QPixmap(":/images/resources/images/base.png");
     setPos(360, 240);
@@ -28,11 +29,19 @@ Base::~Base() {
     delete bitten_timer;
 }
 
-void Base::bitten() {
-    health -= 10;
+void Base::increase_health(short increment) {
+    health += increment;
+    if (health > 1000) health = 1000;
     health_bar->setRect(221, 544, 337*(health/1000.0), 51);
-    center->setPixmap(pix[1]);
-    bitten_timer->start(500);
+}
+
+void Base::bitten() {
+    if (vulnerable) {
+        health -= 10;
+        health_bar->setRect(221, 544, 337*(health/1000.0), 51);
+        center->setPixmap(pix[1]);
+        bitten_timer->start(500);
+    }
 }
 
 void Base::return_normal() {

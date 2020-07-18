@@ -11,7 +11,7 @@ FireBall::FireBall(short x, short y) {
 
     setPos(x - 17.5, y - 17.5);
     setPixmap(pix[0]);
-    setZValue(2);
+    setZValue(4);
 
     update_timer = new QTimer;
     connect(update_timer, &QTimer::timeout, this, &FireBall::update);
@@ -25,21 +25,22 @@ FireBall::~FireBall() {
 
 void FireBall::test_collisions() {
 
+    QGraphicsItem *item;
     collisions = collidingItems(Qt::IntersectsItemShape);
     for (short i = 0; i < collisions.size(); i++) {
-        QGraphicsItem *item = collisions[i];
-//        if ((typeid(*item) == typeid(Enemy)) or (typeid(*item) == typeid(Snail)) or (typeid(*item) == typeid(Enemy))
-//         or (typeid(*item) == typeid(Enemy)) or (typeid(*item) == typeid(Enemy)) or (typeid(*item) == typeid(Enemy))
-//         or (typeid(*item) == typeid(Enemy)) or (typeid(*item) == typeid(Enemy)) or (typeid(*item) == typeid(Enemy))) {
-//            Enemy *enemy = dynamic_cast<Enemy*>(item);
-//            enemy->reduces_health();
-//            return;
-//        }
+        item = collisions[i];
         if ((typeid(*item) == typeid(Enemy)) or (typeid(*item) == typeid(Snail)) or (typeid(*item) == typeid(Porcupine))
          or (typeid(*item) == typeid(Owl)) or (typeid(*item) == typeid(Chamaleon)) or (typeid(*item) == typeid(Mole))
          or (typeid(*item) == typeid(Vulture))) {
             Enemy *enemy = dynamic_cast<Enemy*>(item);
-            enemy->reduces_health();
+            enemy->reduces_health(100);
+            return;
+        }
+        else if (typeid(*item) == typeid(PowerUp)) {
+            PowerUp *power_up = dynamic_cast<PowerUp*>(item);
+            power_up->emit_give_power();
+            scene()->removeItem(power_up);
+            delete power_up;
             return;
         }
     }

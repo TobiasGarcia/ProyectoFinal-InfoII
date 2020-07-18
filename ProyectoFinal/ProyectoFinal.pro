@@ -21,8 +21,8 @@ SOURCES += \
     fireball.cpp \
     level.cpp \
     main.cpp \
-    players.cpp \
-    roundrect.cpp \
+    player.cpp \
+    powerup.cpp \
     special_enemies.cpp \
     terrain.cpp \
     terrainobject.cpp \
@@ -34,8 +34,8 @@ HEADERS += \
     enemy.h \
     fireball.h \
     level.h \
-    players.h \
-    roundrect.h \
+    player.h \
+    powerup.h \
     special_enemies.h \
     terrain.h \
     terrainobject.h \
