@@ -1,6 +1,6 @@
 #include "terrainobject.h"
 
-TerrainObject::TerrainObject(short x, short y, short _type) : type(_type) {
+TerrainObject::TerrainObject(short i, short j, short _type) : type(_type) {
 
     if (type == 1) {
         pix = new QPixmap(":/images/resources/images/rock.png");
@@ -16,7 +16,7 @@ TerrainObject::TerrainObject(short x, short y, short _type) : type(_type) {
     }
     else if (type == 4) pix = new QPixmap(":/images/resources/images/fluid.png");
 
+    setPos(60*j, 60*i);
     setPixmap(*pix);
-    setPos(x, y);
-    setZValue(0);
+    setZValue(1);
 }

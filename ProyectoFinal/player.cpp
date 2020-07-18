@@ -12,7 +12,7 @@ Player::Player(short i, short j, bool _player_one) : player_one(_player_one) {
     setPos(30 + 60*j, 30 + 60*i);
     setOffset(-15, -15);
     setPixmap(*pix);
-    setZValue(5);
+    setZValue(6);
 
     move_dir.fill(false);
 

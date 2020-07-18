@@ -2,6 +2,8 @@
 #define TERRAIN_H
 
 #include <array>
+#include <terrainobject.h>
+#include <QGraphicsScene>
 
 //Clase Terrain para que pueda tener sus propios métodos.
 
@@ -10,10 +12,12 @@ public:
     //0: Nada
     //1: Roca
     //2: Caracol
-    //3: Ralentizador
-    std::array<std::array<short, 13>, 10> tiles;
+    //3: Fluido
+    QGraphicsScene *level;
+    std::array<std::array<TerrainObject*, 13>, 10> tiles;
 
-    Terrain();
+    Terrain(QGraphicsScene *_level);
+    ~Terrain();
 };
 
 #endif // TERRAIN_H

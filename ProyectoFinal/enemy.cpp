@@ -6,7 +6,7 @@ Enemy::Enemy(short i, short j, short _type, QGraphicsScene *_level, Terrain *_te
 
     initialize();
 
-    setZValue(1);
+    setZValue(2);
 
     setPixmap(*pix);
     setPos(tiles2pixels(i, j).toPoint());
@@ -324,8 +324,9 @@ bool Enemy::collisions_handler(QList<QGraphicsItem*> collisions) {
 
     //Retornamos true si necesitamos dejar de ejecutar el slot move().
 
+    QGraphicsItem *item;
     for (short i = 0; i < collisions.size(); i++) {
-        QGraphicsItem *item = collisions[i];
+        item = collisions[i];
         if (typeid(*item) == typeid(TerrainObject)) {
 
             TerrainObject *terrain_object = dynamic_cast<TerrainObject*>(item);
@@ -389,11 +390,12 @@ bool Enemy::entrance_exists(short side, short tile[2]) {
 
     if (side%2) {
 
-        //Vamos por arriba o por abajo
+        //Vamos por los costados.
 
         index = 3*side;
-        for (short k = 0; k < 3; k++) {
-            if (terrain->tiles[k + 3][index] != 1) entrances_index.push_back(k + 3);
+        for (short i = 3; i < 6; i++) {
+            if ((terrain->tiles[i][index] == nullptr)
+             or (terrain->tiles[i][index]->get_type() != 1)) entrances_index.push_back(i);
         }
 
         //Si no hay entradas retornamos falso, o en caso contrario
@@ -408,11 +410,12 @@ bool Enemy::entrance_exists(short side, short tile[2]) {
     }
     else {
 
-        //Vamos por los costados.
+        //Vamos por arriba o por abajo
 
         index = 2*side + 2;
-        for (short k = 0; k < 5; k++) {
-            if (terrain->tiles[index][k + 4] != 1) entrances_index.push_back(k + 4);
+        for (short j = 4; j < 9; j++) {
+            if ((terrain->tiles[index][j] == nullptr)
+             or (terrain->tiles[index][j]->get_type() != 1)) entrances_index.push_back(j);
         }
 
         if (entrances_index.isEmpty()) return false;

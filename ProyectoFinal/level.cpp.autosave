@@ -98,7 +98,7 @@ Level::Level() {
 
     //Se mide en porcentaje, pero como 100.0, con una cifra decimal.
     rock_index = 2;
-    fluid_index = 0;
+    fluid_index = 2;
     initial_health = 1000;
     display_hud();
 
@@ -396,8 +396,8 @@ void Level::add_fluid(short i, short j) {
         terrain->tiles[i][j] = new TerrainObject(i, j, 3);
         addItem(terrain->tiles[i][j]);
 
-//        removeItem(fluid_powers + fluid_index);
-//        fluid_index--;
+        removeItem(fluid_powers + fluid_index);
+        fluid_index--;
     }
     else if (terrain->tiles[i][j]->get_type() == 2) {
         removeItem(terrain->tiles[i][j]);
@@ -406,8 +406,8 @@ void Level::add_fluid(short i, short j) {
         terrain->tiles[i][j] = new TerrainObject(i, j, 3);
         addItem(terrain->tiles[i][j]);
 
-//        removeItem(fluid_powers + fluid_index);
-//        fluid_index--;
+        removeItem(fluid_powers + fluid_index);
+        fluid_index--;
     }
 
     //Simplemente salimo si hay un fluido colocado por los jugadores.

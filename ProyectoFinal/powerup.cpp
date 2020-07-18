@@ -84,7 +84,7 @@ PowerUp::PowerUp(short _path_type, short _power_type) : path_type(_path_type), p
 
     setPixmap(*pix);
     setOffset(-11, -11);
-    setZValue(2);
+    setZValue(3);
 
     initialize();
 

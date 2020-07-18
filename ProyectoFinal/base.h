@@ -16,9 +16,10 @@ private:
     QTimer *bitten_timer;
 
 public:
-    Base(QGraphicsRectItem *_health_bar);
+    Base(QGraphicsRectItem *_health_bar, short initial_health);
     ~Base();
     QGraphicsPixmapItem *center;
+    void increase_health(short increment);
     void set_vulnerable(bool _vulnerable) {vulnerable = _vulnerable;};
 public slots:
     void bitten();

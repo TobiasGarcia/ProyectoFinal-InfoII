@@ -9,7 +9,7 @@ private:
     QPixmap *pix;
 public:
     short get_type() {return type;};
-    TerrainObject(short x, short y, short _type);
+    TerrainObject(short i, short j, short _type);
     ~TerrainObject() {delete pix;};
 };
 
