@@ -2,6 +2,7 @@
 #define LEVEL_H
 
 #include <QGraphicsScene>
+#include <QFontDatabase>
 #include <player.h>
 #include <terrain.h>
 #include <terrainobject.h>
@@ -10,6 +11,7 @@
 #include <base.h>
 #include <powerup.h>
 #include <QKeyEvent>
+#include <information.h>
 #include <special_enemies.h>
 
 class Level: public QGraphicsScene {
@@ -29,6 +31,7 @@ private:
     //se debe retirar la plantialla, de otro modo es porque hay algún jugador que
     //la necesita.
 
+    Information *information;
     short initial_health, rock_index, fluid_index, template_on;
     PowerUp *power_up;
     QList<Enemy*> enemies;

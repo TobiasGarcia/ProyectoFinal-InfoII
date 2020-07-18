@@ -19,6 +19,7 @@ SOURCES += \
     base.cpp \
     enemy.cpp \
     fireball.cpp \
+    information.cpp \
     level.cpp \
     main.cpp \
     player.cpp \
@@ -33,6 +34,7 @@ HEADERS += \
     base.h \
     enemy.h \
     fireball.h \
+    information.h \
     level.h \
     player.h \
     powerup.h \

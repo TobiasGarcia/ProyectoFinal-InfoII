@@ -36,4 +36,11 @@
         <file>resources/images/interface/available.png</file>
         <file>resources/images/interface/not_available.png</file>
     </qresource>
+    <qresource prefix="/letter">
+        <file>resources/letter.ttf</file>
+        <file>resources/arcade.ttf</file>
+    </qresource>
+    <qresource prefix="/textures">
+        <file>resources/images/floor_texture.png</file>
+    </qresource>
 </RCC>
