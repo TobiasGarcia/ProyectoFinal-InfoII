@@ -43,4 +43,9 @@
     <qresource prefix="/textures">
         <file>resources/images/floor_texture.png</file>
     </qresource>
+    <qresource prefix="/minigame">
+        <file>resources/images/minigame/ball.png</file>
+        <file>resources/images/minigame/claw0.png</file>
+        <file>resources/images/minigame/claw1.png</file>
+    </qresource>
 </RCC>

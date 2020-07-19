@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <level.h>
+#include <minigame.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -19,5 +20,6 @@ public:
 private:
     Ui::Widget *ui;
     Level *level;
+    Minigame *minigame;
 };
 #endif // WIDGET_H
