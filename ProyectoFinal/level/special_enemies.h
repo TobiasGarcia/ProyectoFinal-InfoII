@@ -1,7 +1,7 @@
 #ifndef SPECIAL_ENEMIES_H
 #define SPECIAL_ENEMIES_H
 
-#include <enemy.h>
+#include "level/enemy.h"
 
 class Snail: public Enemy {
 private:

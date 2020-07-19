@@ -36,4 +36,17 @@
         <file>resources/images/interface/available.png</file>
         <file>resources/images/interface/not_available.png</file>
     </qresource>
+    <qresource prefix="/textures">
+        <file>resources/images/floor_texture.png</file>
+    </qresource>
+    <qresource prefix="/minigame">
+        <file>resources/images/minigame/ball.png</file>
+        <file>resources/images/minigame/claw0.png</file>
+        <file>resources/images/minigame/claw1.png</file>
+        <file>resources/images/minigame/minigame_background.png</file>
+        <file>resources/images/minigame/goal.png</file>
+    </qresource>
+    <qresource prefix="/font">
+        <file>resources/kepler296.otf</file>
+    </qresource>
 </RCC>

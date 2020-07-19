@@ -56,16 +56,23 @@ void Level::keyReleaseEvent(QKeyEvent *event) {
 
 Level::Level() {
 
-    srand(time(nullptr));
-
     setSceneRect(0, 0, 779, 599); //780x600 pixeles para que los jugadores se muevan de 15 en 15.
+    setBackgroundBrush(QBrush(QPixmap(":/textures/resources/images/floor_texture.png")));
+
+    information = new Information(this);
+//    information->display_message(390, 60, QString("Estadisticas:\n"
+//                                                  "\tHabilidad: 1000\n"
+//                                                  "\tConcurrencia: 4200\n"
+//                                                  "\tBelleza: Exquisita\n"
+//                                                  "\n"
+//                                                  "Nota: A+"));
 
     terrain = new Terrain(this);
     display_terrain();
 
     //Se mide en porcentaje, pero como 100.0, con una cifra decimal.
     rock_index = 3;
-    fluid_index = -1;
+    fluid_index = 3;
     initial_health = 1000;
     display_hud();
 
@@ -79,50 +86,50 @@ Level::Level() {
     freez_timer->setSingleShot(true);
     connect(freez_timer, &QTimer::timeout, this, &Level::defrost);
 
-    base = new Base(health_bar, initial_health);
-    addItem(base);
+//    base = new Base(health_bar, initial_health);
+//    addItem(base);
 
-    carlos = new Enemy(9, 3, 0, this, terrain, 0);
-    make_connections(carlos);
-    enemies.append(carlos);
-    addItem(carlos);
+//    carlos = new Enemy(9, 3, 0, this, terrain, 0);
+//    make_connections(carlos);
+//    enemies.append(carlos);
+//    addItem(carlos);
 
-    carlos = new Chamaleon(-1, 6, this, terrain, 1);
-    make_connections(carlos);
-    enemies.append(carlos);
-    addItem(carlos);
+//    carlos = new Chamaleon(-1, 6, this, terrain, 1);
+//    make_connections(carlos);
+//    enemies.append(carlos);
+//    addItem(carlos);
 
-    carlos = new Mole(9, 4, this, terrain, 2);
-    make_connections(carlos);
-    enemies.append(carlos);
-    addItem(carlos);
+//    carlos = new Mole(9, 4, this, terrain, 2);
+//    make_connections(carlos);
+//    enemies.append(carlos);
+//    addItem(carlos);
 
-    carlos = new Snail(0, 13, this, terrain, 3);
-    make_connections(carlos);
-    enemies.append(carlos);
-    addItem(carlos);
+//    carlos = new Snail(0, 13, this, terrain, 3);
+//    make_connections(carlos);
+//    enemies.append(carlos);
+//    addItem(carlos);
 
-    carlos = new Porcupine(9, 12, this, terrain, 4);
-    make_connections(carlos);
-    enemies.append(carlos);
-    addItem(carlos);
+//    carlos = new Porcupine(9, 12, this, terrain, 4);
+//    make_connections(carlos);
+//    enemies.append(carlos);
+//    addItem(carlos);
 
-    carlos = new Owl(-1, 6, this, terrain, 5);
-    make_connections(carlos);
-    enemies.append(carlos);
-    addItem(carlos);
+//    carlos = new Owl(-1, 6, this, terrain, 5);
+//    make_connections(carlos);
+//    enemies.append(carlos);
+//    addItem(carlos);
 
-    carlos = new Vulture(9, 4, this, terrain, 6);
-    make_connections(carlos);
-    enemies.append(carlos);
-    addItem(carlos);
+//    carlos = new Vulture(9, 4, this, terrain, 6);
+//    make_connections(carlos);
+//    enemies.append(carlos);
+//    addItem(carlos);
 
 //    terrain->tiles[4][9] = new TerrainObject(540, 240, 1);
 //    terrain->tiles[3][3] = new TerrainObject(180, 180, 1);
 //    terrain->tiles[4][3] = new TerrainObject(180, 240, 1);
 //    terrain->tiles[5][3] = new TerrainObject(180, 300, 1);
 
-    power_up = new PowerUp(1, 4);
+    power_up = new PowerUp(3, 4);
     connect(power_up, &PowerUp::give_power, this, &Level::give_power);
     addItem(power_up);
 
@@ -135,6 +142,7 @@ Level::Level() {
 
 Level::~Level() {
     //delete carlos;
+    delete information;
     delete player1;
     delete player2;
     delete terrain;

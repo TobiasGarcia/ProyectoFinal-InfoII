@@ -2,7 +2,7 @@
 #define TERRAIN_H
 
 #include <array>
-#include <terrainobject.h>
+#include "level/terrainobject.h"
 #include <QGraphicsScene>
 
 //Clase Terrain para que pueda tener sus propios métodos.

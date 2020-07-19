@@ -4,7 +4,7 @@
 void PowerUp::initialize() {
 
     if (path_type == 0) {
-        a = 129; b = 69; spd = 15;
+        a = 129; b = 69; spd = 300;
 
         //Ángulo aleatorio entre 0 y 2*pi.
         angle = (rand()%360)*M_PI/180;
@@ -14,7 +14,7 @@ void PowerUp::initialize() {
         setPos(r*cos(angle), r*sin(angle));
     }
     else if (path_type == 1) {
-        a = 260; spd = 15;
+        a = 260; spd = 300;
 
         angle = ((rand()%31 + 30) + 90*(rand()%4))*M_PI/180;
         period = 2*M_PI;
@@ -23,7 +23,7 @@ void PowerUp::initialize() {
         setPos(r*cos(angle), r*sin(angle));
     }
     else if (path_type == 2) {
-        a = 250; b = 5.0/3.0; spd = 15;
+        a = 250; b = 5.0/3.0; spd = 300;
 
         angle = (rand()%540)*M_PI/180;
         period = 3*M_PI;
@@ -32,7 +32,7 @@ void PowerUp::initialize() {
         setPos(r*cos(angle), r*sin(angle));
     }
     else if (path_type == 3) {
-        a = 300; b = 2*(rand()%2) - 1; spd = 15;
+        a = 300; b = 2*(rand()%2) - 1; spd = 300;
 
         //Ángulo aleatorio entre -pi/4 y pi/4.
         angle = (rand()%61 - 30)*M_PI/180;
@@ -104,7 +104,7 @@ PowerUp::~PowerUp() {
 void PowerUp::move() {
 
     dr = diff_radio();
-    angle += spd/sqrt(dr*dr + r*r);
+    angle += 0.06*spd/sqrt(dr*dr + r*r);
     if (angle > period) angle -= period;
 
     r = radio();
@@ -113,26 +113,37 @@ void PowerUp::move() {
 
 void PowerUp::lemniscate_move() {
 
-    if (abs(r) < 30) {
+    //Como dibujamos cada 0.05 segundos, al discretizar la derivada del ángulo
+    //debemos multiplicar por esos 0.05 segundos que es el intervalo de tiempo,
+    //sin embargo, utilizamos 0.06 en su lugar para compensar el tiempo que
+    //tarda la máquina en realizar los cálculos y modificar la posición
+    //de la imágen en pantalla.
+
+    //Este aumento de 0.01 fue determinado por tanteo, pues es difícil carlcular
+    //cuanto tarda en promedio la máquina en realizar todo este proceso,
+    //además, este número puede variar dependiendo de la máquina donde
+    //se corra el código.
+
+    if (abs(r) < 40) {
 
         if (!straight_line) {
             b *= -1;
-            angle +=  b*spd/sqrt(dr*dr + r*r);
+            angle +=  b*0.06*spd/sqrt(dr*dr + r*r);
             m_angle = atan2(269 - y(), x() - 389);
         }
 
         straight_line = true;
-        setPos(x() - spd*cos(m_angle), y() + spd*sin(m_angle));
+        setPos(x() - 0.06*spd*cos(m_angle), y() + 0.06*spd*sin(m_angle));
         r = sqrt(pow(x() - 389, 2) + pow(269 - y(), 2));
     }
     else {
 
         //En realidad la derivada de la lemniscata va con un signo menos, pero como
-        //nos interesa elevarla al cuadrado es indiferente el colocarlo o no.
+        //nos interesa en particular su segunda potencia, es indiferente el colocarlo o no.
 
         straight_line = false;
         dr = a*sin(2*angle)/sqrt(cos(2*angle));
-        angle += b*spd/sqrt(dr*dr + r*r);
+        angle += b*0.06*spd/sqrt(dr*dr + r*r);
 
         r = a*b*sqrt(cos(2*angle));
         setPos(389 + cos(angle)*r, 269 - sin(angle)*r);

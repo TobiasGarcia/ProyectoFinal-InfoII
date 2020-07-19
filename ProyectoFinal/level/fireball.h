@@ -3,9 +3,9 @@
 
 #include <QGraphicsPixmapItem>
 #include <QTimer>
-#include <enemy.h>
-#include <powerup.h>
-#include <special_enemies.h>
+#include "level/enemy.h"
+#include "level/powerup.h"
+#include "level/special_enemies.h"
 
 class FireBall: public QObject, public QGraphicsPixmapItem {
 
