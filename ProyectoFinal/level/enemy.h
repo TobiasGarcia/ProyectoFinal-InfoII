@@ -7,9 +7,9 @@
 #include <QQueue>
 #include <QVector2D>
 #include <QPainter>
-#include <terrain.h>
-#include <terrainobject.h>
-#include <base.h>
+#include "level/terrain.h"
+#include "level/terrainobject.h"
+#include "level/base.h"
 #include <QGraphicsScene>
 
 class Enemy: public QObject, public QGraphicsPixmapItem {

@@ -15,22 +15,26 @@ private:
     //Tomaremos la gravedad en dirección del eje Y positivo, pues esta es la dirección
     //que los usuarios perciben como abajo.
 
-    double restitution, time, specific_energy, scaled_gravity;
-    QVector2D initial_speed, initial_pos;
+    double initial_speed[2], initial_pos[2], restitution, time, specific_energy, scaled_gravity;
+    short goal_pos[2], rebounds_num;
     QTimer *move_timer;
     QList<QGraphicsItem*> collisions;
 
     QRectF boundingRect() const;
     QPainterPath shape() const;
+    void collision(short side);
 
 public:
-    Ball(short x, short y);
+    Ball(short x, short y, short goal_x, short goal_y);
     ~Ball();
 
     void start_falling(double spd);
-    void collision(short side);
+    void stop_timer();
 public slots:
     void move();
+    short get_rebounds() {return rebounds_num;};
+signals:
+    void win();
 };
 
 #endif // BALL_H

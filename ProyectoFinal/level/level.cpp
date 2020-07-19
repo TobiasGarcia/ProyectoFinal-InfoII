@@ -56,19 +56,16 @@ void Level::keyReleaseEvent(QKeyEvent *event) {
 
 Level::Level() {
 
-    srand(time(nullptr));
-
     setSceneRect(0, 0, 779, 599); //780x600 pixeles para que los jugadores se muevan de 15 en 15.
     setBackgroundBrush(QBrush(QPixmap(":/textures/resources/images/floor_texture.png")));
 
-    QFontDatabase::addApplicationFont(":/letter/resources/letter.ttf");
-    information = new Information(390, 60, QString("Estadisticas:\n"
-                                                   "\tHabilidad: 1000\n"
-                                                   "\tConcurrencia: 4200\n"
-                                                   "\tBelleza: Exquisita\n"
-                                                   "\n"
-                                                   "Nota: A+"));
-    //addItem(information);
+    information = new Information(this);
+//    information->display_message(390, 60, QString("Estadisticas:\n"
+//                                                  "\tHabilidad: 1000\n"
+//                                                  "\tConcurrencia: 4200\n"
+//                                                  "\tBelleza: Exquisita\n"
+//                                                  "\n"
+//                                                  "Nota: A+"));
 
     terrain = new Terrain(this);
     display_terrain();

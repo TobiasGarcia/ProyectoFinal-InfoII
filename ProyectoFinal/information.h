@@ -3,6 +3,7 @@
 
 #include <QGraphicsRectItem>
 #include <QGraphicsTextItem>
+#include <QGraphicsScene>
 #include <QPen>
 #include <QBrush>
 #include <QFont>
@@ -10,10 +11,13 @@
 class Information: public QGraphicsRectItem {
 private:
     short width, height;
+    QGraphicsScene *scene;
     QGraphicsTextItem *text;
 public:
-    Information(short x, short y, QString message);
+    Information(QGraphicsScene *_scene);
     ~Information();
+
+    void display_message(short x, short y, QString message);
 };
 
 #endif // INFORMATION_H

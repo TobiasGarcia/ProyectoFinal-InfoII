@@ -2,8 +2,8 @@
 #define WIDGET_H
 
 #include <QWidget>
-#include <level.h>
-#include <minigame.h>
+#include "level/level.h"
+#include "minigame/minigame.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }

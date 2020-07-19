@@ -11,13 +11,18 @@ QPainterPath Ball::shape() const {
     return path;
 }
 
-Ball::Ball(short x, short y) {
+Ball::Ball(short x, short y, short goal_x, short goal_y) {
 
     setPixmap(QPixmap(":/minigame/resources/images/minigame/ball.png"));
     setOffset(-15, -15);
     setPos(x, y);
 
-    restitution = 1;
+    rebounds_num = 0;
+
+    goal_pos[0] = goal_x;
+    goal_pos[1] = goal_y;
+
+    restitution = 0.8;
 
     //Suponemos una altura de 7 metros para los 497 pixeles que tiene para caer la pelota, luego
     //el factor de conversión es 71 pixeles/metro, por lo cual la gravedad escalada seria 9.8*71 = 695.8,
@@ -45,33 +50,29 @@ void Ball::start_falling(double spd) {
     move_timer->start(50);
 }
 
+void Ball::stop_timer() {
+    move_timer->stop();
+}
+
 void Ball::collision(short side) {
 
-    //Recordemos que la restitución solo afecta en la dirección del choque,
+    rebounds_num++;
+
+    //Recordemos que la restitución sólo afecta en la dirección del choque,
     //por lo cual si la dirección es horizontal la restitución sólo afecta
-    //la rapidez en x.
+    //la rapidez en x; análogamente para los choques vérticales.
 
-    if (side == 3) {
-        initial_pos[0] = 584;
+    if (side%2) {
+        initial_pos[0] = 194*side + 2;
         initial_pos[1] = y();
 
         initial_speed[0] = -initial_speed[0]*restitution;
-        initial_speed[1] = initial_speed[1] + time*scaled_gravity;;
+        initial_speed[1] = initial_speed[1] + time*scaled_gravity;
 
-        setX(584);
+        setX(194*side + 2);
         time = 0;
     }
-    else if (side == 1) {
-        initial_pos[0] = 196;
-        initial_pos[1] = y();
-
-        initial_speed[0] = -initial_speed[0]*restitution;
-        initial_speed[1] = initial_speed[1] + time*scaled_gravity;;
-
-        setX(196);
-        time = 0;
-    }
-    else if (side == 2) {
+    else {
 
         //Notemos que como no necesitamos modificar ni la dirección ni magnitud de la componente
         //en X de la velocidad, no aparece.
@@ -80,13 +81,13 @@ void Ball::collision(short side) {
         //seguridad de que la simulación es correcta para el resto de valores del coeficiente de
         //restitución, utilizamos la relación entre la rapidez en Y y la posición en Y.
 
+        initial_speed[1] = -sqrt(2*scaled_gravity*(553 - initial_pos[1]) + initial_speed[1]*initial_speed[1])*restitution;
+
         //Este procedimiento no hace falta dentro de los condicionales anteriores porque modificar
         //la posición en X no afecta la energía potencial gravitacional, mientras que la posición en Y sí.
 
         //No está de más recordar que la fórmula toma esta forma porque tomamos la gravedad positiva en
         //dirección del eje Y positivo.
-
-        initial_speed[1] = -sqrt(2*scaled_gravity*(553 - initial_pos[1]) + initial_speed[1]*initial_speed[1])*restitution;
 
         initial_pos[0] = x();
         initial_pos[1] = 553;
@@ -98,7 +99,6 @@ void Ball::collision(short side) {
 
 void Ball::move() {
     time += 0.06;
-    if (time > 1000) return;
 
     //Recordemos que como el eje Y positivo crece hacia abajo de la pantalla, el término
     //que tiene como factor a la gravedad se debe sumar en lugar de restar.
@@ -109,10 +109,15 @@ void Ball::move() {
     specific_energy = 0.5*((initial_speed[1] + time*scaled_gravity)*(initial_speed[1] + time*scaled_gravity) + initial_speed[0]*initial_speed[0]) - scaled_gravity*y();
 
     if (584 < x()) collision(3);
-    else if (x() < 196) collision(1);
-    else if (553 < y()) collision(2);//Justo antes del 569, donde empieza la pared.
+    if (x() < 196) collision(1);
+    if (553 < y()) collision(2);//Justo antes del 569, donde empieza la pared.
 
-    qDebug() << specific_energy;
+    //qDebug() << specific_energy;
+
+    if (sqrt(pow(goal_pos[0] - x(), 2) + pow(goal_pos[1] - y(), 2)) < 25) {
+        move_timer->stop();
+        emit win();
+    }
 }
 
 

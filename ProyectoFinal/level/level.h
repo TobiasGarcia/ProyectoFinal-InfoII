@@ -3,16 +3,16 @@
 
 #include <QGraphicsScene>
 #include <QFontDatabase>
-#include <player.h>
-#include <terrain.h>
-#include <terrainobject.h>
-#include <enemy.h>
-#include <fireball.h>
-#include <base.h>
-#include <powerup.h>
+#include "level/player.h"
+#include "level/terrain.h"
+#include "level/terrainobject.h"
+#include "level/enemy.h"
+#include "level/fireball.h"
+#include "level/base.h"
+#include "level/powerup.h"
 #include <QKeyEvent>
-#include <information.h>
-#include <special_enemies.h>
+#include "information.h"
+#include "level/special_enemies.h"
 
 class Level: public QGraphicsScene {
 

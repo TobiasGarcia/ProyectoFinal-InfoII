@@ -13,10 +13,13 @@ Widget::Widget(QWidget *parent)
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+    srand(time(nullptr));
+    QFontDatabase::addApplicationFont(":/font/resources/kepler296.otf");
+
     //level = new Level;
     //ui->graphicsView->setScene(level);
 
-    minigame = new Minigame;
+    minigame = new Minigame(true);
     ui->graphicsView->setScene(minigame);
 }
 
