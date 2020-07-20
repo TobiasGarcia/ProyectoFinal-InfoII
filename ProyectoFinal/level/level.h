@@ -3,11 +3,11 @@
 
 #include <QGraphicsScene>
 #include <QFontDatabase>
-#include "level/player.h"
+#include "player.h"
 #include "level/terrain.h"
 #include "level/terrainobject.h"
 #include "level/enemy.h"
-#include "level/fireball.h"
+#include "fireball.h"
 #include "level/base.h"
 #include "level/powerup.h"
 #include <QKeyEvent>

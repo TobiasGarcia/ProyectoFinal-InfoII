@@ -14,7 +14,7 @@ private:
     QString message;
     Ball *ball;
     short state;
-    double time, ang_frecuency, gamma, release_time;
+    double time, ang_frecuency, gamma, phase, amp, k, b, m, T;
     QTimer *claw_move_timer, *delay_timer;
     bool two_players, claw_close;
     QPixmap *claw_pix;

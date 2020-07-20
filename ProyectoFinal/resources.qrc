@@ -34,7 +34,6 @@
     </qresource>
     <qresource prefix="/interface">
         <file>resources/images/interface/available.png</file>
-        <file>resources/images/interface/not_available.png</file>
     </qresource>
     <qresource prefix="/textures">
         <file>resources/images/floor_texture.png</file>
@@ -48,5 +47,13 @@
     </qresource>
     <qresource prefix="/font">
         <file>resources/kepler296.otf</file>
+    </qresource>
+    <qresource prefix="/leves_menu">
+        <file>resources/images/levels_menu/backgorund.png</file>
+        <file>resources/images/levels_menu/level1.png</file>
+        <file>resources/images/levels_menu/level2.png</file>
+        <file>resources/images/levels_menu/level3.png</file>
+        <file>resources/images/levels_menu/needle.png</file>
+        <file>resources/images/levels_menu/level0.png</file>
     </qresource>
 </RCC>
