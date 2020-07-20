@@ -21,15 +21,22 @@ Needle::Needle() {
     setPos(390, 300);
     setPixmap(*pix);
 
+    //La aguja oscilará describiendo un MAS y luego un MAS amortiguado, se utilizará un
+    //período T = 4 segundos por lo cual la frecuencia angular será 2*pi/T = 1.570796 aproximadamente.
+    //Se considerará además una amplitud de 75 grados.
+
+    T = 4;
     amp = 75;
+    ang_frecuency = 2*M_PI/T;
+
+    //Comenzamos con un gamma de 0 para no considerar la fricción hasta que se
+    //elija un nivel, además de una fase inicial de 0 randianes.
+
     time = 0;
     gamma = 0;
     phase = 0;
-    release_time = 0;
 
-    //Para un periodo T = 4 segundos, la frecuencia angular corresponde
-    //a 2*pi/4 = 1.570796, aproximadamente.
-    ang_frecuency = 2*M_PI/4;
+    offset = 0;
 
     move_timer = new QTimer;
     connect(move_timer, &QTimer::timeout, this, &Needle::move);
@@ -38,17 +45,34 @@ Needle::Needle() {
 
 Needle::~Needle() {
     delete pix;
-    //delete move_timer;
+    delete move_timer;
 }
 
 void Needle::point_direction(short direction) {
 
-    Q_UNUSED(direction);
+    //No hace falta la fase porque en este momento es cero.
+    double initial_angle = amp*cos(ang_frecuency*time),
+            initial_speed = -ang_frecuency*amp*sin(ang_frecuency*time);
 
-    double initial_angle = amp*cos(ang_frecuency*time), initial_speed = -ang_frecuency*amp*sin(ang_frecuency*time);
+    //La variable offset es para trasladar la oscilación desde el extremo inferior
+    //hasta uno de los costados o la parte superior.
+
+    if (direction == 3) offset = 90;
+    else if (direction == 1) offset = -90;
+    else if ((direction == 0) and (initial_angle >= 0)) offset = 180;
+    else if ((direction == 0) and (initial_angle < 0)) offset = -180;
+
+    initial_angle -= offset;
+
+    //Le damos un valor de 2 s^-1 a la variable gamma para comenzar a considerar la fricción.
 
     gamma = 2;
-    ang_frecuency = 2*M_PI/0.8;
+
+    //Para el MAS amortiguado se utilizará un período T = 0.8 segundos,
+    //de esta forma la nueva frecuencia es 2*pi/0.8 = 7.853982 aproximadamente.
+
+    T = 0.8;
+    ang_frecuency = 2*M_PI/T;
     amp = sqrt(initial_angle*initial_angle + pow(initial_speed + gamma*initial_angle, 2)/(ang_frecuency*ang_frecuency));
 
     if ((initial_speed + gamma*initial_angle) > 0) phase = -acos(initial_angle/amp);
@@ -64,7 +88,12 @@ void Needle::point_direction(short direction) {
 
 void Needle::move() {
     time += 0.06;
-    if (time > 1000) return;
+    if ((gamma == 0) and (time > T)) time = 0;
 
-    setRotation(180 - amp*exp(-gamma*time)*cos(ang_frecuency*time + phase));
+    setRotation(180 - (amp*exp(-gamma*time)*cos(ang_frecuency*time + phase) + offset));
+
+    if ((gamma != 0) and (amp*exp(-gamma*time) < 0.8)) {
+        move_timer->stop();
+        emit level_selected();
+    }
 }

@@ -66,7 +66,10 @@ void Minigame::second_chance() {
 
     time = 0;
     gamma = 0;
-    release_time = 0;
+    phase = 0;
+
+    amp = 155;
+    ang_frecuency = sqrt(k/m);
 
     if (two_players) {
         message = "     Segunda Oportunidad\n"
@@ -80,33 +83,30 @@ void Minigame::second_chance() {
 }
 
 void Minigame::drop_ball() {
+
     claw->setPixmap(claw_pix[1]);
     claw->setOffset(-50, 0);
     claw_close = false;
 
-    ball->start_falling(155*ang_frecuency*cos(ang_frecuency*time));
+    //No hace falta la fase porque en este momento es cero.
+    double initial_angle = amp*sin(ang_frecuency*time),
+           initial_speed = amp*ang_frecuency*cos(ang_frecuency*time);
 
-////    Queremos que la frecuencia angular durante el amortiguamiento sea la misma que antes
-////    de este, por lo cual basta con utilizar la misma frecuencia angular, y de todas formas
-////    podemos elegir la masa y el coeficiente b, la proporción entre la fricción y la rapidez,
-////    como queramos, pues para cualquier combinación de valores positivos de estos siempre
-////    existirá un k (la constante del "nuevo resorte") que permitrá este movimiento.
+    ball->start_falling(initial_speed);
 
-////    En este caso tomamos 10 kg de masa y una b de 10 kg/s, para una gamma de 10/(2*10) = 0.5.
-
-    //Le damos un valor de 0.5 a la variable gamma para comenzar a considerar la fricción.
-
-
+    //Le damos un valor de 0.5 s^-1 a la variable gamma para comenzar a considerar la fricción.
 
     gamma = 0.5;
 
-    //La amplitud de la oscilación debe comenzar a disminuir desde un tiempo 0, no desde
-    //el valor actual de la variable time, por lo cual tomamos la medida del tiempo en
-    //que comienza el amortiguamiento para poder restarla a time y comenzar a
-    //disminuir la amplitud correctamente.
+    //Calculamos la nueva frecuencia angular del MAS amortiguado.
 
-    release_time = time;
+    ang_frecuency = sqrt(ang_frecuency*ang_frecuency - (b*b/(4*m*m)));
+    amp = sqrt(initial_angle*initial_angle + pow(initial_speed + gamma*initial_angle, 2)/(ang_frecuency*ang_frecuency));
 
+    if ((initial_speed + gamma*initial_angle) > 0) phase = asin(initial_angle/amp);
+    else phase = M_PI - asin(initial_angle/amp);
+
+    time = 0;
     state++;
 }
 
@@ -163,16 +163,24 @@ Minigame::Minigame(short _two_players) : two_players(_two_players) {
     connect(ball, &Ball::win, this, &Minigame::win);
     addItem(ball);
 
-    //Para un periodo T = 3 segundos, la frecuencia angular corresponde
-    //a 2*pi/3 = 2.094395, aproximadamente.
-    ang_frecuency = 2*M_PI/3;
+    //La garra simulará el movimiento de un sistema masa-resorte, se considerará una masa de 10 kg;
+    //para que se vea bien el movimiento se usará un periodo T = 3 segundos, por lo cual la constante
+    //del resorte será k = m*4*(pi^2)/(T^2) = 43.864908 N/m aproximadamente. Se utilizará una
+    //amplitud inicial de 155 pixeles.
+
+    T = 3;
+    m = 10;
+    k = m*4*M_PI*M_PI/(T*T);
+
+    amp = 155;
+    ang_frecuency = sqrt(k/m);
 
     //Comenzamos con un gamma de 0 para no considerar la fricción hasta que se
-    //suelte la pelota.
-    gamma = 0;
+    //suelte la pelota, además de una fase inicial de 0 randianes.
 
     time = 0;
-    release_time = 0;
+    gamma = 0;
+    phase = 0;
 
     claw_move_timer = new QTimer;
     connect(claw_move_timer, &QTimer::timeout, this, &Minigame::claw_move);
@@ -203,15 +211,17 @@ Minigame::~Minigame() {
 }
 
 void Minigame::claw_move() {
+
     //Sumamos de 0.05 porque dibujamos cada 0.05 segundos,
     //más 0.02 para compensar tiempos de cálculos.
-    time += 0.06;
-    if ((claw_close) and (time > 3)) time = 0;
 
-    claw->setX(389 + 155*exp(-gamma*(time - release_time))*sin(ang_frecuency*time));
+    time += 0.06;
+    if ((claw_close) and (time > T)) time -= T;
+
+    claw->setX(389 + amp*exp(-gamma*time)*sin(ang_frecuency*time + phase));
     if (claw_close) ball->setX(claw->x());
 
-    if ((!claw_close) and (exp(-gamma*(time - release_time)) < 0.02)) fail();
+    if ((!claw_close) and (exp(-gamma*time) < 0.02)) fail();
 }
 
 void Minigame::win() {

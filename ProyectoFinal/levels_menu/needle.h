@@ -11,7 +11,7 @@ class Needle: public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
 private:
-    double ang_frecuency, time, release_time, gamma, phase, amp;
+    double ang_frecuency, time, gamma, phase, amp, T, offset;
     QPixmap *pix;
     QTimer *move_timer;
 
@@ -25,6 +25,8 @@ public:
     void point_direction(short direction);
 public slots:
     void move();
+signals:
+    void level_selected();
 };
 
 #endif // NEEDLE_H
