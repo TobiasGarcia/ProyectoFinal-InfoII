@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "level/level.h"
 #include "minigame/minigame.h"
+#include "levels_menu/levelsmenu.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -21,5 +22,6 @@ private:
     Ui::Widget *ui;
     Level *level;
     Minigame *minigame;
+    LevelsMenu *levels_menu;
 };
 #endif // WIDGET_H

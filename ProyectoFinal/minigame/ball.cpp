@@ -106,7 +106,7 @@ void Ball::move() {
     setX(initial_pos[0] + time*initial_speed[0]);
     setY(initial_pos[1] + time*initial_speed[1] + 0.5*time*time*scaled_gravity);
 
-    specific_energy = 0.5*((initial_speed[1] + time*scaled_gravity)*(initial_speed[1] + time*scaled_gravity) + initial_speed[0]*initial_speed[0]) - scaled_gravity*y();
+    //specific_energy = 0.5*((initial_speed[1] + time*scaled_gravity)*(initial_speed[1] + time*scaled_gravity) + initial_speed[0]*initial_speed[0]) - scaled_gravity*y();
 
     if (584 < x()) collision(3);
     if (x() < 196) collision(1);

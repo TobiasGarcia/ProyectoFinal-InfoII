@@ -16,34 +16,38 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    fireball.cpp \
     information.cpp \
     level/base.cpp \
     level/enemy.cpp \
-    level/fireball.cpp \
     level/level.cpp \
-    level/player.cpp \
     level/powerup.cpp \
     level/special_enemies.cpp \
     level/terrain.cpp \
     level/terrainobject.cpp \
+    levels_menu/levelsmenu.cpp \
+    levels_menu/needle.cpp \
     main.cpp \
     minigame/ball.cpp \
     minigame/minigame.cpp \
+    player.cpp \
     widget.cpp
 
 HEADERS += \
+    fireball.h \
     information.h \
     level/base.h \
     level/enemy.h \
-    level/fireball.h \
     level/level.h \
-    level/player.h \
     level/powerup.h \
     level/special_enemies.h \
     level/terrain.h \
     level/terrainobject.h \
+    levels_menu/levelsmenu.h \
+    levels_menu/needle.h \
     minigame/ball.h \
     minigame/minigame.h \
+    player.h \
     widget.h
 
 FORMS += \

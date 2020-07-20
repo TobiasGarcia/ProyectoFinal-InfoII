@@ -86,15 +86,25 @@ void Minigame::drop_ball() {
 
     ball->start_falling(155*ang_frecuency*cos(ang_frecuency*time));
 
-    //Queremos que la frecuencia angular durante el amortiguamiento sea la misma que antes
-    //de este, por lo cual basta con utilizar la misma frecuencia angular, y de todas formas
-    //podemos elegir la masa y el coeficiente b, la proporción entre la fricción y la rapidez,
-    //como queramos, pues para cualquier combinación de valores positivos de estos siempre
-    //existirá un k (la constante del "resorte") que permitrá este movimiento.
+////    Queremos que la frecuencia angular durante el amortiguamiento sea la misma que antes
+////    de este, por lo cual basta con utilizar la misma frecuencia angular, y de todas formas
+////    podemos elegir la masa y el coeficiente b, la proporción entre la fricción y la rapidez,
+////    como queramos, pues para cualquier combinación de valores positivos de estos siempre
+////    existirá un k (la constante del "nuevo resorte") que permitrá este movimiento.
 
-    //En este caso tomamos 10 kg de masa y una b de 10 kg/s, para una gamma de 10/(2*10) = 0.5.
+////    En este caso tomamos 10 kg de masa y una b de 10 kg/s, para una gamma de 10/(2*10) = 0.5.
+
+    //Le damos un valor de 0.5 a la variable gamma para comenzar a considerar la fricción.
+
+
 
     gamma = 0.5;
+
+    //La amplitud de la oscilación debe comenzar a disminuir desde un tiempo 0, no desde
+    //el valor actual de la variable time, por lo cual tomamos la medida del tiempo en
+    //que comienza el amortiguamiento para poder restarla a time y comenzar a
+    //disminuir la amplitud correctamente.
+
     release_time = time;
 
     state++;

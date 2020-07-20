@@ -66,6 +66,7 @@ Level::Level() {
 //                                                  "\tBelleza: Exquisita\n"
 //                                                  "\n"
 //                                                  "Nota: A+"));
+//    information->setZValue(7);
 
     terrain = new Terrain(this);
     display_terrain();
@@ -86,8 +87,8 @@ Level::Level() {
     freez_timer->setSingleShot(true);
     connect(freez_timer, &QTimer::timeout, this, &Level::defrost);
 
-//    base = new Base(health_bar, initial_health);
-//    addItem(base);
+    base = new Base(health_bar, initial_health);
+    addItem(base);
 
 //    carlos = new Enemy(9, 3, 0, this, terrain, 0);
 //    make_connections(carlos);

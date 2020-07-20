@@ -17,8 +17,6 @@ Information::Information(QGraphicsScene *_scene) : scene(_scene) {
 
     setBrush(QColor(104, 109, 117));
     setPen(QPen(QColor(224, 162, 43), 5));
-
-    setZValue(7);
 }
 
 Information::~Information() {
