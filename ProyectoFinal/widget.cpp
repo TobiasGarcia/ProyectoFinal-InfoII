@@ -16,20 +16,20 @@ Widget::Widget(QWidget *parent)
     srand(time(nullptr));
     QFontDatabase::addApplicationFont(":/font/resources/kepler296.otf");
 
-//    level = new Level;
-//    ui->graphicsView->setScene(level);
+    level = new Level;
+    ui->graphicsView->setScene(level);
 
-    //minigame = new Minigame(true);
-    //ui->graphicsView->setScene(minigame);
+//    minigame = new Minigame(true);
+//    ui->graphicsView->setScene(minigame);
 
-    levels_menu = new LevelsMenu(true);
-    ui->graphicsView->setScene(levels_menu);
+//    levels_menu = new LevelsMenu(true);
+//    ui->graphicsView->setScene(levels_menu);
 }
 
 Widget::~Widget() {
     //delete minigame;
-    delete levels_menu;
-    //delete level;
+    //delete levels_menu;
+    delete level;
     delete ui;
 }
 

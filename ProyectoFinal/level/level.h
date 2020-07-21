@@ -13,6 +13,8 @@
 #include <QKeyEvent>
 #include "information.h"
 #include "level/special_enemies.h"
+#include <fstream>
+#include <queue>
 
 class Level: public QGraphicsScene {
 
@@ -21,7 +23,7 @@ class Level: public QGraphicsScene {
 private:
     Base *base;
     FireBall *fire_ball;
-    Enemy *carlos;
+    Enemy *enemie;
     Player *player1, *player2;
 
     //La variable tamplate_on[] servirá para determinar cuando colocar la plantilla
@@ -31,24 +33,31 @@ private:
     //se debe retirar la plantialla, de otro modo es porque hay algún jugador que
     //la necesita.
 
+    bool pop;
     Information *information;
-    short initial_health, rock_index, fluid_index, template_on;
+    short rock_index, fluid_index, template_on, enemie_count, max_enemies;
     PowerUp *power_up;
     QList<Enemy*> enemies;
     QGraphicsPixmapItem *rock_powers, *fluid_powers, *power_template;
-    QTimer *freez_timer;
+    QTimer *freez_timer, *instructions_timer, *delay_timer;
     QList<QGraphicsItem*> rock_ghost_collisions;
+
+    std::string instruction;
+    std::queue<std::string> script;
 
     //La variable ghost_rock es utilizada para revisar si la zona donde se
     //desea colocar una roca está disponible, o hay algún enemigo ocupándola.
 
     QGraphicsRectItem *health_bar, *ghost_rock;
+    void add_enemie(short type);
+    void add_power_up();
+    bool get_level_script();
     void add_fire_ball(short x, short y);
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
 
     void display_terrain();
-    void display_hud();
+    void display_hud(short initial_health);
     void hit_all_enemies();
     void make_connections(Enemy *enemy);
     void set_freez(bool freez);
@@ -64,6 +73,8 @@ public slots:
     void give_power(short power_type);
     void remove_enemy(short list_index);
     void defrost();
+    void next_instruction();
+    void finish_delay();
 
 signals:
     void update_index(short removed_index);

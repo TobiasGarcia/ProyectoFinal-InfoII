@@ -83,7 +83,7 @@ void Enemy::move() {
     //por una esquina.
     if (rotated) speed = 1.6*speed;
     setPos(x() + speed[0]*0.1, y() + speed[1]*0.1);
-    if (health_bar_on) health_bar->setPos(health_bar->x() + speed[0]*0.1, health_bar->y() + speed[1]*0.1);
+    if (health_bar_on) health_bar->setPos(x() - 20, y() - 35);
 
     dir = targets.head() - QVector2D(pos());
     rotated = false;
@@ -237,7 +237,7 @@ void Enemy::initialize() {
         width_half = 18;
         height_half = 18;
         spd = 30;
-        max_health = 400;
+        max_health = 500;
         pix = new QPixmap(":/enemies/resources/images/enemies/enemy0.png");
     }
     else if (type == 1) {
@@ -245,7 +245,7 @@ void Enemy::initialize() {
         width_half = 20;
         height_half = 25;
         spd = 20;
-        max_health = 600;
+        max_health = 800;
         pix = new QPixmap(":/enemies/resources/images/enemies/enemy1.png");
     }
     else if (type == 2) {
@@ -351,7 +351,7 @@ bool Enemy::collisions_handler(QList<QGraphicsItem*> collisions) {
     return false;
 }
 
-//Colocar formas más acertadas.
+//-----------------------------------------------------------Colocar formas más acertadas.
 
 QPainterPath Enemy::shape() const {
     QPainterPath path;

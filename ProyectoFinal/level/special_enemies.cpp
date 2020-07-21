@@ -208,8 +208,8 @@ Chamaleon::Chamaleon(short i, short j, QGraphicsScene *_level, Terrain *_terrain
     camouflage_timer->start(3000);
 }
 
-Mole::Mole(short i, short j, QGraphicsScene *_level, Terrain *_terrain, short _list_index) :
-    Enemy(i, j, 7, _level, _terrain, _list_index) {
+Mole::Mole(QGraphicsScene *_level, Terrain *_terrain, short _list_index) :
+    Enemy(0, -1, 7, _level, _terrain, _list_index) {
 
     move_timer->stop();
 
@@ -244,96 +244,137 @@ void Mole::spawn() {
     move_timer->start(50);
 }
 
-void Vulture::set_targets(short i, short j) {
+//void Vulture::set_targets(short i, short j) {
 
-    short initial_target;
-    QVector2D route[8] = {QVector2D(89, 209), QVector2D(89, 329), QVector2D(269, 509), QVector2D(509, 509),
-                                QVector2D(689, 329), QVector2D(689, 209), QVector2D(509, 29), QVector2D(269, 29)};
+//    short initial_target;
+//    QVector2D route[8] = {QVector2D(89, 209), QVector2D(89, 329), QVector2D(269, 509), QVector2D(509, 509),
+//                                QVector2D(689, 329), QVector2D(689, 209), QVector2D(509, 29), QVector2D(269, 29)};
 
-    if ((j == -1) and (i < 4)) initial_target = 1;
-    else if (j == -1) initial_target = 2;
+//    if ((j == -1) and (i < 4)) initial_target = 1;
+//    else if (j == -1) initial_target = 2;
 
-    else if ((i == 9) and (j <= 6)) initial_target = 3;
-    else if (i == 9) initial_target = 4;
+//    else if ((i == 9) and (j <= 6)) initial_target = 3;
+//    else if (i == 9) initial_target = 4;
 
-    else if ((j == 13) and (i >= 4)) initial_target = 5;
-    else if (j == 13) initial_target = 6;
+//    else if ((j == 13) and (i >= 4)) initial_target = 5;
+//    else if (j == 13) initial_target = 6;
 
-    else if ((i == -1) and (j > 6)) initial_target = 7;
-    else initial_target = 0;
+//    else if ((i == -1) and (j > 6)) initial_target = 7;
+//    else initial_target = 0;
 
-    for (short k = 0; k < 16; k++) targets.enqueue(route[(k + initial_target)%8]);
-    targets.enqueue(QVector2D(389, 269));
+//    for (short k = 0; k < 16; k++) targets.enqueue(route[(k + initial_target)%8]);
+//    targets.enqueue(QVector2D(389, 269));
+//}
+
+//bool Vulture::collisions_handler(QList<QGraphicsItem *> collisions) {
+
+//    //Retornamos true si necesitamos dejar de ejecutar el slot move().
+
+//    for (short i = 0; i < collisions.size(); i++) {
+//        QGraphicsItem *item = collisions[i];
+//        if (typeid(*item) == typeid(Base)) {
+//            move_timer->stop();
+
+//            //No se puede emitir la señal timeout manualmente,
+//            //por lo cual definimos una señal auxiliar para
+//            //enviar al comenzar el timer.
+
+//            //EMITIR SEÑAL PARA EXPLOTAR LA BASE.
+
+//            emit first_bite();
+//            bite_timer->start(1000);
+//            return true;
+//        }
+//    }
+//    return false;
+//}
+
+double Vulture::radio() {
+    return 1/sqrt(pow(cos(angle)/a, 2) + pow(sin(angle)/b, 2));
 }
 
-bool Vulture::collisions_handler(QList<QGraphicsItem *> collisions) {
+double Vulture::diff_radio() {
+    return (0.5*a*b*(b*b - a*a))*(sin(2*angle)/pow(pow(b*cos(angle), 2) + pow(a*sin(angle), 2) , 1.5));
+}
+
+Vulture::Vulture(QGraphicsScene *_level, Terrain *_terrain, short _list_index) :
+    Enemy(0, -1, 8, _level, _terrain, _list_index) {
+
+    a = 330; b = 210; c = sqrt(a*a + b*b);
+
+    loop_num = 0;
+
+    setPos(389, 269 - c);
+    setRotation(-135);
+    strike = false;
+    straight_line = true;
+    offset = 0;
+
+    initial_angle = atan2(b*b/c, -a*a/c);
+    angle = initial_angle;
+}
+
+void Vulture::move() {
+
+    if (freez) return;
+
+    if (straight_line) {
+        setPos(x() - 0.1*spd, y() + 0.1*spd);
+        if (health_bar_on) health_bar->setPos(x() - 20, y() - 35);
+
+        if (sqrt(pow((389 - a*a/c) - x(), 2) + pow((269 - b*b/c) - y(), 2)) < 5) {
+            straight_line = false;
+            r = radio();
+            setPos(389 + r*cos(angle), 269 - r*sin(angle) - offset);
+            spd = 330;
+        }
+    }
+    else {
+
+        //Usamos la derivada implícita para obtener la pendiente en cualquier
+        //punto de la elipse.
+
+        setRotation(-90 - atan2(-b*b*(x() - 389), a*a*(269 - y() - offset))*180/M_PI);
+
+        dr = diff_radio();
+        angle += 0.06*spd/sqrt(dr*dr + r*r);
+        //qDebug() << angle << "  " << 5*M_PI/2;
+        if (abs(angle - 5*M_PI/2) < 0.1) {
+
+            angle -= 2*M_PI;
+            loop_num++;
+
+            if (loop_num == 2) {
+                a /= 2; b /= 2;
+                offset = b;
+                strike = true;
+            }
+        }
+
+        r = radio();
+        setPos(389 + r*cos(angle), 269 - r*sin(angle) - offset);
+        if (health_bar_on) health_bar->setPos(x() - 20, y() - 35);
+
+        if (strike) collisions_handler(collidingItems(Qt::IntersectsItemBoundingRect));
+    }
+}
+
+bool Vulture::collisions_handler(QList<QGraphicsItem*> collisions) {
 
     //Retornamos true si necesitamos dejar de ejecutar el slot move().
 
+    QGraphicsItem *item;
     for (short i = 0; i < collisions.size(); i++) {
-        QGraphicsItem *item = collisions[i];
+        item = collisions[i];
         if (typeid(*item) == typeid(Base)) {
+
             move_timer->stop();
-
-            //No se puede emitir la señal timeout manualmente,
-            //por lo cual definimos una señal auxiliar para
-            //enviar al comenzar el timer.
-
-            //EMITIR SEÑAL PARA EXPLOTAR LA BASE.
-
-            emit first_bite();
-            bite_timer->start(1000);
+            qDebug() << "EXPLOUIIII!";
             return true;
         }
     }
     return false;
 }
-
-Vulture::Vulture(short i, short j, QGraphicsScene *_level, Terrain *_terrain, short _list_index) :
-    Enemy(i, j, 8, _level, _terrain, _list_index) {
-
-    targets.clear();
-    set_targets(i, j);
-    update_target();
-}
-
-//Vulture::Vulture(QGraphicsScene *_level, Terrain *_terrain) :
-//    Enemy(-1, 6, 8, _level, _terrain) {
-
-//    up = 1;
-//    straight_line = true;
-//    setPos(389, -121);
-//    setRotation(-135);
-//}
-
-//void Vulture::move() {
-
-//    if (straight_line) {
-//        setPos(x() - 6, y() + 6);
-//        //setPos(x(), y() + 3);
-//        if (sqrt(pow(111 - x(), 2) + pow(156 - y(), 2)) < 5) straight_line = false;
-//    }
-//    else {
-
-//        angle = atan2(-44100*(x() - 389), 108900*(269 - y()));
-//        setRotation(-(angle + M_PI/2)*180/M_PI);
-
-//        setX(x() - 10*cos(angle));
-
-//        if (abs(angle - M_PI/2) < 0.25) {
-//            setX(x() + 0.1);
-//            up = -1;
-//        }
-//        else if (abs(angle + M_PI/2) < 0.25) {
-//            setX(x() - 0.1);
-//            up = 1;
-//        }
-
-//        setY(269 - up*210*sqrt(1 - pow(x() - 389, 2)/108900));
-//    }
-//}
-
-
 
 
 

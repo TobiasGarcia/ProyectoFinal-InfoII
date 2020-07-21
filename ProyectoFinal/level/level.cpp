@@ -59,6 +59,17 @@ Level::Level() {
     setSceneRect(0, 0, 779, 599); //780x600 pixeles para que los jugadores se muevan de 15 en 15.
     setBackgroundBrush(QBrush(QPixmap(":/textures/resources/images/floor_texture.png")));
 
+    if (!get_level_script()) qDebug() << "No se abrió el archivo >:(";
+    pop = true;
+
+    instructions_timer = new QTimer;
+    connect(instructions_timer, &QTimer::timeout, this, &Level::next_instruction);
+
+    delay_timer = new QTimer;
+    delay_timer->setSingleShot(true);
+    connect(delay_timer, &QTimer::timeout, this, &Level::finish_delay);
+
+
     information = new Information(this);
 //    information->display_message(390, 60, QString("Estadisticas:\n"
 //                                                  "\tHabilidad: 1000\n"
@@ -72,10 +83,8 @@ Level::Level() {
     display_terrain();
 
     //Se mide en porcentaje, pero como 100.0, con una cifra decimal.
-    rock_index = 3;
-    fluid_index = 3;
-    initial_health = 1000;
-    display_hud();
+    rock_index = -1;
+    fluid_index = -1;
 
     initialize_template();
 
@@ -87,10 +96,11 @@ Level::Level() {
     freez_timer->setSingleShot(true);
     connect(freez_timer, &QTimer::timeout, this, &Level::defrost);
 
-    base = new Base(health_bar, initial_health);
+    display_hud(1000);//Salud inicial de la base.
+    base = new Base(health_bar, 1000);//Salud inicial de la base.
     addItem(base);
 
-//    carlos = new Enemy(9, 3, 0, this, terrain, 0);
+//    carlos = new Enemy(9, 3, 1, this, terrain, 1);
 //    make_connections(carlos);
 //    enemies.append(carlos);
 //    addItem(carlos);
@@ -130,15 +140,17 @@ Level::Level() {
 //    terrain->tiles[4][3] = new TerrainObject(180, 240, 1);
 //    terrain->tiles[5][3] = new TerrainObject(180, 300, 1);
 
-    power_up = new PowerUp(3, 4);
-    connect(power_up, &PowerUp::give_power, this, &Level::give_power);
-    addItem(power_up);
+//    power_up = new PowerUp(3, 3);
+//    connect(power_up, &PowerUp::give_power, this, &Level::give_power);
+//    addItem(power_up);
 
     player1 = new Player(5, 5);
     addItem(player1);
 
     player2 =  new Player(5, 7, false);
     addItem(player2);
+
+    instructions_timer->start(500);
 }
 
 Level::~Level() {
@@ -153,6 +165,8 @@ Level::~Level() {
     delete[] fluid_powers;
     delete power_template;
     delete ghost_rock;
+    delete instructions_timer;
+    delete delay_timer;
     //delete base;
     //delete power_up;
 }
@@ -186,6 +200,78 @@ void Level::remove_enemy(short list_index) {
 
 void Level::defrost() {
     set_freez(false);
+}
+
+void Level::add_enemie(short type) {
+
+    short i, j, side = rand()%4;
+
+    if (side%2) {
+        i = rand()%8;
+        j = 7*side - 8;
+    }
+    else {
+        i = 5*side - 1;
+        j = rand()%13;
+    }
+
+    if (type == 8) enemie = new Vulture(this, terrain, enemies.size());
+    else if (type == 7) enemie = new Mole(this, terrain, enemies.size());
+    else if (type == 6) enemie = new Chamaleon(i, j, this, terrain, enemies.size());
+    else if (type == 5) enemie = new Owl(i, j, this, terrain, enemies.size());
+    else if (type == 4) enemie = new Porcupine(i, j, this, terrain, enemies.size());
+    else if (type == 3) enemie = new Snail(i, j, this, terrain, enemies.size());
+    else enemie = new Enemy(i, j, type, this, terrain, enemies.size());
+    make_connections(enemie);
+    enemies.append(enemie);
+    addItem(enemie);
+}
+
+void Level::add_power_up() {
+
+    if (enemies.size() > 3) power_up = new PowerUp(rand()%4, rand()%2);
+    else if (base->get_health() < 500) power_up = new PowerUp(rand()%4, 2);
+    else if (rand()%2 and (terrain->rocks_num < 15)) power_up = new PowerUp(rand()%4, 4);
+    else power_up = new PowerUp(rand()%4, 3);
+
+    connect(power_up, &PowerUp::give_power, this, &Level::give_power);
+    addItem(power_up);
+}
+
+void Level::next_instruction() {
+
+    instruction = script.front();
+
+    qDebug() << QString::fromUtf8(instruction.c_str());
+    if (instruction[0] == 'W') qDebug() << "Wave " << instruction[1];
+    else if (instruction[0] == 'S') {
+        qDebug() << "STOP" << std::stoi(instruction.substr(1));
+        delay_timer->start(std::stoi(instruction.substr(1)));
+        instructions_timer->stop();
+    }
+    else if (instruction[0] == 'E') {
+        if (pop) {
+            max_enemies = instruction.size() - 1;
+            enemie_count = 0;
+            pop = false;
+        }
+
+        add_enemie(short(instruction[enemie_count + 1]) - 48);
+        enemie_count++;
+
+        if (max_enemies == enemie_count) pop = true;
+    }
+    else if (instruction[0] == 'P') add_power_up();
+    else {
+        qDebug() << "Finish";
+        instructions_timer->stop();
+    }
+
+    if (pop) script.pop();
+}
+
+void Level::finish_delay() {
+    instructions_timer->start(500);
 }
 
 void Level::display_terrain() {
@@ -223,7 +309,7 @@ void Level::display_terrain() {
 //    addItem(elli);
 }
 
-void Level::display_hud() {
+void Level::display_hud(short initial_health) {
 
     QGraphicsRectItem *rect = new QGraphicsRectItem(221, 544, 337, 51);
     rect->setBrush(QColor(86, 86, 86));
@@ -312,6 +398,7 @@ void Level::initialize_template() {
     power_template = new QGraphicsPixmapItem;
     power_template->setPixmap(QPixmap(":/interface/resources/images/interface/available.png"));
     power_template->setPos(180, 120);
+    power_template->setOpacity(0.6);
     power_template->setZValue(0);
 }
 
@@ -395,6 +482,17 @@ void Level::add_fluid(short i, short j) {
     //Simplemente salimo si hay un fluido colocado por los jugadores
     //o una roca.
 
+}
+
+bool Level::get_level_script() {
+
+    std::fstream file("../ProyectoFinal/data/levels_scripts/level1.txt", std::ios::in);
+    if (file.is_open()) {
+        while (getline(file, instruction)) script.push(instruction);
+        file.close();
+        return true;
+    }
+    else return false;
 }
 
 void Level::add_fire_ball(short x, short y) {

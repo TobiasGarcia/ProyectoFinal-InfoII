@@ -55,17 +55,25 @@ private:
     QGraphicsPixmapItem *hole;
 public:
     QTimer *dig_timer;
-    Mole(short i, short j, QGraphicsScene *_level, Terrain *_terrain, short _list_index);
+    Mole(QGraphicsScene *_level, Terrain *_terrain, short _list_index);
 public slots:
     void spawn();
 };
 
 class Vulture: public Enemy {
 private:
-    void set_targets(short i, short j);
+    short a, b, loop_num;
+    bool straight_line, strike;
+    double angle, initial_angle, r, dr, c, offset;
+
+    double radio();
+    double diff_radio();
     bool collisions_handler(QList<QGraphicsItem*> collisions);
+
 public:
-    Vulture(short i, short j, QGraphicsScene *_level, Terrain *_terrain, short _list_index);
+    Vulture(QGraphicsScene *_level, Terrain *_terrain, short _list_index);
+public slots:
+    void move();
 };
 
 #endif // SPECIAL_ENEMIES_H

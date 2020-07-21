@@ -21,6 +21,8 @@ public:
     QGraphicsPixmapItem *center;
     void increase_health(short increment);
     void set_vulnerable(bool _vulnerable) {vulnerable = _vulnerable;};
+    short get_health() {return health;};
+
 public slots:
     void bitten();
     void return_normal();

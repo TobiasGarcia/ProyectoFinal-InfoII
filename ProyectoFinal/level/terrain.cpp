@@ -15,9 +15,9 @@ Terrain::Terrain(QGraphicsScene *_level) : level(_level) {
 //        tiles[6][j] = new TerrainObject(6, j, 1);
 //    }
 
-//    //tiles[6][5] = 0;
-//    //tiles[6][7] = 0;
-//    //tiles[6][6] = 0;
+    //tiles[6][5] = 0;
+    //tiles[6][7] = 0;
+    //tiles[6][6] = 0;
 
 //    delete tiles[3][3];
 //    tiles[3][3] = nullptr;
@@ -28,7 +28,7 @@ Terrain::Terrain(QGraphicsScene *_level) : level(_level) {
 //    delete tiles[5][3];
 //    tiles[5][3] = nullptr;
 
-    rocks_num = 0;
+//    rocks_num = 12;
 
 //    delete tiles[2][7];
 //    tiles[2][7] = nullptr;

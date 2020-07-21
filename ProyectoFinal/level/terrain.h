@@ -15,6 +15,9 @@ public:
     //1: Roca
     //2: Caracol
     //3: Fluido
+
+    //Público porque hay que sumarle y leer el valor.
+
     short rocks_num;
     std::array<std::array<TerrainObject*, 13>, 10> tiles;
 

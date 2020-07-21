@@ -31,11 +31,11 @@ private:
     //además de que sin esta opción parecía que los enemigos
     //simplemente desaparecían.
 
-    bool defeated, freez;
+    bool defeated;
     QVector2D dir;
     QTimer *health_on_timer;
     QPixmap *pix;
-    short spd, width_half, height_half, type, health, max_health;
+    short width_half, height_half, type, health, max_health;
 
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -50,7 +50,7 @@ private:
 protected:
     QQueue<QVector2D> targets;
     QGraphicsRectItem *health_bar;
-    bool rotated, health_bar_on;
+    bool rotated, health_bar_on, freez;
     QVector2D speed, speed_aux;
     QTimer *move_timer, *delay_timer;
     //Necesitamos la varible level para tener un puntero a la escena y poder modificarla
@@ -59,7 +59,7 @@ protected:
     //enemigos especiales.
     QGraphicsScene *level;
     Terrain *terrain;
-    short list_index;
+    short list_index, spd;
 
     void update_target();
     void recalculate_initial_tile(short tile[2]);
