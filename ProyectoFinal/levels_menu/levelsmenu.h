@@ -7,16 +7,16 @@
 #include "player.h"
 #include "fireball.h"
 #include "levels_menu/needle.h"
+#include "blackscreen.h"
 
 class LevelsMenu: public QGraphicsScene {
 private:
-    QGraphicsRectItem *black_screen;
-    short state, opacity;
+    short state;
     Needle *needle;
-    QTimer *opacity_timer;
     bool two_players;
     Player *player1, *player2;
     QGraphicsPixmapItem *levels;
+    BlackScreen *black_screen;
 
     void add_fire_ball(short x, short y);
     void keyPressEvent(QKeyEvent *event);
@@ -26,8 +26,8 @@ public:
     LevelsMenu(bool _two_players);
     ~LevelsMenu();
 public slots:
-    void increase_opacity();
     void level_selected();
+    void finish();
 };
 
 #endif // LEVELSMENU_H

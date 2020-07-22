@@ -16,7 +16,7 @@ Widget::Widget(QWidget *parent)
     srand(time(nullptr));
     QFontDatabase::addApplicationFont(":/font/resources/kepler296.otf");
 
-    level = new Level;
+    level = new Level(true);
     ui->graphicsView->setScene(level);
 
 //    minigame = new Minigame(true);

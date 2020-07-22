@@ -20,6 +20,7 @@ public:
 
     short rocks_num;
     std::array<std::array<TerrainObject*, 13>, 10> tiles;
+    void clean_fluid();
 
     Terrain(QGraphicsScene *_level);
     ~Terrain();

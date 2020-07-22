@@ -65,12 +65,9 @@ LevelsMenu::LevelsMenu(bool _two_players) : two_players(_two_players) {
     setSceneRect(0, 0, 779, 599);
     setBackgroundBrush(QBrush(QPixmap(":/leves_menu/resources/images/levels_menu/backgorund.png")));
 
-    black_screen = new QGraphicsRectItem(0, 0, 779, 599);
-    black_screen->setBrush(Qt::black);
-    black_screen->setOpacity(0);
-    black_screen->setZValue(7);
+    black_screen = new BlackScreen;
+    connect(black_screen, &BlackScreen::finish, this, &LevelsMenu::finish);
     addItem(black_screen);
-    opacity = 0;
 
     levels =  new QGraphicsPixmapItem[4];
 
@@ -94,10 +91,9 @@ LevelsMenu::LevelsMenu(bool _two_players) : two_players(_two_players) {
         addItem(player2);
     }
 
-    opacity_timer = new QTimer;
-    connect(opacity_timer, &QTimer::timeout, this, &LevelsMenu::increase_opacity);
-
     state = 0;
+
+    black_screen->change_opacity(false);
 
 //    QGraphicsRectItem *rect = new QGraphicsRectItem(314, 480.5, 149, 98);
 //    addItem(rect);
@@ -130,16 +126,10 @@ LevelsMenu::~LevelsMenu() {
     delete black_screen;
 }
 
-void LevelsMenu::increase_opacity() {
-    opacity += 5;
-    if (opacity > 100) {
-        opacity_timer->stop();
-        qDebug() << "Finish";
-        return;
-    }
-    black_screen->setOpacity(opacity/100.0);
+void LevelsMenu::level_selected() {
+    black_screen->change_opacity(true);
 }
 
-void LevelsMenu::level_selected() {
-    opacity_timer->start(50);
+void LevelsMenu::finish() {
+    qDebug() << "Finish";
 }

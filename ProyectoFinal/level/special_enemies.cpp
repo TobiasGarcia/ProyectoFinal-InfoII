@@ -26,7 +26,7 @@ bool Snail::collisions_handler(QList<QGraphicsItem*> collisions) {
         if (typeid(*item) == typeid(TerrainObject)) {
             TerrainObject *terrain_object = dynamic_cast<TerrainObject*>(item);
 
-            if ((terrain_object->get_type() == 1) and !rotated) {
+            if ((terrain_object->get_type() == 1) and !QRect(210, 150, 360, 240).contains(x(), y(), false)) {
                 rock_collision();
                 return true;
             }
@@ -51,7 +51,11 @@ bool Snail::collisions_handler(QList<QGraphicsItem*> collisions) {
             return true;
         }
     }
-    if (!in_fluid) add_fluid();
+
+    //Tenemos que asegurarnos de que esté dentro del rectángulo para que no se
+    //coloquen fluidos por fuera de la pantalla.
+
+    if (!in_fluid and QRect(0, 0, 779, 599).contains(x(), y(), false)) add_fluid();
     return false;
 }
 
@@ -64,7 +68,7 @@ bool Porcupine::collisions_handler(QList<QGraphicsItem*> collisions) {
         if (typeid(*item) == typeid(TerrainObject)) {
 
             TerrainObject *terrain_object = dynamic_cast<TerrainObject*>(item);
-            if ((terrain_object->get_type() == 1) and !rotated) {
+            if ((terrain_object->get_type() == 1) and !QRect(210, 150, 360, 240).contains(x(), y(), false)) {
 
                 terrain->tiles[short(terrain_object->y()/60)][short(terrain_object->x()/60)] = nullptr;
 
@@ -178,7 +182,7 @@ bool Chamaleon::collisions_handler(QList<QGraphicsItem *> collisions) {
         if (typeid(*item) == typeid(TerrainObject)) {
 
             TerrainObject *terrain_object = dynamic_cast<TerrainObject*>(item);
-            if ((terrain_object->get_type() == 1) and !rotated) {
+            if ((terrain_object->get_type() == 1) and !QRect(210, 150, 360, 240).contains(x(), y(), false)) {
                 rock_collision();
                 return true;
             }
@@ -224,7 +228,6 @@ Mole::Mole(QGraphicsScene *_level, Terrain *_terrain, short _list_index) :
 
     targets.clear();
     targets.enqueue(QVector2D(389, 269));
-    rotated = true;
 
     dig_timer = new QTimer;
     dig_timer->setSingleShot(true);

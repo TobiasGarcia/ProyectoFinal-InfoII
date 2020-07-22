@@ -93,6 +93,7 @@ PowerUp::PowerUp(short _path_type, short _power_type) : path_type(_path_type), p
     if (path_type != 3) connect(move_timer, &QTimer::timeout, this, &PowerUp::move);
     else connect(move_timer, &QTimer::timeout, this, &PowerUp::lemniscate_move);
 
+    freez = false;
     move_timer->start(50);
 }
 
@@ -102,6 +103,8 @@ PowerUp::~PowerUp() {
 }
 
 void PowerUp::move() {
+
+    if (freez) return;
 
     dr = diff_radio();
     angle += 0.06*spd/sqrt(dr*dr + r*r);

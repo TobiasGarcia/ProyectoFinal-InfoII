@@ -13,6 +13,7 @@
 #include <QKeyEvent>
 #include "information.h"
 #include "level/special_enemies.h"
+#include "blackscreen.h"
 #include <fstream>
 #include <queue>
 
@@ -21,6 +22,7 @@ class Level: public QGraphicsScene {
     Q_OBJECT
 
 private:
+    BlackScreen *black_screen;
     Base *base;
     FireBall *fire_ball;
     Enemy *enemie;
@@ -33,7 +35,7 @@ private:
     //se debe retirar la plantialla, de otro modo es porque hay algún jugador que
     //la necesita.
 
-    bool pop;
+    bool next, pause, two_players, power_up_bool;
     Information *information;
     short rock_index, fluid_index, template_on, enemie_count, max_enemies;
     PowerUp *power_up;
@@ -51,7 +53,7 @@ private:
     QGraphicsRectItem *health_bar, *ghost_rock;
     void add_enemie(short type);
     void add_power_up();
-    bool get_level_script();
+    bool get_level_script(short initial_wave);
     void add_fire_ball(short x, short y);
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
@@ -66,7 +68,7 @@ private:
     void add_fluid(short i, short j);
 
 public:
-    Level();
+    Level(bool _two_players);
     ~Level();
     Terrain *terrain;
 public slots:

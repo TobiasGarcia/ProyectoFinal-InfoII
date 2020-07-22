@@ -19,6 +19,8 @@ Player::Player(short i, short j, bool _player_one) : player_one(_player_one) {
     delay_timer = new QTimer;
     delay_timer->setSingleShot(true);
 
+    freez = false;
+
     move_timer = new QTimer;
     connect(move_timer, &QTimer::timeout, this, &Player::move);
     move_timer->start(17);
@@ -30,6 +32,9 @@ Player::~Player() {
 }
 
 void Player::move() {
+
+    if (freez) return;
+
     if (move_dir[0] and (y() > 15)) setY(y() - 5);
     if (move_dir[1] and (x() > 15)) setX(x() - 5);
     if (move_dir[2] and (y() < 525)) setY(y() + 5);

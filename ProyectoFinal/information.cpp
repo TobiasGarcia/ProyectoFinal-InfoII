@@ -17,10 +17,19 @@ Information::Information(QGraphicsScene *_scene) : scene(_scene) {
 
     setBrush(QColor(104, 109, 117));
     setPen(QPen(QColor(224, 162, 43), 5));
+    setZValue(7);
+
+    display_timer = new QTimer;
+    display_timer->setSingleShot(true);
+    connect(display_timer, &QTimer::timeout, this, &Information::remove);
 }
 
 Information::~Information() {
     delete text;
+}
+
+void Information::set_display_time(short millis) {
+    display_timer->start(millis);
 }
 
 void Information::display_message(short x, short y, QString message) {
@@ -31,4 +40,8 @@ void Information::display_message(short x, short y, QString message) {
     setPos(x - text->boundingRect().width()/2, y);
 
     scene->addItem(this);
+}
+
+void Information::remove() {
+    scene->removeItem(this);
 }

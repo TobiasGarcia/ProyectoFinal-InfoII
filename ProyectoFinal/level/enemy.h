@@ -50,7 +50,7 @@ private:
 protected:
     QQueue<QVector2D> targets;
     QGraphicsRectItem *health_bar;
-    bool rotated, health_bar_on, freez;
+    bool health_bar_on, freez;
     QVector2D speed, speed_aux;
     QTimer *move_timer, *delay_timer;
     //Necesitamos la varible level para tener un puntero a la escena y poder modificarla
