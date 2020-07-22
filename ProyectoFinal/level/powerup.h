@@ -14,7 +14,7 @@ private:
     QTimer *move_timer;
     QPixmap *pix;
     short spd, path_type, power_type;;
-    bool straight_line;
+    bool straight_line, freez;
 
     //Parametros de las curvas. Tipo float para que
     //no dividan de forma entera, doube no para no
@@ -36,6 +36,7 @@ public:
     void emit_give_power();
     PowerUp(short _path_type, short _power_type);
     ~PowerUp();
+    void set_freez(bool _freez) {freez = _freez;};
 
 public slots:
     void move();

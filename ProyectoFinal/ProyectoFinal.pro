@@ -16,6 +16,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    blackscreen.cpp \
     fireball.cpp \
     information.cpp \
     level/base.cpp \
@@ -34,6 +35,7 @@ SOURCES += \
     widget.cpp
 
 HEADERS += \
+    blackscreen.h \
     fireball.h \
     information.h \
     level/base.h \

@@ -38,9 +38,14 @@ void FireBall::test_collisions() {
         }
         else if (typeid(*item) == typeid(PowerUp)) {
             PowerUp *power_up = dynamic_cast<PowerUp*>(item);
+
+            //No es buena idea andar conectando las fire balls siempre, por eso utilzamos
+            //el método para emitir la señal.
+
             power_up->emit_give_power();
             scene()->removeItem(power_up);
             delete power_up;
+
             return;
         }
     }

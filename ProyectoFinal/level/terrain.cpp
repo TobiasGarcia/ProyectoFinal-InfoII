@@ -1,6 +1,17 @@
 #include "terrain.h"
 #include <QDebug>
 
+void Terrain::clean_fluid() {
+    for (short i = 0; i < 10; i++) {
+        for (short j = 0; j < 13; j++) {
+            if ((tiles[i][j] != nullptr) and (tiles[i][j]->get_type() != 1)) {
+                delete tiles[i][j];
+                tiles[i][j] = nullptr;
+            }
+        }
+    }
+}
+
 Terrain::Terrain(QGraphicsScene *_level) : level(_level) {
 
     for (short i = 0; i < 10; i++) tiles[i].fill(nullptr);
@@ -15,15 +26,15 @@ Terrain::Terrain(QGraphicsScene *_level) : level(_level) {
 //        tiles[6][j] = new TerrainObject(6, j, 1);
 //    }
 
-//    //tiles[6][5] = 0;
-//    //tiles[6][7] = 0;
-//    //tiles[6][6] = 0;
+    //tiles[6][5] = 0;
+    //tiles[6][7] = 0;
+    //tiles[6][6] = 0;
 
-//    delete tiles[3][3];
-//    tiles[3][3] = nullptr;
+//    delete tiles[6][8];
+//    tiles[6][8] = nullptr;
 
-//    delete tiles[4][3];
-//    tiles[4][3] = nullptr;
+//    delete tiles[2][4];
+//    tiles[2][4] = nullptr;
 
 //    delete tiles[5][3];
 //    tiles[5][3] = nullptr;

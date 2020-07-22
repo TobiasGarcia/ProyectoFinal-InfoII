@@ -20,7 +20,6 @@ Enemy::Enemy(short i, short j, short _type, QGraphicsScene *_level, Terrain *_te
     freez = false;
     set_targets(i, j);
     update_target();
-    rotated = false;
 
     bite_timer = new QTimer;
 
@@ -81,12 +80,11 @@ void Enemy::move() {
     //Le damos un "empujonsito" aumentado su rapidez para poder
     //evitar que los enemigos más lentos se atasquen al girar
     //por una esquina.
-    if (rotated) speed = 1.6*speed;
-    setPos(x() + speed[0]*0.1, y() + speed[1]*0.1);
-    if (health_bar_on) health_bar->setPos(health_bar->x() + speed[0]*0.1, health_bar->y() + speed[1]*0.1);
+
+    setPos(x() + speed[0], y() + speed[1]);
+    if (health_bar_on) health_bar->setPos(x() - 20, y() - 35);
 
     dir = targets.head() - QVector2D(pos());
-    rotated = false;
 
     if (dir.length() < 7) {
         targets.dequeue();
@@ -94,7 +92,6 @@ void Enemy::move() {
         //y borrar las dos lineas siguientes.
         //-----------------
         update_target();
-        rotated = true;
         //-----------------
 //        if (targets.empty()) move_timer->stop();
 //        else {
@@ -209,7 +206,7 @@ void Enemy::recalculate_initial_tile(short tile[2]) {
 
 void Enemy::update_target() {
     dir = targets.head() - QVector2D(pos());
-    speed = spd*dir.normalized();
+    speed = 0.06*spd*dir.normalized();
     speed_aux = speed;
     setRotation(90 - (atan2(-dir[1], dir[0])*180/M_PI));
 }
@@ -237,38 +234,38 @@ void Enemy::initialize() {
         width_half = 18;
         height_half = 18;
         spd = 30;
-        max_health = 400;
+        max_health = 500;
         pix = new QPixmap(":/enemies/resources/images/enemies/enemy0.png");
     }
     else if (type == 1) {
         //40 x 50 pixeles;
         width_half = 20;
         height_half = 25;
-        spd = 20;
-        max_health = 600;
+        spd = 25;
+        max_health = 800;
         pix = new QPixmap(":/enemies/resources/images/enemies/enemy1.png");
     }
     else if (type == 2) {
         //40 x 50 pixeles;
         width_half = 20;
         height_half = 25;
-        spd = 20;
-        max_health = 600;
-        pix = new QPixmap(":/enemies/resources/images/enemies/enemy1.png");
+        spd = 40;
+        max_health = 300;
+        pix = new QPixmap(":/enemies/resources/images/enemies/enemy2.png");
     }
     else if (type == 3) {
         //40 x 50 pixeles;
         width_half = 20;
         height_half = 25;
         spd = 35;
-        max_health = 400;
+        max_health = 600;
         pix = new QPixmap(":/enemies/resources/images/enemies/snail.png");
     }
     else if (type == 4) {
         //40 x 50 pixeles;
         width_half = 20;
         height_half = 25;
-        spd = 40;
+        spd = 35;
         max_health = 300;
         pix = new QPixmap(":/enemies/resources/images/enemies/porcupine.png");
     }
@@ -276,7 +273,7 @@ void Enemy::initialize() {
         //40 x 50 pixeles;
         width_half = 20;
         height_half = 25;
-        spd = 25;
+        spd = 30;
         max_health = 300;
         pix = new QPixmap(":/enemies/resources/images/enemies/owl.png");
     }
@@ -284,15 +281,15 @@ void Enemy::initialize() {
         //40 x 50 pixeles;
         width_half = 20;
         height_half = 25;
-        spd = 20;
-        max_health = 500;
+        spd = 25;
+        max_health = 700;
         pix = new QPixmap(":/enemies/resources/images/enemies/chamaleon.png");
     }
     else if (type == 7) {
         //40 x 50 pixeles;
         width_half = 20;
         height_half = 25;
-        spd = 20;
+        spd = 25;
         max_health = 300;
         pix = new QPixmap(":/enemies/resources/images/enemies/mole.png");
     }
@@ -308,8 +305,10 @@ void Enemy::initialize() {
 
 void Enemy::rock_collision() {
 
-    setPos(x() - speed[0]*0.2, y() - speed[1]*0.2);
-    if (health_bar_on) health_bar->setPos(health_bar->x() - speed[0]*0.2, health_bar->y() - speed[1]*0.2);
+    //Revisar colisiones
+
+    setPos(x() - 2.5*speed[0], y() - 2.5*speed[1]);
+    if (health_bar_on) health_bar->setPos(x() - 20, y() - 35);
 
     short tile[2];
     targets.clear();
@@ -330,7 +329,14 @@ bool Enemy::collisions_handler(QList<QGraphicsItem*> collisions) {
         if (typeid(*item) == typeid(TerrainObject)) {
 
             TerrainObject *terrain_object = dynamic_cast<TerrainObject*>(item);
-            if ((terrain_object->get_type() == 1) and !rotated) {
+
+            //Utilizamos la norma infinito para asegurarnos de que los enemigos estén por
+            //fuera de un cuadrado de 280 x 280 pixeles con centro en la base, en cuyo caso
+            //deben colisionar con las rocas, dentro no, esto es pues cuando los enemigos
+            //rotaban luego de pasar la frontera para dirijirse ya hacia la base, esa rotación
+            //generaba que colisionaran con las paredes y se quedaran bugueados.
+
+            if ((terrain_object->get_type() == 1) and !QRect(210, 150, 360, 240).contains(x(), y(), false)) {
                 rock_collision();
                 return true;
             }
@@ -351,7 +357,7 @@ bool Enemy::collisions_handler(QList<QGraphicsItem*> collisions) {
     return false;
 }
 
-//Colocar formas más acertadas.
+//-----------------------------------------------------------Colocar formas más acertadas.
 
 QPainterPath Enemy::shape() const {
     QPainterPath path;

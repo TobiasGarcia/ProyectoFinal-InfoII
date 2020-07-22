@@ -11,13 +11,14 @@ class Player: public QObject, public QGraphicsPixmapItem {
 private:
     QPixmap *pix;
     QTimer *move_timer;
-    bool player_one;
+    bool player_one, freez;
 
     QRectF boundingRect() const;
 
 public:
     QTimer *delay_timer;
     std::array<bool, 4> move_dir;
+    void set_freez(bool _freez) {freez = _freez;};
 
     Player(short i, short j, bool _player_one = true);
     ~Player();

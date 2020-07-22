@@ -5,7 +5,7 @@ void Level::keyPressEvent(QKeyEvent *event) {
 
     if (event->isAutoRepeat()) return;
 
-    if (event->key() == Qt::Key_Up) player1->move_dir[0] = true;
+    else if (event->key() == Qt::Key_Up) player1->move_dir[0] = true;
     else if (event->key() == Qt::Key_Left) player1->move_dir[1] = true;
     else if (event->key() == Qt::Key_Down) player1->move_dir[2] = true;
     else if (event->key() == Qt::Key_Right) player1->move_dir[3] = true;
@@ -14,6 +14,17 @@ void Level::keyPressEvent(QKeyEvent *event) {
     else if (event->key() == Qt::Key_A) player2->move_dir[1] = true;
     else if (event->key() == Qt::Key_S) player2->move_dir[2] = true;
     else if (event->key() == Qt::Key_D) player2->move_dir[3] = true;
+
+    else if (event->key() == Qt::Key_Escape) {
+        pause = !pause;
+
+        set_freez(pause);
+        if (power_up_bool) power_up->set_freez(pause);
+
+        player1->set_freez(pause);
+        if (two_players) player2->set_freez(pause);
+    }
+    else if (pause) return;
 
     //Qt::Key_Return es el enter cercano a las flechas, Qt::Key_Enter es el del Numeric Keypad.
 
@@ -40,6 +51,8 @@ void Level::keyReleaseEvent(QKeyEvent *event) {
     else if (event->key() == Qt::Key_S) player2->move_dir[2] = false;
     else if (event->key() == Qt::Key_D) player2->move_dir[3] = false;
 
+    else if (pause) return;
+
     else if (event->key() == Qt::Key_Backspace) {
         template_on--;
         if (template_on == 0) removeItem(power_template);
@@ -54,10 +67,26 @@ void Level::keyReleaseEvent(QKeyEvent *event) {
     else if (event->key() == Qt::Key_B) add_fluid(player2->y()/60, player2->x()/60);
 }
 
-Level::Level() {
+Level::Level(bool _two_players) : two_players(_two_players) {
 
     setSceneRect(0, 0, 779, 599); //780x600 pixeles para que los jugadores se muevan de 15 en 15.
     setBackgroundBrush(QBrush(QPixmap(":/textures/resources/images/floor_texture.png")));
+
+    if (!get_level_script(2)) qDebug() << "No se abrió el archivo >:(";
+    next = true;
+
+    instructions_timer = new QTimer;
+    connect(instructions_timer, &QTimer::timeout, this, &Level::next_instruction);
+
+    delay_timer = new QTimer;
+    delay_timer->setSingleShot(true);
+    connect(delay_timer, &QTimer::timeout, this, &Level::finish_delay);
+
+    power_up_bool = false;
+
+    black_screen = new BlackScreen;
+    //connect();
+    addItem(black_screen);
 
     information = new Information(this);
 //    information->display_message(390, 60, QString("Estadisticas:\n"
@@ -72,10 +101,8 @@ Level::Level() {
     display_terrain();
 
     //Se mide en porcentaje, pero como 100.0, con una cifra decimal.
-    rock_index = 3;
-    fluid_index = 3;
-    initial_health = 1000;
-    display_hud();
+    rock_index = -1;
+    fluid_index = -1;
 
     initialize_template();
 
@@ -87,10 +114,31 @@ Level::Level() {
     freez_timer->setSingleShot(true);
     connect(freez_timer, &QTimer::timeout, this, &Level::defrost);
 
-    base = new Base(health_bar, initial_health);
+    display_hud(1000);//Salud inicial de la base.
+    base = new Base(health_bar, 1000);//Salud inicial de la base.
     addItem(base);
 
-//    carlos = new Enemy(9, 3, 0, this, terrain, 0);
+//    enemie = new Snail(-1, 3, this, terrain, 0);
+//    make_connections(enemie);
+//    enemies.append(enemie);
+//    addItem(enemie);
+
+//    enemie = new Snail(2, -1, this, terrain, 1);
+//    make_connections(enemie);
+//    enemies.append(enemie);
+//    addItem(enemie);
+
+//    enemie = new Snail(9, 4, this, terrain, 2);
+//    make_connections(enemie);
+//    enemies.append(enemie);
+//    addItem(enemie);
+
+//    enemie = new Snail(5, 13, this, terrain, 3);
+//    make_connections(enemie);
+//    enemies.append(enemie);
+//    addItem(enemie);
+
+//    carlos = new Enemy(9, 3, 1, this, terrain, 1);
 //    make_connections(carlos);
 //    enemies.append(carlos);
 //    addItem(carlos);
@@ -130,15 +178,19 @@ Level::Level() {
 //    terrain->tiles[4][3] = new TerrainObject(180, 240, 1);
 //    terrain->tiles[5][3] = new TerrainObject(180, 300, 1);
 
-    power_up = new PowerUp(3, 4);
-    connect(power_up, &PowerUp::give_power, this, &Level::give_power);
-    addItem(power_up);
+//    power_up = new PowerUp(rand()%4, 4);
+//    connect(power_up, &PowerUp::give_power, this, &Level::give_power);
+//    addItem(power_up);
 
     player1 = new Player(5, 5);
     addItem(player1);
 
     player2 =  new Player(5, 7, false);
     addItem(player2);
+
+    pause = false;
+    black_screen->change_opacity(false);
+    instructions_timer->start(500);
 }
 
 Level::~Level() {
@@ -153,16 +205,21 @@ Level::~Level() {
     delete[] fluid_powers;
     delete power_template;
     delete ghost_rock;
+    delete instructions_timer;
+    delete delay_timer;
+    delete black_screen;
     //delete base;
     //delete power_up;
 }
 
 void Level::give_power(short power_type) {
 
+    power_up_bool = false;
+
     if (power_type == 0) hit_all_enemies();
     else if (power_type == 1) {
         set_freez(true);
-        freez_timer->start(3000);
+        freez_timer->start(5000);
     }
     else if (power_type == 2) base->increase_health(200);
     else if (power_type == 3) {
@@ -186,6 +243,109 @@ void Level::remove_enemy(short list_index) {
 
 void Level::defrost() {
     set_freez(false);
+}
+
+void Level::add_enemie(short type) {
+
+    short i, j, side = rand()%4;
+
+    if (side%2) {
+        i = rand()%8;
+        j = 7*side - 8;
+    }
+    else {
+        i = 5*side - 1;
+        j = rand()%13;
+    }
+
+    if (type == 8) enemie = new Vulture(this, terrain, enemies.size());
+    else if (type == 7) enemie = new Mole(this, terrain, enemies.size());
+    else if (type == 6) enemie = new Chamaleon(i, j, this, terrain, enemies.size());
+    else if (type == 5) enemie = new Owl(i, j, this, terrain, enemies.size());
+    else if (type == 4) enemie = new Porcupine(i, j, this, terrain, enemies.size());
+    else if (type == 3) enemie = new Snail(i, j, this, terrain, enemies.size());
+    else enemie = new Enemy(i, j, type, this, terrain, enemies.size());
+    make_connections(enemie);
+    enemies.append(enemie);
+    addItem(enemie);
+}
+
+void Level::add_power_up() {
+
+    power_up_bool = true;
+
+    //El rand()%3 es para que sea más probable que salga true que false.
+
+    if (enemies.size() > 3) power_up = new PowerUp(rand()%4, rand()%2);
+    else if (base->get_health() < 500) power_up = new PowerUp(rand()%4, 2);
+    else if (rand()%3 and (terrain->rocks_num < 15)) power_up = new PowerUp(rand()%4, 4);
+    else power_up = new PowerUp(rand()%4, 3);
+
+    connect(power_up, &PowerUp::give_power, this, &Level::give_power);
+    addItem(power_up);
+}
+
+void Level::next_instruction() {
+
+    if (pause) return;
+
+    instruction = script.front();
+
+    //qDebug() << QString::fromUtf8(instruction.c_str());
+    if (instruction[0] == 'W') {
+
+        information->display_message(389, 194,  "Oleada " + QString(instruction[1]));
+        information->set_display_time(3000);
+
+        delay_timer->start(3000);
+        instructions_timer->stop();
+    }
+    else if (instruction[0] == 'S') {
+        //qDebug() << "STOP" << std::stoi(instruction.substr(1));
+        delay_timer->start(std::stoi(instruction.substr(1)));
+        instructions_timer->stop();
+    }
+    else if (instruction[0] == 'E') {
+        if (next) {
+            max_enemies = instruction.size() - 1;
+            enemie_count = 0;
+            next = false;
+        }
+
+        add_enemie(short(instruction[enemie_count + 1]) - 48);
+        enemie_count++;
+
+        if (max_enemies == enemie_count) next = true;
+    }
+    else if (instruction[0] == 'P') add_power_up();
+    else if (instruction[0] == 'F') {
+        if (next) {
+            next = false;
+            qDebug() << "Finish";
+        }
+        else if (enemies.isEmpty()) {
+            next = true;
+
+            if (instruction[1] == '1') terrain->clean_fluid();
+
+            information->display_message(389, 194,  "¡Fin de la Oleada!");
+            information->set_display_time(3000);
+
+            delay_timer->start(3000);
+            instructions_timer->stop();
+        }
+    }
+    else {
+        black_screen->change_opacity(true);
+        instructions_timer->stop();
+        qDebug() << "Finish Level";
+    }
+
+    if (next) script.pop();
+}
+
+void Level::finish_delay() {
+    instructions_timer->start(500);
 }
 
 void Level::display_terrain() {
@@ -216,6 +376,9 @@ void Level::display_terrain() {
 //        addItem(line);
 //    }
 
+//    QGraphicsRectItem *rect = new QGraphicsRectItem(QRect(254, 134, 265, 265));
+//    addItem(rect);
+
 //    QGraphicsEllipseItem *elli =  new QGraphicsEllipseItem(QRectF(60, 60, 659, 419));
 //    addItem(elli);
 
@@ -223,7 +386,7 @@ void Level::display_terrain() {
 //    addItem(elli);
 }
 
-void Level::display_hud() {
+void Level::display_hud(short initial_health) {
 
     QGraphicsRectItem *rect = new QGraphicsRectItem(221, 544, 337, 51);
     rect->setBrush(QColor(86, 86, 86));
@@ -264,11 +427,11 @@ void Level::hit_all_enemies() {
     short index = 0, size = enemies.size();
     while (index < size) {
 
-        //El topo coloca un agujero antes de aparecer, por lo cual tarda un poco
-        //en entrar al campo visual y por tanto no se le deberá aplicar ningún efecto
-        //de los power ups hasta que entre, no obstante, como él ya está en la lista de
-        //enemigos, utilizamos el condicional para que el power up no le afecte a él
-        //en caso de que aún no haya aparecido.
+////        El topo coloca un agujero antes de aparecer, por lo cual tarda un poco
+////        en entrar al campo visual y por tanto no se le deberá aplicar ningún efecto
+////        de los power ups hasta que entre, no obstante, como él ya está en la lista de
+////        enemigos, utilizamos el condicional para que el power up no le afecte a él
+////        en caso de que aún no haya aparecido.
 
         if (enemies.at(index)->get_type() == 7) {
             Mole *mole = dynamic_cast<Mole*>(enemies.at(index));
@@ -296,10 +459,10 @@ void Level::set_freez(bool freez) {
     base->set_vulnerable(!freez);
     for (short i = 0; i < enemies.size(); i++) {
 
-        if (enemies.at(i)->get_type() == 7) {
-            Mole *mole = dynamic_cast<Mole*>(enemies.at(i));
-            if (mole->dig_timer->isActive()) continue;
-        }
+//        if (enemies.at(i)->get_type() == 7) {
+//            Mole *mole = dynamic_cast<Mole*>(enemies.at(i));
+//            if (mole->dig_timer->isActive()) continue;
+//        }
 
         enemies.at(i)->set_freez(freez);
     }
@@ -312,6 +475,7 @@ void Level::initialize_template() {
     power_template = new QGraphicsPixmapItem;
     power_template->setPixmap(QPixmap(":/interface/resources/images/interface/available.png"));
     power_template->setPos(180, 120);
+    power_template->setOpacity(0.6);
     power_template->setZValue(0);
 }
 
@@ -395,6 +559,25 @@ void Level::add_fluid(short i, short j) {
     //Simplemente salimo si hay un fluido colocado por los jugadores
     //o una roca.
 
+}
+
+bool Level::get_level_script(short initial_wave) {
+
+    bool current_game = false;
+    std::fstream file("../ProyectoFinal/data/levels_scripts/level1.txt", std::ios::in);
+    if (file.is_open()) {
+        while (getline(file, instruction)) {
+
+            if (current_game) script.push(instruction);
+            else if ((instruction[0] == 'W') and ((short(instruction[1]) - 48) == initial_wave)) {
+                script.push(instruction);
+                current_game = true;
+            }
+        }
+        file.close();
+        return true;
+    }
+    else return false;
 }
 
 void Level::add_fire_ball(short x, short y) {
