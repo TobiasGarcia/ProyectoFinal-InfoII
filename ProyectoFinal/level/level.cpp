@@ -67,12 +67,12 @@ void Level::keyReleaseEvent(QKeyEvent *event) {
     else if (event->key() == Qt::Key_B) add_fluid(player2->y()/60, player2->x()/60);
 }
 
-Level::Level(bool _two_players) : two_players(_two_players) {
+Level::Level(bool _two_players, std::string path) : two_players(_two_players) {
 
     setSceneRect(0, 0, 779, 599); //780x600 pixeles para que los jugadores se muevan de 15 en 15.
     setBackgroundBrush(QBrush(QPixmap(":/textures/resources/images/floor_texture.png")));
 
-    if (!get_level_script(2)) qDebug() << "No se abrió el archivo >:(";
+    if (!get_level_script(2, path)) qDebug() << "No se abrió el archivo >:(";
     next = true;
 
     instructions_timer = new QTimer;
@@ -561,10 +561,10 @@ void Level::add_fluid(short i, short j) {
 
 }
 
-bool Level::get_level_script(short initial_wave) {
+bool Level::get_level_script(short initial_wave, std::string path) {
 
     bool current_game = false;
-    std::fstream file("../ProyectoFinal/data/levels_scripts/level1.txt", std::ios::in);
+    std::fstream file(path + "levels_scripts/level1.txt", std::ios::in);
     if (file.is_open()) {
         while (getline(file, instruction)) {
 

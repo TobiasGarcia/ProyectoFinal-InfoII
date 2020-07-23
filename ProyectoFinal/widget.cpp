@@ -13,11 +13,17 @@ Widget::Widget(QWidget *parent)
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    srand(time(nullptr));
-    QFontDatabase::addApplicationFont(":/font/resources/kepler296.otf");
+    //srand(time(nullptr));
+    //QFontDatabase::addApplicationFont(":/font/resources/kepler296.otf");
 
-    level = new Level(true);
-    ui->graphicsView->setScene(level);
+//    std::string path = "../ProyectoFinal/data/";
+
+//    Game *game = new Game(path, true, "Johnny Cage");
+
+//    Q_UNUSED(game);
+
+//    level = new Level(true, path);
+//    ui->graphicsView->setScene(level);
 
 //    minigame = new Minigame(true);
 //    ui->graphicsView->setScene(minigame);
@@ -29,7 +35,7 @@ Widget::Widget(QWidget *parent)
 Widget::~Widget() {
     //delete minigame;
     //delete levels_menu;
-    delete level;
-    delete ui;
+    //delete level;
+    //delete ui;
 }
 

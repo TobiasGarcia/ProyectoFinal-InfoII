@@ -5,6 +5,7 @@
 #include "level/level.h"
 #include "minigame/minigame.h"
 #include "levels_menu/levelsmenu.h"
+#include "game.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }

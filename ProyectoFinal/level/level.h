@@ -53,7 +53,7 @@ private:
     QGraphicsRectItem *health_bar, *ghost_rock;
     void add_enemie(short type);
     void add_power_up();
-    bool get_level_script(short initial_wave);
+    bool get_level_script(short initial_wave, std::string path);
     void add_fire_ball(short x, short y);
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
@@ -68,7 +68,7 @@ private:
     void add_fluid(short i, short j);
 
 public:
-    Level(bool _two_players);
+    Level(bool _two_players, std::string path);
     ~Level();
     Terrain *terrain;
 public slots:

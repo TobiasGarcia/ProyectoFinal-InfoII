@@ -2,7 +2,7 @@
 #include <QDebug>
 
 void Terrain::clean_fluid() {
-    for (short i = 0; i < 10; i++) {
+    for (short i = 0; i < 9; i++) {
         for (short j = 0; j < 13; j++) {
             if ((tiles[i][j] != nullptr) and (tiles[i][j]->get_type() != 1)) {
                 delete tiles[i][j];
@@ -14,7 +14,7 @@ void Terrain::clean_fluid() {
 
 Terrain::Terrain(QGraphicsScene *_level) : level(_level) {
 
-    for (short i = 0; i < 10; i++) tiles[i].fill(nullptr);
+    for (short i = 0; i < 9; i++) tiles[i].fill(nullptr);
 
 //    for (short i = 3; i < 6; i++) {
 //        tiles[i][3] = new TerrainObject(i, 3, 1);
@@ -65,7 +65,7 @@ Terrain::Terrain(QGraphicsScene *_level) : level(_level) {
 }
 
 Terrain::~Terrain() {
-    for (short i = 0; i < 10; i++) {
+    for (short i = 0; i < 9; i++) {
         for (short j = 0; j < 13; j++) {
             if (tiles[i][j] != nullptr) {
                 level->removeItem(tiles[i][j]);
