@@ -22,7 +22,7 @@ public:
     std::array<std::array<TerrainObject*, 13>, 10> tiles;
     void clean_fluid();
 
-    Terrain(QGraphicsScene *_level);
+    Terrain(QGraphicsScene *_level, std::array<std::string, 9> *terrain_matrix);
     ~Terrain();
 };
 

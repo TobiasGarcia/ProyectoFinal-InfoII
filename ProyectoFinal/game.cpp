@@ -100,11 +100,25 @@ void Game::load_game() {
     levels_waves[2] = short(first_line[6]) - 48;
 }
 
-Game::Game(std::string _path, bool _two_players, std::string _game_id, std::string password) :
-    path(_path), game_id(_game_id), two_players(_two_players) {
+Game::Game(std::string _path, QGraphicsView *_game_gv, bool _two_players, std::string _game_id, std::string password) :
+    path(_path), game_id(_game_id), two_players(_two_players), game_gv(_game_gv) {
 
     if (password != "") create_new_game(password);
     else load_game();
+
+    levels_menu = new LevelsMenu(two_players);
+    connect(levels_menu, &LevelsMenu::level_selected, this, &Game::level_selceted);
+    game_gv->setScene(levels_menu);
+}
+
+void Game::level_selceted(short level_num) {
+    delete levels_menu;
+    if (level_num == 0) qDebug() << "Esto no está listo aún.";
+    else {
+        level = new Level(path, two_players, level_num, (levels_waves + (level_num - 1)),
+                          &rocks_num, &fluids_num, &extra_life, &(terrain_matrices[level_num - 1]));
+        game_gv->setScene(level);
+    }
 }
 
 

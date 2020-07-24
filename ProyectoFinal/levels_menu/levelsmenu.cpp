@@ -8,18 +8,22 @@ void LevelsMenu::add_fire_ball(short x, short y) {
     if (state == 0) {
         if (QRectF(314, 20.5, 149, 98).contains(x, y)) {
             needle->point_direction(0);//Level 2
+            level_num = 2;
             state++;
         }
         else if (QRectF(39, 250.5, 149, 98).contains(x, y)) {
             needle->point_direction(1);//Level 3
+            level_num = 3;
             state++;
         }
         else if (QRectF(314, 480.5, 149, 98).contains(x, y)) {
             needle->point_direction(2);//Level 0
+            level_num = 0;
             state++;
         }
         else if (QRectF(589, 250.5, 149, 98).contains(x, y)) {
             needle->point_direction(3);//Level 1
+            level_num = 1;
             state++;
         }
     }
@@ -66,7 +70,7 @@ LevelsMenu::LevelsMenu(bool _two_players) : two_players(_two_players) {
     setBackgroundBrush(QBrush(QPixmap(":/leves_menu/resources/images/levels_menu/backgorund.png")));
 
     black_screen = new BlackScreen;
-    connect(black_screen, &BlackScreen::finish, this, &LevelsMenu::finish);
+    connect(black_screen, &BlackScreen::finish, this, &LevelsMenu::black_screen_finish);
     addItem(black_screen);
 
     levels =  new QGraphicsPixmapItem[4];
@@ -80,7 +84,7 @@ LevelsMenu::LevelsMenu(bool _two_players) : two_players(_two_players) {
     }
 
     needle = new Needle;
-    connect(needle, &Needle::level_selected, this, &LevelsMenu::level_selected);
+    connect(needle, &Needle::finish, this, &LevelsMenu::needle_finish);
     addItem(needle);
 
     player1 = new Player(8, 1);
@@ -126,10 +130,10 @@ LevelsMenu::~LevelsMenu() {
     delete black_screen;
 }
 
-void LevelsMenu::level_selected() {
+void LevelsMenu::needle_finish() {
     black_screen->change_opacity(true);
 }
 
-void LevelsMenu::finish() {
-    qDebug() << "Finish";
+void LevelsMenu::black_screen_finish() {
+    emit level_selected(level_num);
 }

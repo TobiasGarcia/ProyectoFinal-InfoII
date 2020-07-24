@@ -340,8 +340,8 @@ bool Enemy::collisions_handler(QList<QGraphicsItem*> collisions) {
                 rock_collision();
                 return true;
             }
-            else if (terrain_object->get_type() == 2) speed = 1.4*speed_aux;
             else if (terrain_object->get_type() == 3) speed = 0.6*speed_aux;
+            else if (terrain_object->get_type() == 2) speed = 1.4*speed_aux;
         }
         else if (typeid(*item) == typeid(Base)) {
             move_timer->stop();

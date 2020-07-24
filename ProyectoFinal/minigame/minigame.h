@@ -10,6 +10,9 @@
 #include <information.h>
 
 class Minigame: public QGraphicsScene {
+
+    Q_OBJECT
+
 private:
     QString message;
     Ball *ball;

@@ -67,12 +67,17 @@ void Level::keyReleaseEvent(QKeyEvent *event) {
     else if (event->key() == Qt::Key_B) add_fluid(player2->y()/60, player2->x()/60);
 }
 
-Level::Level(bool _two_players, std::string path) : two_players(_two_players) {
+Level::Level(std::string path, bool _two_players, short level_num, short *_wave, short *_rocks_num,
+             short *_fluids_num, bool *_extra_life, std::array<std::string, 9> *terrain_matrix) :
 
+             two_players(_two_players), extra_life(_extra_life), rocks_num(_rocks_num),
+             fluids_num(_fluids_num), wave(_wave) {
+
+    //(*wave) = 2;
     setSceneRect(0, 0, 779, 599); //780x600 pixeles para que los jugadores se muevan de 15 en 15.
     setBackgroundBrush(QBrush(QPixmap(":/textures/resources/images/floor_texture.png")));
 
-    if (!get_level_script(2, path)) qDebug() << "No se abrió el archivo >:(";
+    if (!get_level_script(path, level_num)) qDebug() << "No se abrió el archivo >:(";
     next = true;
 
     instructions_timer = new QTimer;
@@ -97,12 +102,10 @@ Level::Level(bool _two_players, std::string path) : two_players(_two_players) {
 //                                                  "Nota: A+"));
 //    information->setZValue(7);
 
-    terrain = new Terrain(this);
-    display_terrain();
+    terrain = new Terrain(this, terrain_matrix);
+    while ((terrain->rocks_num + (*rocks_num)) > 15) (*rocks_num)--;
 
-    //Se mide en porcentaje, pero como 100.0, con una cifra decimal.
-    rock_index = -1;
-    fluid_index = -1;
+    display_terrain();
 
     initialize_template();
 
@@ -118,69 +121,69 @@ Level::Level(bool _two_players, std::string path) : two_players(_two_players) {
     base = new Base(health_bar, 1000);//Salud inicial de la base.
     addItem(base);
 
-//    enemie = new Snail(-1, 3, this, terrain, 0);
-//    make_connections(enemie);
-//    enemies.append(enemie);
-//    addItem(enemie);
+////    enemie = new Snail(-1, 3, this, terrain, 0);
+////    make_connections(enemie);
+////    enemies.append(enemie);
+////    addItem(enemie);
 
-//    enemie = new Snail(2, -1, this, terrain, 1);
-//    make_connections(enemie);
-//    enemies.append(enemie);
-//    addItem(enemie);
+////    enemie = new Snail(2, -1, this, terrain, 1);
+////    make_connections(enemie);
+////    enemies.append(enemie);
+////    addItem(enemie);
 
-//    enemie = new Snail(9, 4, this, terrain, 2);
-//    make_connections(enemie);
-//    enemies.append(enemie);
-//    addItem(enemie);
+////    enemie = new Snail(9, 4, this, terrain, 2);
+////    make_connections(enemie);
+////    enemies.append(enemie);
+////    addItem(enemie);
 
-//    enemie = new Snail(5, 13, this, terrain, 3);
-//    make_connections(enemie);
-//    enemies.append(enemie);
-//    addItem(enemie);
+////    enemie = new Snail(5, 13, this, terrain, 3);
+////    make_connections(enemie);
+////    enemies.append(enemie);
+////    addItem(enemie);
 
-//    carlos = new Enemy(9, 3, 1, this, terrain, 1);
-//    make_connections(carlos);
-//    enemies.append(carlos);
-//    addItem(carlos);
+////    carlos = new Enemy(9, 3, 1, this, terrain, 1);
+////    make_connections(carlos);
+////    enemies.append(carlos);
+////    addItem(carlos);
 
-//    carlos = new Chamaleon(-1, 6, this, terrain, 1);
-//    make_connections(carlos);
-//    enemies.append(carlos);
-//    addItem(carlos);
+////    carlos = new Chamaleon(-1, 6, this, terrain, 1);
+////    make_connections(carlos);
+////    enemies.append(carlos);
+////    addItem(carlos);
 
-//    carlos = new Mole(9, 4, this, terrain, 2);
-//    make_connections(carlos);
-//    enemies.append(carlos);
-//    addItem(carlos);
+////    carlos = new Mole(9, 4, this, terrain, 2);
+////    make_connections(carlos);
+////    enemies.append(carlos);
+////    addItem(carlos);
 
-//    carlos = new Snail(0, 13, this, terrain, 3);
-//    make_connections(carlos);
-//    enemies.append(carlos);
-//    addItem(carlos);
+////    carlos = new Snail(0, 13, this, terrain, 3);
+////    make_connections(carlos);
+////    enemies.append(carlos);
+////    addItem(carlos);
 
-//    carlos = new Porcupine(9, 12, this, terrain, 4);
-//    make_connections(carlos);
-//    enemies.append(carlos);
-//    addItem(carlos);
+////    carlos = new Porcupine(9, 12, this, terrain, 4);
+////    make_connections(carlos);
+////    enemies.append(carlos);
+////    addItem(carlos);
 
-//    carlos = new Owl(-1, 6, this, terrain, 5);
-//    make_connections(carlos);
-//    enemies.append(carlos);
-//    addItem(carlos);
+////    carlos = new Owl(-1, 6, this, terrain, 5);
+////    make_connections(carlos);
+////    enemies.append(carlos);
+////    addItem(carlos);
 
-//    carlos = new Vulture(9, 4, this, terrain, 6);
-//    make_connections(carlos);
-//    enemies.append(carlos);
-//    addItem(carlos);
+////    carlos = new Vulture(9, 4, this, terrain, 6);
+////    make_connections(carlos);
+////    enemies.append(carlos);
+////    addItem(carlos);
 
-//    terrain->tiles[4][9] = new TerrainObject(540, 240, 1);
-//    terrain->tiles[3][3] = new TerrainObject(180, 180, 1);
-//    terrain->tiles[4][3] = new TerrainObject(180, 240, 1);
-//    terrain->tiles[5][3] = new TerrainObject(180, 300, 1);
+////    terrain->tiles[4][9] = new TerrainObject(540, 240, 1);
+////    terrain->tiles[3][3] = new TerrainObject(180, 180, 1);
+////    terrain->tiles[4][3] = new TerrainObject(180, 240, 1);
+////    terrain->tiles[5][3] = new TerrainObject(180, 300, 1);
 
-//    power_up = new PowerUp(rand()%4, 4);
-//    connect(power_up, &PowerUp::give_power, this, &Level::give_power);
-//    addItem(power_up);
+////    power_up = new PowerUp(rand()%4, 4);
+////    connect(power_up, &PowerUp::give_power, this, &Level::give_power);
+////    addItem(power_up);
 
     player1 = new Player(5, 5);
     addItem(player1);
@@ -223,15 +226,15 @@ void Level::give_power(short power_type) {
     }
     else if (power_type == 2) base->increase_health(200);
     else if (power_type == 3) {
-        while (fluid_index < 3) {
-            fluid_index++;
-            addItem(fluid_powers + fluid_index);
+        while ((*fluids_num) < 4) {
+            (*fluids_num)++;
+            addItem(fluid_powers + (*fluids_num) - 1);
         }
     }
     else {
-        while ((rock_index < 3) and ((terrain->rocks_num + (rock_index + 1)) < 15)) {
-            rock_index++;
-            addItem(rock_powers + rock_index);
+        while (((*rocks_num) < 4) and ((terrain->rocks_num + (*rocks_num)) < 15)) {
+            (*rocks_num)++;
+            addItem(rock_powers + (*rocks_num) - 1);
         }
     }
 }
@@ -250,13 +253,15 @@ void Level::add_enemie(short type) {
     short i, j, side = rand()%4;
 
     if (side%2) {
-        i = rand()%8;
+        i = rand()%9;
         j = 7*side - 8;
     }
     else {
         i = 5*side - 1;
         j = rand()%13;
     }
+
+    qDebug() << i << "  " << j;
 
     if (type == 8) enemie = new Vulture(this, terrain, enemies.size());
     else if (type == 7) enemie = new Mole(this, terrain, enemies.size());
@@ -294,6 +299,7 @@ void Level::next_instruction() {
     //qDebug() << QString::fromUtf8(instruction.c_str());
     if (instruction[0] == 'W') {
 
+        (*wave)++;
         information->display_message(389, 194,  "Oleada " + QString(instruction[1]));
         information->set_display_time(3000);
 
@@ -350,7 +356,7 @@ void Level::finish_delay() {
 
 void Level::display_terrain() {
 
-    for (short i = 0; i < 10; i++) for (short j = 0; j < 13; j++) {
+    for (short i = 0; i < 9; i++) for (short j = 0; j < 13; j++) {
         if (terrain->tiles[i][j] != nullptr) addItem(terrain->tiles[i][j]);
     }
 
@@ -410,7 +416,7 @@ void Level::display_hud(short initial_health) {
         rock_powers[i].setPixmap(QPixmap(":/power_ups/resources/images/power_ups/rock_power.png"));
         rock_powers[i].setPos(20 + 50*i, 555);
         rock_powers[i].setZValue(5);
-        if (i <= rock_index) addItem(rock_powers + i);
+        if (i < (*rocks_num)) addItem(rock_powers + i);
     }
 
     fluid_powers = new QGraphicsPixmapItem[4];
@@ -418,7 +424,7 @@ void Level::display_hud(short initial_health) {
         fluid_powers[i].setPixmap(QPixmap(":/power_ups/resources/images/power_ups/fluid_power.png"));
         fluid_powers[i].setPos(730 - 50*i, 555);
         fluid_powers[i].setZValue(5);
-        if (i <= fluid_index) addItem(fluid_powers + i);
+        if (i < (*fluids_num)) addItem(fluid_powers + i);
     }
 }
 
@@ -481,7 +487,7 @@ void Level::initialize_template() {
 
 void Level::add_rock(short i, short j) {
 
-    if (rock_index == -1) return;
+    if ((*rocks_num) == 0) return;
 
     //Verificamos que sea una de las baldosas donde se pueden colocar
     //las rocas.
@@ -527,8 +533,8 @@ void Level::add_rock(short i, short j) {
         terrain->tiles[i][j] = new TerrainObject(i, j, 1);
         addItem(terrain->tiles[i][j]);
 
-        removeItem(rock_powers + rock_index);
-        rock_index--;
+        removeItem(rock_powers + (*rocks_num) - 1);
+        (*rocks_num)--;
 
         terrain->rocks_num++;
     }
@@ -536,14 +542,14 @@ void Level::add_rock(short i, short j) {
 
 void Level::add_fluid(short i, short j) {
 
-    if (fluid_index == -1) return;
+    if ((*fluids_num) == 0) return;
     else if ((i == 4) and (j == 6)) return;
     else if (terrain->tiles[i][j] == nullptr) {
         terrain->tiles[i][j] = new TerrainObject(i, j, 3);
         addItem(terrain->tiles[i][j]);
 
-        removeItem(fluid_powers + fluid_index);
-        fluid_index--;
+        removeItem(fluid_powers + (*fluids_num) - 1);
+        (*fluids_num)--;
     }
     else if (terrain->tiles[i][j]->get_type() == 2) {
         removeItem(terrain->tiles[i][j]);
@@ -552,8 +558,8 @@ void Level::add_fluid(short i, short j) {
         terrain->tiles[i][j] = new TerrainObject(i, j, 3);
         addItem(terrain->tiles[i][j]);
 
-        removeItem(fluid_powers + fluid_index);
-        fluid_index--;
+        removeItem(fluid_powers + (*fluids_num) - 1);
+        (*fluids_num)--;
     }
 
     //Simplemente salimo si hay un fluido colocado por los jugadores
@@ -561,20 +567,25 @@ void Level::add_fluid(short i, short j) {
 
 }
 
-bool Level::get_level_script(short initial_wave, std::string path) {
+bool Level::get_level_script(std::string path, short level_num) {
 
     bool current_game = false;
-    std::fstream file(path + "levels_scripts/level1.txt", std::ios::in);
+    std::fstream file(path + "levels_scripts/level" + char(level_num + 48) + ".txt", std::ios::in);
     if (file.is_open()) {
         while (getline(file, instruction)) {
 
             if (current_game) script.push(instruction);
-            else if ((instruction[0] == 'W') and ((short(instruction[1]) - 48) == initial_wave)) {
+            else if ((instruction[0] == 'W') and ((short(instruction[1]) - 48) == (*wave))) {
                 script.push(instruction);
                 current_game = true;
             }
         }
         file.close();
+
+        //Le bajamos uno para que cuando se comiencen a ejecutar las
+        //instrucciones se compense.
+
+        (*wave)--;
         return true;
     }
     else return false;

@@ -6,6 +6,8 @@
 #include "minigame/minigame.h"
 #include "levels_menu/levelsmenu.h"
 #include "game.h"
+#include <fstream>
+#include <vector>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -19,10 +21,36 @@ public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
 
+private slots:
+    void on_new_btn_clicked();
+
+    void on_return_new_btn_clicked();
+
+    void on_return_log_btn_clicked();
+
+    void on_load_btn_clicked();
+
+    void on_pass_cbox_stateChanged(int arg1);
+
+    void on_register_btn_clicked();
+
+    void on_mode_btn_clicked();
+
 private:
+    bool two_players;
     Ui::Widget *ui;
     Level *level;
     Minigame *minigame;
     LevelsMenu *levels_menu;
+    std::string path;
+    Game *game;
+
+    //Mantenemos la información del control de acceso cargada.
+
+    std::vector<std::array<std::string, 2>> games_id_pass;
+
+    bool normal_characters(QString str);
+    bool search_id(std::string id, unsigned short &index);
+    void start_new_game();
 };
 #endif // WIDGET_H

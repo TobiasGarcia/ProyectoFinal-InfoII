@@ -10,8 +10,11 @@
 #include "blackscreen.h"
 
 class LevelsMenu: public QGraphicsScene {
+
+    Q_OBJECT
+
 private:
-    short state;
+    short state, level_num;
     Needle *needle;
     bool two_players;
     Player *player1, *player2;
@@ -26,8 +29,10 @@ public:
     LevelsMenu(bool _two_players);
     ~LevelsMenu();
 public slots:
-    void level_selected();
-    void finish();
+    void needle_finish();
+    void black_screen_finish();
+signals:
+    void level_selected(short level_num);
 };
 
 #endif // LEVELSMENU_H

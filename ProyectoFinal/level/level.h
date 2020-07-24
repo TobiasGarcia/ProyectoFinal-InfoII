@@ -35,9 +35,9 @@ private:
     //se debe retirar la plantialla, de otro modo es porque hay algún jugador que
     //la necesita.
 
-    bool next, pause, two_players, power_up_bool;
+    bool next, pause, two_players, power_up_bool, extra_life;
     Information *information;
-    short rock_index, fluid_index, template_on, enemie_count, max_enemies;
+    short *rocks_num, *fluids_num, *wave, template_on, enemie_count, max_enemies;
     PowerUp *power_up;
     QList<Enemy*> enemies;
     QGraphicsPixmapItem *rock_powers, *fluid_powers, *power_template;
@@ -53,7 +53,7 @@ private:
     QGraphicsRectItem *health_bar, *ghost_rock;
     void add_enemie(short type);
     void add_power_up();
-    bool get_level_script(short initial_wave, std::string path);
+    bool get_level_script(std::string path, short level_num);
     void add_fire_ball(short x, short y);
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
@@ -68,7 +68,8 @@ private:
     void add_fluid(short i, short j);
 
 public:
-    Level(bool _two_players, std::string path);
+    Level(std::string path, bool _two_players, short level_num, short *_wave, short *_rocks_num,
+          short *_fluids_num, bool *_extra_life, std::array<std::string, 9> *terrain_matrix);
     ~Level();
     Terrain *terrain;
 public slots:

@@ -94,6 +94,6 @@ void Needle::move() {
 
     if ((gamma != 0) and (amp*exp(-gamma*time) < 0.8)) {
         move_timer->stop();
-        emit level_selected();
+        emit finish();
     }
 }
