@@ -329,7 +329,7 @@ void Vulture::move() {
             straight_line = false;
             r = radio();
             setPos(389 + r*cos(angle), 269 - r*sin(angle) - offset);
-            spd = 330;
+            spd = 300;
         }
     }
     else {
@@ -372,7 +372,9 @@ bool Vulture::collisions_handler(QList<QGraphicsItem*> collisions) {
         if (typeid(*item) == typeid(Base)) {
 
             move_timer->stop();
-            qDebug() << "EXPLOUIIII!";
+            emit vulture_hit();
+
+            reduces_health(max_health);
             return true;
         }
     }

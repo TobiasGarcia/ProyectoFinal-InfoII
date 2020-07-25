@@ -15,16 +15,36 @@ void Level::keyPressEvent(QKeyEvent *event) {
     else if (two_players and (event->key() == Qt::Key_S)) player2->move_dir[2] = true;
     else if (two_players and (event->key() == Qt::Key_D)) player2->move_dir[3] = true;
 
-    else if (event->key() == Qt::Key_Escape) {
+    else if ((event->key() == Qt::Key_P) and pause) emit update_level_progress(1);
+
+    //Si se presiona la tecla Esc, debemos deciride cuando podemos entrar al menú de pausa:
+    //si no estamos en el menú de pausa y no hay información en la pantalla, es decir,
+    //information->scene() es nullptr, entramos al menú; si no estamos en el menú de
+    //pausa pero sí hay información en la pantalla, es decir, information->scene()
+    //no es nulo, NO entramos al menú de pausa; y si estamos en pausa siempre
+    //deberemos poder salir de esta.
+
+    else if ((event->key() == Qt::Key_Escape) and (pause or (information->scene() == nullptr))) {
+        if (pause) removeItem(information);
+        else information->display_message(389, 182, "\t\t     PAUSA\n\n"
+                                                    "Presiona Esc de nuevo para volver al juego.\n"
+                                                    "Presiona la tecla P para volver al menú\n"
+                                                    "de niveles.");
+        set_global_freez(!pause);
         pause = !pause;
-
-        set_freez(pause);
-        if (power_up_bool) power_up->set_freez(pause);
-
-        player1->set_freez(pause);
-        if (two_players) player2->set_freez(pause);
     }
-    else if (pause) return;
+
+    //Si los jugadores están quietos, igual debemos actualizar su arreglo move_dir,
+    //esto es para que si los jugadores dejan unidas algunas teclas y se retira
+    //el freez, el juego si reaccione correctamente; por otra parte, debemos
+    //retornar aquí en caso de que los jugadores estén en freez, pues
+    //no podemos permitir que disparen fire balls o coloquen objetos
+    //en el terreno.
+
+    //Notemos que basta preguntar sólo al primer jugador pues él está congelado
+    //si y solo si el segundo también.
+
+    else if (player1->freez) return;
 
     //Qt::Key_Return es el enter cercano a las flechas, Qt::Key_Enter es el del Numeric Keypad.
 
@@ -51,7 +71,9 @@ void Level::keyReleaseEvent(QKeyEvent *event) {
     else if (two_players and (event->key() == Qt::Key_S)) player2->move_dir[2] = false;
     else if (two_players and (event->key() == Qt::Key_D)) player2->move_dir[3] = false;
 
-    else if (pause) return;
+    //El propósito del siguiente condicional es análogo al que se encuentra en keyPressEvent().
+
+    else if (player1->freez) return;
 
     else if (event->key() == Qt::Key_Backspace) {
         template_on--;
@@ -80,14 +102,20 @@ Level::Level(std::string path, bool _two_players, short level_num, short initial
     if (!get_level_script(path, level_num, initial_wave)) qDebug() << "No se abrió el archivo >:(";
     next = true;
 
+    enemie = nullptr;
+
+    gameover = false;
+
+    active_timers[0] = false;
+    active_timers[1] = false;
+    active_timers[2] = false;
+
     instructions_timer = new QTimer;
     connect(instructions_timer, &QTimer::timeout, this, &Level::next_instruction);
 
     delay_timer = new QTimer;
     delay_timer->setSingleShot(true);
     connect(delay_timer, &QTimer::timeout, this, &Level::finish_delay);
-
-    power_up_bool = false;
 
     black_screen = new BlackScreen;
     connect(black_screen, &BlackScreen::finish, this, &Level::finish_level);
@@ -112,7 +140,18 @@ Level::Level(std::string path, bool _two_players, short level_num, short initial
     connect(freez_timer, &QTimer::timeout, this, &Level::defrost);
 
     display_hud(*health);//Salud inicial de la base.
-    base = new Base(health_bar, health);//Salud inicial de la base.
+
+    lifebuoy = nullptr;
+    if ((*extra_life)) {
+        lifebuoy = new QGraphicsPixmapItem(QPixmap(":/images/resources/images/lifebuoy_small.png"));
+        lifebuoy->setOffset(-30, -30);
+        lifebuoy->setPos(390, 270);
+        lifebuoy->setZValue(3);
+        addItem(lifebuoy);
+    }
+
+    base = new Base(health_bar, health, extra_life, lifebuoy);//Salud inicial de la base.
+    connect(base, &Base::no_health, this, &Level::no_health);
     addItem(base);
 
 ////    enemie = new Snail(-1, 3, this, terrain, 0);
@@ -179,6 +218,8 @@ Level::Level(std::string path, bool _two_players, short level_num, short initial
 ////    connect(power_up, &PowerUp::give_power, this, &Level::give_power);
 ////    addItem(power_up);
 
+    power_up = nullptr;
+
     player1 = new Player(5, 5, true);
     addItem(player1);
 
@@ -190,13 +231,13 @@ Level::Level(std::string path, bool _two_players, short level_num, short initial
     pause = false;
     black_screen->change_opacity(false);
     instructions_timer->start(500);
+    active_timers[0] = true;
 }
 
 Level::~Level() {
-    //delete carlos;
     delete information;
     delete player1;
-    delete player2;
+    if (two_players) delete player2;
     delete terrain;
     delete health_bar;
     delete freez_timer;
@@ -207,18 +248,20 @@ Level::~Level() {
     delete instructions_timer;
     delete delay_timer;
     delete black_screen;
-    //delete base;
-    //delete power_up;
+    if (lifebuoy != nullptr) delete lifebuoy;
+    delete base;
+    if (power_up != nullptr) delete power_up;
 }
 
 void Level::give_power(short power_type) {
 
-    power_up_bool = false;
+    power_up = nullptr;
 
     if (power_type == 0) hit_all_enemies();
     else if (power_type == 1) {
-        set_freez(true);
+        set_enemies_freez(true);
         freez_timer->start(5000);
+        active_timers[2] = true;
     }
     else if (power_type == 2) base->increase_health(200);
     else if (power_type == 3) {
@@ -241,7 +284,8 @@ void Level::remove_enemy(short list_index) {
 }
 
 void Level::defrost() {
-    set_freez(false);
+    set_enemies_freez(false);
+    active_timers[2] = false;
 }
 
 void Level::add_enemie(short type) {
@@ -257,7 +301,12 @@ void Level::add_enemie(short type) {
         j = rand()%13;
     }
 
-    if (type == 8) enemie = new Vulture(this, terrain, enemies.size());
+    //La memoria almacenada por enemie se libera cuando se le baja toda la vida.
+
+    if (type == 8) {
+        enemie = new Vulture(this, terrain, enemies.size());
+        connect(enemie, &Enemy::vulture_hit, base, &Base::vulture_hit);
+    }
     else if (type == 7) enemie = new Mole(this, terrain, enemies.size());
     else if (type == 6) enemie = new Chamaleon(i, j, this, terrain, enemies.size());
     else if (type == 5) enemie = new Owl(i, j, this, terrain, enemies.size());
@@ -270,8 +319,6 @@ void Level::add_enemie(short type) {
 }
 
 void Level::add_power_up() {
-
-    power_up_bool = true;
 
     //El rand()%3 es para que sea más probable que salga true que false.
 
@@ -296,16 +343,22 @@ void Level::next_instruction() {
         //El número de la oleada se aumenta cuando se guarda la partida
         //y no es la oleada final.
 
-        information->display_message(389, 194,  "Oleada " + QString(instruction[1]));
+        information->display_message(389, 194, "Oleada " + QString(instruction[1]));
         information->set_display_time(3000);
 
         delay_timer->start(3000);
+        active_timers[1] = true;
+
         instructions_timer->stop();
+        active_timers[0] = false;
     }
     else if (instruction[0] == 'S') {
         //qDebug() << "STOP" << std::stoi(instruction.substr(1));
         delay_timer->start(std::stoi(instruction.substr(1)));
+        active_timers[1] = true;
+
         instructions_timer->stop();
+        active_timers[0] = false;
     }
     else if (instruction[0] == 'E') {
         if (next) {
@@ -331,31 +384,55 @@ void Level::next_instruction() {
             //if (instruction[1] == '1') terrain->clean_fluid();
             if (instruction[1] == '0') {
                 terrain->update_terrain_matrix(terrain_matrix);
-                emit save_game(false);
+                emit update_level_progress(2);
                 information->display_message(389, 194, "¡Fin de la Oleada!");
+                information->set_display_time(3000);
             }
             else information->display_message(389, 194, "Nivel Superado");
 
-            information->set_display_time(3000);
-
             delay_timer->start(3000);
+            active_timers[1] = true;
+
             instructions_timer->stop();
+            active_timers[0] = false;
         }
     }
     else {
         black_screen->change_opacity(true);
         instructions_timer->stop();
+        active_timers[0] = false;
     }
 
     if (next) script.pop();
 }
 
 void Level::finish_delay() {
-    instructions_timer->start(500);
+
+    if (gameover) black_screen->change_opacity(true);
+    else {
+        instructions_timer->start(500);
+        active_timers[0] = true;
+        active_timers[1] = false;
+    }
 }
 
 void Level::finish_level() {
-    emit save_game(true);
+    emit update_level_progress((gameover?0:3));
+}
+
+void Level::no_health() {
+
+    gameover = true;
+    set_global_freez(true);
+    information->display_message(389, 194, "La base ha sido destruida");
+
+    //El timer delay_timer activará la pantalla negra, la cual posteriormente
+    //activará el slot de finish_level, el cual emitirá la señal de
+    //update_level_progress con un valor de 0 pues gameover
+    //está en true.
+
+    delay_timer->start(3000);
+    active_timers[1] = true;
 }
 
 void Level::display_terrain() {
@@ -464,7 +541,7 @@ void Level::make_connections(Enemy *enemy) {
     connect(this, &Level::update_index, enemy, &Enemy::update_index);
 }
 
-void Level::set_freez(bool freez) {
+void Level::set_enemies_freez(bool freez) {
 
     base->set_vulnerable(!freez);
     for (short i = 0; i < enemies.size(); i++) {
@@ -571,6 +648,47 @@ void Level::add_fluid(short i, short j) {
 
 }
 
+void Level::set_global_freez(bool freez) {
+
+    //Permite detener el juego justo donde está, para luego poder
+    //retormarlo justo como estaba. A exceción de Information.
+
+    set_enemies_freez(freez);
+    if (power_up != nullptr) power_up->set_freez(freez);
+
+    player1->freez = freez;
+    if (two_players) player2->freez = freez;
+
+    if (freez) {
+        if (active_timers[0]) {
+            remainings[0] = instructions_timer->remainingTime();
+            instructions_timer->stop();
+        }
+        if (active_timers[1]) {
+            remainings[1] = delay_timer->remainingTime();
+            delay_timer->stop();
+        }
+        if (active_timers[2]) {
+            remainings[2] = freez_timer->remainingTime();
+            freez_timer->stop();
+        }
+    }
+    else {
+        if (active_timers[0]) {
+            instructions_timer->start(remainings[0]);
+            active_timers[0] = true;
+        }
+        if (active_timers[1]) {
+            delay_timer->start(remainings[1]);
+            active_timers[1] = true;
+        }
+        if (active_timers[2]) {
+            freez_timer->start(remainings[2]);
+            active_timers[2] = true;
+        }
+    }
+}
+
 bool Level::get_level_script(std::string path, short level_num, short initial_wave) {
 
     bool current_game = false;
@@ -595,6 +713,9 @@ bool Level::get_level_script(std::string path, short level_num, short initial_wa
 }
 
 void Level::add_fire_ball(short x, short y) {
+
+    //La memoria de la fire ball se libera cuando ella sola se destruye.
+
     fire_ball = new FireBall(x, y);
     addItem(fire_ball);
     //Tiene que ser después de que se agregó a la escena,

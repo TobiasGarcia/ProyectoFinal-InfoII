@@ -1,7 +1,8 @@
 #include "base.h"
 #include <QDebug>
 
-Base::Base(QGraphicsRectItem *_health_bar, short *_health) : health_bar(_health_bar), health(_health) {
+Base::Base(QGraphicsRectItem *_health_bar, short *_health, bool *_extra_life, QGraphicsPixmapItem *_lifebuoy) :
+    lifebuoy(_lifebuoy), extra_life(_extra_life), health_bar(_health_bar), health(_health) {
 
     vulnerable = true;
 
@@ -17,15 +18,15 @@ Base::Base(QGraphicsRectItem *_health_bar, short *_health) : health_bar(_health_
     center = new QGraphicsPixmapItem(pix[0], this);
     center->setPos(19, 19);
 
-    bitten_timer = new QTimer;
-    bitten_timer->setSingleShot(true);
-    connect(bitten_timer, &QTimer::timeout, this, &Base::return_normal);
+    hurt_timer = new QTimer;
+    hurt_timer->setSingleShot(true);
+    connect(hurt_timer, &QTimer::timeout, this, &Base::return_normal);
 }
 
 Base::~Base() {
     delete center;
     delete[] pix;
-    delete bitten_timer;
+    delete hurt_timer;
 }
 
 void Base::increase_health(short increment) {
@@ -37,14 +38,50 @@ void Base::increase_health(short increment) {
 void Base::bitten() {
     if (vulnerable) {
         (*health) -= 10;
+
+        if (((*health) < 300) and (*extra_life)) {
+            scene()->removeItem(lifebuoy);
+            hurt_timer->start(500);
+            (*extra_life) = false;
+            (*health) = 1000;
+        }
+        else if ((*health) == 0) {
+            if (hurt_timer->isActive()) hurt_timer->stop();
+            vulnerable = false;
+            emit no_health();
+        }
+        else hurt_timer->start(500);
+
         health_bar->setRect(221, 544, 337*((*health)/1000.0), 51);
         center->setPixmap(pix[1]);
-        bitten_timer->start(500);
     }
 }
 
 void Base::return_normal() {
     center->setPixmap(pix[0]);
+}
+
+void Base::vulture_hit() {
+
+    if ((*extra_life)) {
+        scene()->removeItem(lifebuoy);
+        hurt_timer->start(500);
+        (*extra_life) = false;
+        (*health) = 1000;
+
+        health_bar->setRect(221, 544, 337*((*health)/1000.0), 51);
+        center->setPixmap(pix[1]);
+    }
+    else {
+        (*health) = 0;
+
+        if (hurt_timer->isActive()) hurt_timer->stop();
+        vulnerable = false;
+        emit no_health();
+
+        health_bar->setRect(221, 544, 337*((*health)/1000.0), 51);
+        center->setPixmap(pix[1]);
+    }
 }
 
 

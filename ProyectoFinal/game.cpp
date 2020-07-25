@@ -151,14 +151,15 @@ void Game::level_selceted(short level_num) {
             level = new Level(path, two_players, level_num, levels_waves[level_num - 1],
                               &rocks_num, &fluids_num, &extra_life, (healths + (level_num - 1)),
                               &(terrain_matrices[level_num - 1]));
-            connect(level, &Level::save_game, this, &Game::save_game_slot);
+            connect(level, &Level::update_level_progress, this, &Game::update_level_progress);
             game_gv->setScene(level);
         }
     }
 }
 
-void Game::save_game_slot(bool level_finished) {
-    if (level_finished) {
+void Game::update_level_progress(short progress_type) {
+
+    if (progress_type == 3) {
         delete level;
 
         //Como terrain_matrices es un std::array y no un array de la forma [],
@@ -183,9 +184,46 @@ void Game::save_game_slot(bool level_finished) {
         connect(minigame, &Minigame::minigame_finished, this, &Game::minigame_finished);
         game_gv->setScene(minigame);
     }
-    else {
+    else if (progress_type == 2) {
+
+        //En este punto la matriz de terreno de std::strings está actualizada
+        //con la info del terreno de la partida como tal.
+
         levels_waves[current_level - 1]++;
         save_game();
+    }
+    else {
+        delete level;
+
+////        En este punto la matriz de terreno de std::strings NO está actualizada
+////        con la info del terreno de la partida como tal, por lo cual, como
+////        queremos que el jugador pueda retornar con el anterior terreno,
+////        el hecho que no esté actualizada es necesario.
+
+////        La oleada tampoco se actualizó, por lo cual regresará a donde estaba.
+
+////        Colocamos la salud de la base de nuevo en 1000, para que cuando regrese
+////        de nuevo al nivel tenga una ventaja, pues la base poseerá una vida
+////        mayor o igual a la que tenía cuando inició la oleada en que fue
+////        derrotado.
+
+        load_game();
+
+        //En caso de que del nivel se haya salido porque la base fue destruida, le ayudamos un poco
+        //al jugador de caso de que la vida de la base haya quedado muy baja cuando se guardó la
+        //partida, haciendo que cuando vuevla a entrar al nivel la vida de la base será el
+        //máximo entre la vida que tenía y 500.
+
+        if ((progress_type == 0) and (healths[current_level - 1] < 500)) {
+            healths[current_level - 1] = 500;
+            save_game();
+        }
+
+        //Volvemos al menú de niveles.
+
+        levels_menu = new LevelsMenu(two_players, rocks_num, fluids_num, extra_life, levels_waves, winner);
+        connect(levels_menu, &LevelsMenu::level_selected, this, &Game::level_selceted);
+        game_gv->setScene(levels_menu);
     }
 }
 

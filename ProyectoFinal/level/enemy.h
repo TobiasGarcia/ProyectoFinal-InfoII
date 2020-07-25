@@ -35,7 +35,7 @@ private:
     QVector2D dir;
     QTimer *health_on_timer;
     QPixmap *pix;
-    short width_half, height_half, type, health, max_health;
+    short width_half, height_half, type, health;
 
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -59,7 +59,7 @@ protected:
     //enemigos especiales.
     QGraphicsScene *level;
     Terrain *terrain;
-    short list_index, spd;
+    short list_index, spd, max_health;
 
     void update_target();
     void recalculate_initial_tile(short tile[2]);
@@ -88,6 +88,13 @@ public slots:
 signals:
     void first_bite();
     void remove_enemy(short list_index);
+
+    //El compilador presentaba problemas al utilizar la macro Q_OBJECT dentro de special_enemies.h,
+    //aunque esta es necesaria en la declaración de la calse, heredada de Enemy, Vulture, pues debía
+    //utilizar una señal, por lo cual es preferible declarar la señal dentro de la clase Enemy
+    //como tal, aunque esta sólo sea utilizada por la clase heredada Vulture.
+
+    void vulture_hit();
 };
 
 #endif // ENEMY_H

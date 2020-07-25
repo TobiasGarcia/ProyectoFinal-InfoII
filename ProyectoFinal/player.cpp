@@ -34,6 +34,7 @@ Player::Player(short i, short j, bool level, bool _player_one) : player_one(_pla
 Player::~Player() {
     delete pix;
     delete delay_timer;
+    delete move_timer;
 }
 
 void Player::move() {

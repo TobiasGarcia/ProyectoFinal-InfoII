@@ -65,6 +65,7 @@ void Enemy::reduces_health(short hit) {
     if (health == 0) {
         emit remove_enemy(list_index);
         if (scene() != NULL) level->removeItem(this);
+        if (bite_timer->isActive()) bite_timer->stop();
         defeated = true;
         freez = true;
     }
@@ -349,6 +350,7 @@ bool Enemy::collisions_handler(QList<QGraphicsItem*> collisions) {
             //No se puede emitir la señal timeout manualmente,
             //por lo cual definimos una señal auxiliar para
             //enviar al comenzar el timer.
+
             emit first_bite();
             bite_timer->start(1000);
             return true;

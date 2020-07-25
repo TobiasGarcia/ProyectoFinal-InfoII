@@ -2,6 +2,7 @@
 #define BASE_H
 
 #include <QGraphicsPixmapItem>
+#include <QGraphicsScene>
 #include <QTimer>
 
 class Base: public QObject, public QGraphicsPixmapItem {
@@ -9,14 +10,15 @@ class Base: public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
 private:
-    bool vulnerable;
+    QGraphicsPixmapItem *lifebuoy;
+    bool vulnerable, *extra_life;
     QGraphicsRectItem *health_bar;
     QPixmap *pix;
     short *health;
-    QTimer *bitten_timer;
+    QTimer *hurt_timer;
 
 public:
-    Base(QGraphicsRectItem *_health_bar, short *_health);
+    Base(QGraphicsRectItem *_health_bar, short *_health, bool *_extra_life, QGraphicsPixmapItem *_lifebuoy);
     ~Base();
     QGraphicsPixmapItem *center;
     void increase_health(short increment);
@@ -26,6 +28,10 @@ public:
 public slots:
     void bitten();
     void return_normal();
+    void vulture_hit();
+
+signals:
+    void no_health();
 };
 
 #endif // BASE_H

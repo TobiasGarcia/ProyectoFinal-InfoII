@@ -1,7 +1,7 @@
 #include "information.h"
 #include <QDebug>
 
-Information::Information(QGraphicsScene *_scene) : scene(_scene) {
+Information::Information(QGraphicsScene *_target_scene) : target_scene(_target_scene) {
 
     text = new QGraphicsTextItem(this);
 
@@ -26,9 +26,10 @@ Information::Information(QGraphicsScene *_scene) : scene(_scene) {
 
 Information::~Information() {
     delete text;
+    delete display_timer;
 }
 
-void Information::set_display_time(short millis) {
+void Information::set_display_time(unsigned long long int millis) {
     display_timer->start(millis);
 }
 
@@ -39,9 +40,16 @@ void Information::display_message(short x, short y, QString message) {
     setRect(-10, -5, text->boundingRect().width() + 20, text->boundingRect().height() + 6);
     setPos(x - text->boundingRect().width()/2, y);
 
-    scene->addItem(this);
+    //Por esto necesitamos target_scene, porque no podemos sobrescribir
+    //el método scene() pues cuando no se tiene escena, se necesita
+    //saber en cual hay que colocar la info.
+
+    if (scene() == nullptr) target_scene->addItem(this);
 }
 
 void Information::remove() {
-    scene->removeItem(this);
+
+    //Es un slot de un QTimer.
+
+    target_scene->removeItem(this);
 }

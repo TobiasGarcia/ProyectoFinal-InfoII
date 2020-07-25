@@ -20,3 +20,7 @@ TerrainObject::TerrainObject(short i, short j, short _type) : type(_type) {
     setPixmap(*pix);
     setZValue(1);
 }
+
+TerrainObject::~TerrainObject() {
+    delete pix;
+}

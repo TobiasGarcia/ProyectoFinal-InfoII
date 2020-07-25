@@ -17,6 +17,10 @@
 #include <fstream>
 #include <queue>
 
+//--------------------------------------------------------------------
+//--------Mencionar que la mayor parte de la documentación se encuentra dentro de los .cpp y no en los .h.
+//------------------------------------------------------------------------------------------
+
 class Level: public QGraphicsScene {
 
     Q_OBJECT
@@ -35,12 +39,20 @@ private:
     //se debe retirar la plantialla, de otro modo es porque hay algún jugador que
     //la necesita.
 
-    bool next, pause, two_players, power_up_bool, extra_life;
+    bool next, pause, two_players, *extra_life, active_timers[3], gameover;
+
+    //Active timeres tiene bool sobre si los timers están activos o no:
+    //0: instructions_timer
+    //1: delay_timer
+    //2: freez_timer
+
+    //Análogo para remainings.
+
     Information *information;
-    short *rocks_num, *fluids_num, template_on, enemie_count, max_enemies;
+    short *rocks_num, *fluids_num, template_on, enemie_count, max_enemies, remainings[3];
     PowerUp *power_up;
     QList<Enemy*> enemies;
-    QGraphicsPixmapItem *rock_powers, *fluid_powers, *power_template;
+    QGraphicsPixmapItem *rock_powers, *fluid_powers, *power_template, *lifebuoy;
     QTimer *freez_timer, *instructions_timer, *delay_timer;
     QList<QGraphicsItem*> rock_ghost_collisions;
 
@@ -63,10 +75,11 @@ private:
     void display_hud(short initial_health);
     void hit_all_enemies();
     void make_connections(Enemy *enemy);
-    void set_freez(bool freez);
+    void set_enemies_freez(bool freez);
     void initialize_template();
     void add_rock(short i, short j);
     void add_fluid(short i, short j);
+    void set_global_freez(bool freez);
 
 public:
     Level(std::string path, bool _two_players, short level_num, short initial_wave, short *_rocks_num,
@@ -80,10 +93,18 @@ public slots:
     void next_instruction();
     void finish_delay();
     void finish_level();
+    void no_health();
 
 signals:
     void update_index(short removed_index);
-    void save_game(bool level_finished);
+
+    //La variable progress puede tomar los siguientes valores:
+    //0: el nivel se ha perdidio.
+    //1: se ha salido del nivel por medio del menú de pausa.
+    //2: se ha superado la oleada.
+    //3: el nivel se ha completado.
+
+    void update_level_progress(short progress_type);
 
 };
 

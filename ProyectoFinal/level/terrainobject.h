@@ -10,7 +10,7 @@ private:
 public:
     short get_type() {return type;};
     TerrainObject(short i, short j, short _type);
-    ~TerrainObject() {delete pix;};
+    ~TerrainObject();
 };
 
 #endif // TERRAINOBJECT_H

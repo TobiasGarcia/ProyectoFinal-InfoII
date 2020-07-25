@@ -99,6 +99,8 @@ Widget::Widget(QWidget *parent)
     srand(time(nullptr));
     two_players = false;
 
+    game = nullptr;
+
 //    Game *game = new Game(path, true, "Johnny Cage");
 
 //    Q_UNUSED(game);
@@ -114,6 +116,7 @@ Widget::Widget(QWidget *parent)
 }
 
 Widget::~Widget() {
+    if (game != nullptr) delete game;
     delete ui;
 }
 
@@ -164,6 +167,7 @@ void Widget::on_pass_log_cbox_stateChanged(int arg1) {
 
 void Widget::exit_game() {
     delete game;
+    game = nullptr;
     ui->stacked_w->setCurrentIndex(0);
 }
 

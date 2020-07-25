@@ -34,7 +34,7 @@ public:
          std::string password = "", bool _two_players = false);
 public slots:
     void level_selceted(short level_num);
-    void save_game_slot(bool level_finished);
+    void update_level_progress(short progress_type);
     void minigame_finished();
 signals:
     void exit_game();

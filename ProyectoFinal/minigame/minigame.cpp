@@ -5,12 +5,11 @@ void Minigame::keyPressEvent(QKeyEvent *event) {
 
     if (event->isAutoRepeat()) return;
 
-    if (event->key() == Qt::Key_Return) {
-        if (state == 1) drop_ball();
-        else if (state == 3) second_chance();
-        else if (!two_players and (state == 5)) drop_ball();
-        else if (state == 7) black_screen->change_opacity(true);
-    }
+    if ((event->key() == Qt::Key_Return) and (state == 1)) drop_ball();
+    else if ((event->key() == Qt::Key_Return) and (state == 3)) second_chance();
+    else if ((event->key() == Qt::Key_Return) and !two_players and (state == 5)) drop_ball();
+    else if ((event->key() == Qt::Key_Return) and (state == 7)) black_screen->change_opacity(true);
+    else if (two_players and (event->key() == Qt::Key_V) and (state == 3)) second_chance();
     else if (two_players and (event->key() == Qt::Key_V) and (state == 5)) drop_ball();
     else if (two_players and (event->key() == Qt::Key_V) and (state == 7)) black_screen->change_opacity(true);
 }
@@ -46,7 +45,12 @@ void Minigame::fail() {
     claw->setOffset(-33, 0);
     claw_close = true;
 
-    information->display_message(389, 250, QString("¡Tiempo Fuera!"));
+    message = "             ¡Tiempo Fuera!";
+
+    if (two_players) message += "\nEnter o V para continuar ->";
+    else message += "\nEnter para continuar ->";
+
+    information->display_message(389, 250, message);
     state++;
 }
 
@@ -212,6 +216,7 @@ Minigame::~Minigame() {
     delete claw;
     delete[] claw_pix;
     delete claw_move_timer;
+    delete information;
     delete ball;
     delete goal;
     delete delay_timer;
@@ -222,6 +227,8 @@ void Minigame::claw_move() {
 
     //Sumamos de 0.05 porque dibujamos cada 0.05 segundos,
     //más 0.02 para compensar tiempos de cálculos.
+
+    qDebug() << claw_move_timer->isActive();
 
     time += 0.06;
     if ((claw_close) and (time > T)) time -= T;
@@ -266,6 +273,9 @@ void Minigame::win() {
     }
 
     message += "\nNúmero de Rebotes: " + QString::number(ball->get_rebounds());
+
+    if (two_players) message += "\nEnter o V para continuar ->";
+    else message += "\nEnter para continuar ->";
 
     (*fluids_num) += won_fluids;
     (*rocks_num) += won_rocks;
