@@ -14,11 +14,10 @@ class LevelsMenu: public QGraphicsScene {
     Q_OBJECT
 
 private:
-    short state, level_num;
+    short state, level_num, *levels_waves;
     Needle *needle;
     bool two_players;
     Player *player1, *player2;
-    QGraphicsPixmapItem *levels;
     BlackScreen *black_screen;
 
     void add_fire_ball(short x, short y);
@@ -26,7 +25,8 @@ private:
     void keyReleaseEvent(QKeyEvent *event);
 
 public:
-    LevelsMenu(bool _two_players);
+    LevelsMenu(bool _two_players, short rocks_num, short fluids_num, bool extra_life,
+               short *_levels_waves, bool winner);
     ~LevelsMenu();
 public slots:
     void needle_finish();

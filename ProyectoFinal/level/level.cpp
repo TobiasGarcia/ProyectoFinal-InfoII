@@ -10,10 +10,10 @@ void Level::keyPressEvent(QKeyEvent *event) {
     else if (event->key() == Qt::Key_Down) player1->move_dir[2] = true;
     else if (event->key() == Qt::Key_Right) player1->move_dir[3] = true;
 
-    else if (event->key() == Qt::Key_W) player2->move_dir[0] = true;
-    else if (event->key() == Qt::Key_A) player2->move_dir[1] = true;
-    else if (event->key() == Qt::Key_S) player2->move_dir[2] = true;
-    else if (event->key() == Qt::Key_D) player2->move_dir[3] = true;
+    else if (two_players and (event->key() == Qt::Key_W)) player2->move_dir[0] = true;
+    else if (two_players and (event->key() == Qt::Key_A)) player2->move_dir[1] = true;
+    else if (two_players and (event->key() == Qt::Key_S)) player2->move_dir[2] = true;
+    else if (two_players and (event->key() == Qt::Key_D)) player2->move_dir[3] = true;
 
     else if (event->key() == Qt::Key_Escape) {
         pause = !pause;
@@ -29,9 +29,9 @@ void Level::keyPressEvent(QKeyEvent *event) {
     //Qt::Key_Return es el enter cercano a las flechas, Qt::Key_Enter es el del Numeric Keypad.
 
     else if (!player1->delay_timer->isActive() and (event->key() == Qt::Key_Return)) add_fire_ball(player1->x(), player1->y());
-    else if (!player2->delay_timer->isActive() and (event->key() == Qt::Key_Space)) add_fire_ball(player2->x(), player2->y());
+    else if (two_players and !player2->delay_timer->isActive() and (event->key() == Qt::Key_Space)) add_fire_ball(player2->x(), player2->y());
 
-    else if ((event->key() == Qt::Key_Backspace) or (event->key() == Qt::Key_V)) {
+    else if ((event->key() == Qt::Key_Backspace) or (two_players and (event->key() == Qt::Key_V))) {
         if (template_on == 0) addItem(power_template);
         template_on++;
     }
@@ -46,10 +46,10 @@ void Level::keyReleaseEvent(QKeyEvent *event) {
     else if (event->key() == Qt::Key_Down) player1->move_dir[2] = false;
     else if (event->key() == Qt::Key_Right) player1->move_dir[3] = false;
 
-    else if (event->key() == Qt::Key_W) player2->move_dir[0] = false;
-    else if (event->key() == Qt::Key_A) player2->move_dir[1] = false;
-    else if (event->key() == Qt::Key_S) player2->move_dir[2] = false;
-    else if (event->key() == Qt::Key_D) player2->move_dir[3] = false;
+    else if (two_players and (event->key() == Qt::Key_W)) player2->move_dir[0] = false;
+    else if (two_players and (event->key() == Qt::Key_A)) player2->move_dir[1] = false;
+    else if (two_players and (event->key() == Qt::Key_S)) player2->move_dir[2] = false;
+    else if (two_players and (event->key() == Qt::Key_D)) player2->move_dir[3] = false;
 
     else if (pause) return;
 
@@ -58,26 +58,26 @@ void Level::keyReleaseEvent(QKeyEvent *event) {
         if (template_on == 0) removeItem(power_template);
         add_rock(player1->y()/60, player1->x()/60);
     }
-    else if (event->key() == Qt::Key_V) {
+    else if (two_players and (event->key() == Qt::Key_V)) {
         template_on--;
         if (template_on == 0) removeItem(power_template);
         add_rock(player2->y()/60, player2->x()/60);
     }
     else if (event->key() == Qt::Key_Shift) add_fluid(player1->y()/60, player1->x()/60);
-    else if (event->key() == Qt::Key_B) add_fluid(player2->y()/60, player2->x()/60);
+    else if (two_players and (event->key() == Qt::Key_B)) add_fluid(player2->y()/60, player2->x()/60);
 }
 
-Level::Level(std::string path, bool _two_players, short level_num, short *_wave, short *_rocks_num,
-             short *_fluids_num, bool *_extra_life, std::array<std::string, 9> *terrain_matrix) :
+Level::Level(std::string path, bool _two_players, short level_num, short initial_wave, short *_rocks_num,
+             short *_fluids_num, bool *_extra_life, short *health, std::array<std::string, 9> *_terrain_matrix) :
 
              two_players(_two_players), extra_life(_extra_life), rocks_num(_rocks_num),
-             fluids_num(_fluids_num), wave(_wave) {
+             fluids_num(_fluids_num), terrain_matrix(_terrain_matrix) {
 
     //(*wave) = 2;
     setSceneRect(0, 0, 779, 599); //780x600 pixeles para que los jugadores se muevan de 15 en 15.
     setBackgroundBrush(QBrush(QPixmap(":/textures/resources/images/floor_texture.png")));
 
-    if (!get_level_script(path, level_num)) qDebug() << "No se abrió el archivo >:(";
+    if (!get_level_script(path, level_num, initial_wave)) qDebug() << "No se abrió el archivo >:(";
     next = true;
 
     instructions_timer = new QTimer;
@@ -90,17 +90,11 @@ Level::Level(std::string path, bool _two_players, short level_num, short *_wave,
     power_up_bool = false;
 
     black_screen = new BlackScreen;
-    //connect();
+    connect(black_screen, &BlackScreen::finish, this, &Level::finish_level);
     addItem(black_screen);
 
     information = new Information(this);
-//    information->display_message(390, 60, QString("Estadisticas:\n"
-//                                                  "\tHabilidad: 1000\n"
-//                                                  "\tConcurrencia: 4200\n"
-//                                                  "\tBelleza: Exquisita\n"
-//                                                  "\n"
-//                                                  "Nota: A+"));
-//    information->setZValue(7);
+//    information->display_message(390, 60, QString("GALAXY LACTERS"));
 
     terrain = new Terrain(this, terrain_matrix);
     while ((terrain->rocks_num + (*rocks_num)) > 15) (*rocks_num)--;
@@ -117,8 +111,8 @@ Level::Level(std::string path, bool _two_players, short level_num, short *_wave,
     freez_timer->setSingleShot(true);
     connect(freez_timer, &QTimer::timeout, this, &Level::defrost);
 
-    display_hud(1000);//Salud inicial de la base.
-    base = new Base(health_bar, 1000);//Salud inicial de la base.
+    display_hud(*health);//Salud inicial de la base.
+    base = new Base(health_bar, health);//Salud inicial de la base.
     addItem(base);
 
 ////    enemie = new Snail(-1, 3, this, terrain, 0);
@@ -185,11 +179,13 @@ Level::Level(std::string path, bool _two_players, short level_num, short *_wave,
 ////    connect(power_up, &PowerUp::give_power, this, &Level::give_power);
 ////    addItem(power_up);
 
-    player1 = new Player(5, 5);
+    player1 = new Player(5, 5, true);
     addItem(player1);
 
-    player2 =  new Player(5, 7, false);
-    addItem(player2);
+    if (two_players) {
+        player2 =  new Player(5, 7, true, false);
+        addItem(player2);
+    }
 
     pause = false;
     black_screen->change_opacity(false);
@@ -261,8 +257,6 @@ void Level::add_enemie(short type) {
         j = rand()%13;
     }
 
-    qDebug() << i << "  " << j;
-
     if (type == 8) enemie = new Vulture(this, terrain, enemies.size());
     else if (type == 7) enemie = new Mole(this, terrain, enemies.size());
     else if (type == 6) enemie = new Chamaleon(i, j, this, terrain, enemies.size());
@@ -299,7 +293,9 @@ void Level::next_instruction() {
     //qDebug() << QString::fromUtf8(instruction.c_str());
     if (instruction[0] == 'W') {
 
-        (*wave)++;
+        //El número de la oleada se aumenta cuando se guarda la partida
+        //y no es la oleada final.
+
         information->display_message(389, 194,  "Oleada " + QString(instruction[1]));
         information->set_display_time(3000);
 
@@ -332,9 +328,14 @@ void Level::next_instruction() {
         else if (enemies.isEmpty()) {
             next = true;
 
-            if (instruction[1] == '1') terrain->clean_fluid();
+            //if (instruction[1] == '1') terrain->clean_fluid();
+            if (instruction[1] == '0') {
+                terrain->update_terrain_matrix(terrain_matrix);
+                emit save_game(false);
+                information->display_message(389, 194, "¡Fin de la Oleada!");
+            }
+            else information->display_message(389, 194, "Nivel Superado");
 
-            information->display_message(389, 194,  "¡Fin de la Oleada!");
             information->set_display_time(3000);
 
             delay_timer->start(3000);
@@ -344,7 +345,6 @@ void Level::next_instruction() {
     else {
         black_screen->change_opacity(true);
         instructions_timer->stop();
-        qDebug() << "Finish Level";
     }
 
     if (next) script.pop();
@@ -352,6 +352,10 @@ void Level::next_instruction() {
 
 void Level::finish_delay() {
     instructions_timer->start(500);
+}
+
+void Level::finish_level() {
+    emit save_game(true);
 }
 
 void Level::display_terrain() {
@@ -567,15 +571,15 @@ void Level::add_fluid(short i, short j) {
 
 }
 
-bool Level::get_level_script(std::string path, short level_num) {
+bool Level::get_level_script(std::string path, short level_num, short initial_wave) {
 
     bool current_game = false;
-    std::fstream file(path + "levels_scripts/level" + char(level_num + 48) + ".txt", std::ios::in);
+    std::fstream file(path + "levels_scripts/" + (two_players?'1':'0') + "level" + char(level_num + 48) + ".txt", std::ios::in);
     if (file.is_open()) {
         while (getline(file, instruction)) {
 
             if (current_game) script.push(instruction);
-            else if ((instruction[0] == 'W') and ((short(instruction[1]) - 48) == (*wave))) {
+            else if ((instruction[0] == 'W') and ((short(instruction[1]) - 48) == initial_wave)) {
                 script.push(instruction);
                 current_game = true;
             }
@@ -585,7 +589,6 @@ bool Level::get_level_script(std::string path, short level_num) {
         //Le bajamos uno para que cuando se comiencen a ejecutar las
         //instrucciones se compense.
 
-        (*wave)--;
         return true;
     }
     else return false;

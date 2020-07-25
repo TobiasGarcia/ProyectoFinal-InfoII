@@ -17,7 +17,7 @@ void Needle::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
 Needle::Needle() {
 
-    pix = new QPixmap(":/leves_menu/resources/images/levels_menu/needle.png");
+    pix = new QPixmap(":/levels_menu/resources/images/levels_menu/needle.png");
     setPos(390, 300);
     setPixmap(*pix);
 

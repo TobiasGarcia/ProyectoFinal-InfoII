@@ -9,10 +9,10 @@ void Minigame::keyPressEvent(QKeyEvent *event) {
         if (state == 1) drop_ball();
         else if (state == 3) second_chance();
         else if (!two_players and (state == 5)) drop_ball();
-        else if (state == 7) qDebug() << "Finish";
+        else if (state == 7) black_screen->change_opacity(true);
     }
     else if (two_players and (event->key() == Qt::Key_V) and (state == 5)) drop_ball();
-    else if (two_players and (event->key() == Qt::Key_V) and (state == 7)) qDebug() << "Finish";
+    else if (two_players and (event->key() == Qt::Key_V) and (state == 7)) black_screen->change_opacity(true);
 }
 
 //void Minigame::display_walls() {
@@ -110,10 +110,15 @@ void Minigame::drop_ball() {
     state++;
 }
 
-Minigame::Minigame(short _two_players) : two_players(_two_players) {
+Minigame::Minigame(short _two_players, short *_rocks_num, short *_fluids_num, bool *_extra_life) :
+    rocks_num(_rocks_num), fluids_num(_fluids_num), two_players(_two_players), extra_life(_extra_life) {
 
     setSceneRect(0, 0, 779, 599);
     setBackgroundBrush(QBrush(QPixmap(":/minigame/resources/images/minigame/minigame_background.png")));
+
+    black_screen = new BlackScreen;
+    connect(black_screen, &BlackScreen::finish, this, &Minigame::minigame_finished);
+    addItem(black_screen);
 
     //La variable state nos ayudará a manejar el flujo del minijuego indicándonos en que estado nos
     //encontramos; los estados posibles son los siguientes:
@@ -188,7 +193,9 @@ Minigame::Minigame(short _two_players) : two_players(_two_players) {
     delay_timer = new QTimer;
     delay_timer->setSingleShot(true);
     connect(delay_timer, &QTimer::timeout, this, &Minigame::next_state);
-    delay_timer->start(4000);
+
+    black_screen->change_opacity(false);
+    delay_timer->start(3000);
 
 //    QGraphicsLineItem *line;
 //    for (short i = 0; i < 9; i++) {
@@ -208,6 +215,7 @@ Minigame::~Minigame() {
     delete ball;
     delete goal;
     delete delay_timer;
+    delete black_screen;
 }
 
 void Minigame::claw_move() {
@@ -235,11 +243,32 @@ void Minigame::win() {
                       "\n"
                       "Recompensas obtenidas:\n";
 
-    if (ball->get_rebounds() < 2) message += "   Vida extra x 1\n";
-    message += "   Pegamento x 2\n"
-               "   Roca x 2\n"
-               "\n"
-               "Número de Rebotes: " + QString::number(ball->get_rebounds());
+    if ((ball->get_rebounds() < 2) and !(*extra_life)) {
+        message += "   Vida extra x 1\n";
+        *extra_life = true;
+    }
+    else if (ball->get_rebounds() < 2) message += "   Ya tienes una vida extra\n";
+
+    short won_rocks = fmin(4 - (*rocks_num), 2), won_fluids = fmin(4 - (*fluids_num), 2);
+
+    if (won_fluids == 0) message += "   Ya tienes 4 pegamentos\n";
+    else {
+        message += "   Pegamento x ";
+        message.push_back(char(won_fluids + 48));
+        message += "\n";
+    }
+
+    if (won_rocks == 0) message += "   Ya tienes 4 rocas\n";
+    else {
+        message += "   Rocas x ";
+        message.push_back(char(won_rocks + 48));
+        message += "\n";
+    }
+
+    message += "\nNúmero de Rebotes: " + QString::number(ball->get_rebounds());
+
+    (*fluids_num) += won_fluids;
+    (*rocks_num) += won_rocks;
 
     information->display_message(389, 150, message);
     state++;

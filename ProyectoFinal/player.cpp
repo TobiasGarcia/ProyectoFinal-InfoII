@@ -4,7 +4,7 @@ QRectF Player::boundingRect() const {
     return QRectF(-18, -18, 36, 36);
 }
 
-Player::Player(short i, short j, bool _player_one) : player_one(_player_one) {
+Player::Player(short i, short j, bool level, bool _player_one) : player_one(_player_one) {
 
     if (player_one) pix = new QPixmap(":/images/resources/images/blue_scope.png");
     else pix = new QPixmap(":/images/resources/images/purple_scope.png");
@@ -13,6 +13,11 @@ Player::Player(short i, short j, bool _player_one) : player_one(_player_one) {
     setOffset(-15, -15);
     setPixmap(*pix);
     setZValue(6);
+
+    //Esto es pues en el levels menu el límite inferior es "mayor".
+
+    if (level) lower_limit = 525;
+    else lower_limit = 585;
 
     move_dir.fill(false);
 
@@ -37,6 +42,6 @@ void Player::move() {
 
     if (move_dir[0] and (y() > 15)) setY(y() - 5);
     if (move_dir[1] and (x() > 15)) setX(x() - 5);
-    if (move_dir[2] and (y() < 525)) setY(y() + 5);
+    if (move_dir[2] and (y() < lower_limit)) setY(y() + 5);
     if (move_dir[3] and (x() < 765)) setX(x() + 5);
 }

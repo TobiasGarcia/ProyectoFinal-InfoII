@@ -36,7 +36,16 @@ private slots:
 
     void on_mode_btn_clicked();
 
+    void on_exit_btn_clicked();
+
+    void on_load_game_btn_clicked();
+
+    void on_pass_log_cbox_stateChanged(int arg1);
+
+    void exit_game();
+
 private:
+    QString style_single, style_multi;
     bool two_players;
     Ui::Widget *ui;
     Level *level;
@@ -52,5 +61,6 @@ private:
     bool normal_characters(QString str);
     bool search_id(std::string id, unsigned short &index);
     void start_new_game();
+    void load_game();
 };
 #endif // WIDGET_H

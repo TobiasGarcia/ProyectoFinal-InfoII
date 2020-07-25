@@ -11,6 +11,9 @@
         <file>resources/images/base.png</file>
         <file>resources/images/bitten.png</file>
         <file>resources/images/normal.png</file>
+        <file>resources/images/main_menu.png</file>
+        <file>resources/images/new_game.png</file>
+        <file>resources/images/load_game.png</file>
     </qresource>
     <qresource prefix="/enemies">
         <file>resources/images/enemies/chamaleon.png</file>
@@ -48,12 +51,15 @@
     <qresource prefix="/font">
         <file>resources/kepler296.otf</file>
     </qresource>
-    <qresource prefix="/leves_menu">
+    <qresource prefix="/levels_menu">
         <file>resources/images/levels_menu/backgorund.png</file>
         <file>resources/images/levels_menu/level1.png</file>
         <file>resources/images/levels_menu/level2.png</file>
         <file>resources/images/levels_menu/level3.png</file>
         <file>resources/images/levels_menu/needle.png</file>
         <file>resources/images/levels_menu/level0.png</file>
+        <file>resources/images/levels_menu/lifebuoy.png</file>
+        <file>resources/images/levels_menu/trophy.png</file>
+        <file>resources/images/levels_menu/locked.png</file>
     </qresource>
 </RCC>

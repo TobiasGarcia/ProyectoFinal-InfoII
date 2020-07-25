@@ -12,16 +12,16 @@ private:
     bool vulnerable;
     QGraphicsRectItem *health_bar;
     QPixmap *pix;
-    short health;
+    short *health;
     QTimer *bitten_timer;
 
 public:
-    Base(QGraphicsRectItem *_health_bar, short initial_health);
+    Base(QGraphicsRectItem *_health_bar, short *_health);
     ~Base();
     QGraphicsPixmapItem *center;
     void increase_health(short increment);
     void set_vulnerable(bool _vulnerable) {vulnerable = _vulnerable;};
-    short get_health() {return health;};
+    short get_health() {return (*health);};
 
 public slots:
     void bitten();

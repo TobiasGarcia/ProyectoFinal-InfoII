@@ -1,13 +1,23 @@
 #include "terrain.h"
 #include <QDebug>
 
-void Terrain::clean_fluid() {
+//void Terrain::clean_fluid() {
+//    for (short i = 0; i < 9; i++) {
+//        for (short j = 0; j < 13; j++) {
+//            if ((tiles[i][j] != nullptr) and (tiles[i][j]->get_type() != 1)) {
+//                delete tiles[i][j];
+//                tiles[i][j] = nullptr;
+//            }
+//        }
+//    }
+//}
+
+void Terrain::update_terrain_matrix(std::array<std::string, 9> *terrain_matrix) {
     for (short i = 0; i < 9; i++) {
+        (*terrain_matrix)[i] = "";
         for (short j = 0; j < 13; j++) {
-            if ((tiles[i][j] != nullptr) and (tiles[i][j]->get_type() != 1)) {
-                delete tiles[i][j];
-                tiles[i][j] = nullptr;
-            }
+            if (tiles[i][j] != nullptr) (*terrain_matrix)[i].push_back(char(tiles[i][j]->get_type() + 48));
+            else (*terrain_matrix)[i].push_back('0');
         }
     }
 }

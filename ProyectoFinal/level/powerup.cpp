@@ -11,7 +11,7 @@ void PowerUp::initialize() {
         period = 2*M_PI;
         r = radio();
 
-        setPos(r*cos(angle), r*sin(angle));
+        setPos(389 + r*cos(angle), 269 - r*sin(angle));
     }
     else if (path_type == 1) {
         a = 260; spd = 300;
@@ -20,7 +20,7 @@ void PowerUp::initialize() {
         period = 2*M_PI;
         r = radio();
 
-        setPos(r*cos(angle), r*sin(angle));
+        setPos(389 + r*cos(angle), 269 - r*sin(angle));
     }
     else if (path_type == 2) {
         a = 250; b = 5.0/3.0; spd = 300;
@@ -29,7 +29,7 @@ void PowerUp::initialize() {
         period = 3*M_PI;
         r = radio();
 
-        setPos(r*cos(angle), r*sin(angle));
+        setPos(389 + r*cos(angle), 269 - r*sin(angle));
     }
     else if (path_type == 3) {
         a = 300; b = 2*(rand()%2) - 1; spd = 300;
@@ -38,7 +38,7 @@ void PowerUp::initialize() {
         angle = (rand()%61 - 30)*M_PI/180;
         r = a*b*sqrt(cos(2*angle));
 
-        setPos(r*cos(angle), r*sin(angle));
+        setPos(389 + r*cos(angle), 269 - r*sin(angle));
     }
 }
 

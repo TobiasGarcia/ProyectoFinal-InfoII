@@ -12,6 +12,7 @@ private:
     QPixmap *pix;
     QTimer *move_timer;
     bool player_one, freez;
+    short lower_limit;
 
     QRectF boundingRect() const;
 
@@ -20,7 +21,7 @@ public:
     std::array<bool, 4> move_dir;
     void set_freez(bool _freez) {freez = _freez;};
 
-    Player(short i, short j, bool _player_one = true);
+    Player(short i, short j, bool lower_limit, bool _player_one = true);
     ~Player();
 
 public slots:
