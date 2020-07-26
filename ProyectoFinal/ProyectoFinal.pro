@@ -18,6 +18,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     blackscreen.cpp \
     fireball.cpp \
+    game.cpp \
     information.cpp \
     level/base.cpp \
     level/enemy.cpp \
@@ -37,6 +38,7 @@ SOURCES += \
 HEADERS += \
     blackscreen.h \
     fireball.h \
+    game.h \
     information.h \
     level/base.h \
     level/enemy.h \

@@ -1,0 +1,173 @@
+na
+Hola piloto, estás aquí para restaurar
+el equilibrio que la humanidad le ha
+arrebatado al planeta Tierra, tu misión
+consiste en defender esta base desde tu
+nave espacial, la cual se encuentra
+orbitando el planeta.
+
+na
+Los seres vivos que habitan la Tierra
+ahora son muy agresivos y territoriales,
+tratarán de destruir la base a como de
+lugar, ¡No lo podemos permitir!
+
+na
+La barra azul de abajo es la salud de
+la base, no debes dejar que se agote,
+pues nuestra misión es defenderla.
+
+na
+Utiliza las flechas del teclado para
+moverte por el mapa, y la tecla Enter
+para atacar; si cuentas con un camarada,
+este podrá ayudarte en la misión por
+medio de las teclas WASD y la tecla
+Espacio para atacar.
+
+na
+¿Vez que la base tiene un salvavidas?,
+esto significa que si su salud llega
+a un nivel bajo, esta se restaurará
+por completo.
+
+na
+Como hoy me siento de buen humor, podrás
+disponer de todos los salvavidas que
+quieras durante este entrenamiento, pero
+ten cuidado, pues en una situación real
+no contarás con más de uno.
+
+na
+¡Ahora basta de charla!, veamos como
+te desenvuelves; defiende tu base
+de los atacantes.
+
+acción
+defecto
+
+na
+¡Lo has hecho muy bien!, pero no te
+confíes, te enfrentarás a retos mucho
+mayores, por esto desde el cuartel
+general te enviaremos ayuda.
+
+na
+Podrás disponer de 5 mejoras diferentes,
+dispárales para obtenerlas, pero no será
+tan sencillo, pues lamentablemente hemos
+perdido el control de las cápsulas y
+ahora se mueven de formas extrañas.
+
+:/power_ups/resources/images/power_ups/power0.png
+Le hará daño a todos los atacantes
+que se encuentren en la pantalla.
+
+:/power_ups/resources/images/power_ups/power2.png
+Restaurará parte de la salud
+de la base.
+
+:/power_ups/resources/images/power_ups/power1.png
+Congelará a todos los atacantes
+por un tiempo.
+
+:/power_ups/resources/images/power_ups/power3.png
+Te otorgará 4 cargas de pegamento,
+las cuales puedes colocar por el
+mapa para reducir bastante la
+velocidad de los atacantes que
+caminen por encima de este.
+
+:/power_ups/resources/images/power_ups/power4.png
+Te otorgará 4 cargas de rocas, las
+cuales podrás colocar alrededor de
+la base para protegerla.
+
+na
+Demasiada información ¿no?, esta bien,
+¡Vamos con un poco de práctica!
+
+na
+Probemos con las cargas de pegamento,
+dispárale a la mejora para obtener
+las cargas y colócalas con la tecla
+Shift Derecho.
+
+na
+Si tienes un camarada que te acompañe
+también podrá colocar las cargas con
+la tecla B.
+
+acción
+defecto
+
+na
+Excelente, ¡Los dejarás bien pegados!,
+ahora probemos con las cargas de rocas.
+
+na
+Si presionas la tecla Borrar, la que está
+arriba de la tecla Enter, verás que
+una región del mapa se ilumina, si te
+colocas sobre esta región y sueltas
+la tecla, colocarás una roca.
+
+na
+Tu camarada puede hacer lo mismo mediante
+la tecla V.
+
+acción
+defecto
+
+na
+¡Buen trabajo!, el resto de mejoras las
+verás cuando visites los diferentes
+lugares del planeta.
+
+na
+Como puedes ver, conseguir acertar a las
+mejoras puede resultar difícil, por lo
+cual al final de cada misión le permitimos
+a nuestros pilotos particiar de un
+pequeño juego, en dodne pueden ganar
+recompensas como salvavidas o mejoras
+para su proxima misión.
+
+na
+Sé que estas impaciente por comenzar con
+tu primera misión, pero no te apresures,
+lo más importante para ganar una contienda
+es concer bien a tu rival, échale un vistazo
+a esta información y estarás completamente
+capacitado para comenzar.
+
+:/enemies/resources/images/enemies/enemy0.png
+Él es Larry, es un insecto que ha aumentado
+mucho de tamaño, es bastante carismático,
+aunque tenga tantas paticas.
+
+:/enemies/resources/images/enemies/enemy1.png
+Ella es Deisy, una oveja que ahora es tan
+peluda que apenas puede ver por donde camina,
+lo que hace que se mueva bastante lento,
+pero por su gran pelaje resulta ser muy
+resistente.
+
+:/enemies/resources/images/enemies/enemy2.png
+Él es Charlie, la iguana, es bastante
+curioso por lo que tratará de mordisquear
+tu base para ver a que sabe, es bastante
+ágil, pero un tanto asustadizo, por lo
+cual no te costará mucho deshacerte de él.
+
+na
+Un último detalle, desde el cuartel general
+nos enorgullecemos de nuestro eficiente
+sistema de autoguardado, por lo que nuestros
+pilotos no debe preocuparse por eso.
+
+na
+Listo, creo que eso es todo piloto, recuerda
+que el fúturo de nuestro viejo hogar, el
+planeta Tierra, depende de tí:
+¡Te deseo la mejor de las suertes!.

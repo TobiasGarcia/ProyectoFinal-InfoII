@@ -6,20 +6,33 @@ void LevelsMenu::add_fire_ball(short x, short y) {
     addItem(new FireBall(x, y));
 
     if (state == 0) {
-        if (QRectF(314, 20.5, 149, 98).contains(x, y)) {
-            needle->point_direction(0);//Level 2
+        if (QRectF(314, 480.5, 149, 98).contains(x, y)) {
+            needle->point_direction(2);//Level 0 (Tutorial)
+            level_num = 0;
             state++;
         }
-        else if (QRectF(39, 250.5, 149, 98).contains(x, y)) {
-            needle->point_direction(1);//Level 3
-            state++;
-        }
-        else if (QRectF(314, 480.5, 149, 98).contains(x, y)) {
-            needle->point_direction(2);//Level 0
-            state++;
-        }
-        else if (QRectF(589, 250.5, 149, 98).contains(x, y)) {
+        else if (QRectF(589, 250.5, 149, 98).contains(x, y) and (levels_waves[0] != 0)) {
             needle->point_direction(3);//Level 1
+            level_num = 1;
+            state++;
+        }
+        else if (QRectF(314, 20.5, 149, 98).contains(x, y) and (levels_waves[1] != 0)) {
+            needle->point_direction(0);//Level 2
+            level_num = 2;
+            state++;
+        }
+        else if (QRectF(39, 250.5, 149, 98).contains(x, y) and (levels_waves[2] != 0)) {
+            needle->point_direction(1);//Level 3
+            level_num = 3;
+            state++;
+        }
+        else if (QRectF(626, 505, 92, 50).contains(x, y)) {
+            black_screen->change_opacity(true);
+
+            //El valor -1 es reservado para indicar que se va a salir
+            //al menú principal.
+
+            level_num = -1;
             state++;
         }
     }
@@ -60,34 +73,66 @@ void LevelsMenu::keyReleaseEvent(QKeyEvent *event) {
     else if (two_players and (event->key() == Qt::Key_D)) player2->move_dir[3] = false;
 }
 
-LevelsMenu::LevelsMenu(bool _two_players) : two_players(_two_players) {
+LevelsMenu::LevelsMenu(bool _two_players, short rocks_num, short fluids_num, bool extra_life,
+    short *_levels_waves, bool winner) : levels_waves(_levels_waves), two_players(_two_players) {
 
     setSceneRect(0, 0, 779, 599);
-    setBackgroundBrush(QBrush(QPixmap(":/leves_menu/resources/images/levels_menu/backgorund.png")));
+    setBackgroundBrush(QBrush(QPixmap(":/levels_menu/resources/images/levels_menu/backgorund.png")));
+
+    QGraphicsPixmapItem *graph_pix;
+    for (short i = 0; i < rocks_num; i++) {
+        graph_pix = new QGraphicsPixmapItem(QPixmap(":/power_ups/resources/images/power_ups/rock_power.png"));
+        graph_pix->setPos(28 + 48*i, 546);
+        addItem(graph_pix);
+    }
+
+    for (short i = 0; i < fluids_num; i++) {
+        graph_pix = new QGraphicsPixmapItem(QPixmap(":/power_ups/resources/images/power_ups/fluid_power.png"));
+        graph_pix->setPos(28 + 48*i, 503);
+        addItem(graph_pix);
+    }
+
+    if (extra_life) {
+        graph_pix = new QGraphicsPixmapItem(QPixmap(":/levels_menu/resources/images/levels_menu/lifebuoy.png"));
+        graph_pix->setPos(585, 49);
+        addItem(graph_pix);
+    }
+
+    if (winner) {
+        graph_pix = new QGraphicsPixmapItem(QPixmap(":/levels_menu/resources/images/levels_menu/trophy.png"));
+        graph_pix->setPos(58, 47);
+        addItem(graph_pix);
+    }
 
     black_screen = new BlackScreen;
-    connect(black_screen, &BlackScreen::finish, this, &LevelsMenu::finish);
+    connect(black_screen, &BlackScreen::finish, this, &LevelsMenu::black_screen_finish);
     addItem(black_screen);
-
-    levels =  new QGraphicsPixmapItem[4];
 
     short gap[] = {0, 1, 0, -1};
     for (short i = 0; i < 4; i++) {
-        levels[i].setPixmap(QPixmap(":/leves_menu/resources/images/levels_menu/level" + QString::number(i) + ".png"));
-        levels[i].setOffset(-78, -52.5);
-        levels[i].setPos(389 + gap[i]*275, 299 + gap[(i + 1)%4]*230);
-        addItem(levels + i);
+        graph_pix = new QGraphicsPixmapItem(QPixmap(":/levels_menu/resources/images/levels_menu/level" + QString::number(i) + ".png"));
+        graph_pix->setOffset(-78, -52.5);
+        graph_pix->setPos(389 + gap[i]*275, 299 + gap[(i + 1)%4]*230);
+        addItem(graph_pix);
+
+        if ((i != 0) and (levels_waves[i - 1] == 0)) {
+            graph_pix = new QGraphicsPixmapItem(QPixmap(":/levels_menu/resources/images/levels_menu/locked.png"));
+            graph_pix->setOffset(-78, -52.5);
+            graph_pix->setPos(389 + gap[i]*275, 299 + gap[(i + 1)%4]*230);
+            graph_pix->setOpacity(0.7);
+            addItem(graph_pix);
+        }
     }
 
     needle = new Needle;
-    connect(needle, &Needle::level_selected, this, &LevelsMenu::level_selected);
+    connect(needle, &Needle::finish, this, &LevelsMenu::needle_finish);
     addItem(needle);
 
-    player1 = new Player(8, 1);
+    player1 = new Player(7, 2, false);
     addItem(player1);
 
     if (two_players) {
-        player2 =  new Player(8, 11, false);
+        player2 =  new Player(7, 10, false, false);
         addItem(player2);
     }
 
@@ -119,17 +164,16 @@ LevelsMenu::LevelsMenu(bool _two_players) : two_players(_two_players) {
 }
 
 LevelsMenu::~LevelsMenu() {
-    delete[] levels;
     delete player1;
     if (two_players) delete player2;
     delete needle;
     delete black_screen;
 }
 
-void LevelsMenu::level_selected() {
+void LevelsMenu::needle_finish() {
     black_screen->change_opacity(true);
 }
 
-void LevelsMenu::finish() {
-    qDebug() << "Finish";
+void LevelsMenu::black_screen_finish() {
+    emit level_selected(level_num);
 }

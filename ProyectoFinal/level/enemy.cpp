@@ -65,6 +65,7 @@ void Enemy::reduces_health(short hit) {
     if (health == 0) {
         emit remove_enemy(list_index);
         if (scene() != NULL) level->removeItem(this);
+        if (bite_timer->isActive()) bite_timer->stop();
         defeated = true;
         freez = true;
     }
@@ -260,6 +261,7 @@ void Enemy::initialize() {
         spd = 35;
         max_health = 600;
         pix = new QPixmap(":/enemies/resources/images/enemies/snail.png");
+        *pix = pix->transformed(QTransform().scale(0.5, 0.5));
     }
     else if (type == 4) {
         //40 x 50 pixeles;
@@ -340,8 +342,8 @@ bool Enemy::collisions_handler(QList<QGraphicsItem*> collisions) {
                 rock_collision();
                 return true;
             }
-            else if (terrain_object->get_type() == 2) speed = 1.4*speed_aux;
             else if (terrain_object->get_type() == 3) speed = 0.6*speed_aux;
+            else if (terrain_object->get_type() == 2) speed = 1.4*speed_aux;
         }
         else if (typeid(*item) == typeid(Base)) {
             move_timer->stop();
@@ -349,6 +351,7 @@ bool Enemy::collisions_handler(QList<QGraphicsItem*> collisions) {
             //No se puede emitir la señal timeout manualmente,
             //por lo cual definimos una señal auxiliar para
             //enviar al comenzar el timer.
+
             emit first_bite();
             bite_timer->start(1000);
             return true;

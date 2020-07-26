@@ -55,7 +55,7 @@ bool Snail::collisions_handler(QList<QGraphicsItem*> collisions) {
     //Tenemos que asegurarnos de que esté dentro del rectángulo para que no se
     //coloquen fluidos por fuera de la pantalla.
 
-    if (!in_fluid and QRect(0, 0, 779, 599).contains(x(), y(), false)) add_fluid();
+    if (!in_fluid and QRect(0, 0, 780, 540).contains(x(), y(), false)) add_fluid();
     return false;
 }
 
@@ -80,8 +80,8 @@ bool Porcupine::collisions_handler(QList<QGraphicsItem*> collisions) {
                 delete this;
                 return true;
             }
-            else if (terrain_object->get_type() == 2) speed = 1.4*speed_aux;
             else if (terrain_object->get_type() == 3) speed = 0.6*speed_aux;
+            else if (terrain_object->get_type() == 2) speed = 1.4*speed_aux;
         }
         else if (typeid(*item) == typeid(Base)) {
             move_timer->stop();
@@ -186,8 +186,8 @@ bool Chamaleon::collisions_handler(QList<QGraphicsItem *> collisions) {
                 rock_collision();
                 return true;
             }
-            else if (terrain_object->get_type() == 2) speed = 1.4*speed_aux;
             else if (terrain_object->get_type() == 3) speed = 0.6*speed_aux;
+            else if (terrain_object->get_type() == 2) speed = 1.4*speed_aux;
         }
         else if (typeid(*item) == typeid(Base)) {
             move_timer->stop();
@@ -222,7 +222,7 @@ Mole::Mole(QGraphicsScene *_level, Terrain *_terrain, short _list_index) :
     if (random_tile < 3) tile_pixels = tiles2pixels(rand()%3 + 3, 4);
     else tile_pixels = tiles2pixels(rand()%3 + 3, 8);
 
-    hole = new QGraphicsPixmapItem(QPixmap(":/images/resources/images/bitten.png"));
+    hole = new QGraphicsPixmapItem(QPixmap(":/base/resources/images/base/bitten.png"));
     hole->setPos(tile_pixels[0] - 11, tile_pixels[1] - 11);
     level->addItem(hole);
 
@@ -329,7 +329,7 @@ void Vulture::move() {
             straight_line = false;
             r = radio();
             setPos(389 + r*cos(angle), 269 - r*sin(angle) - offset);
-            spd = 330;
+            spd = 300;
         }
     }
     else {
@@ -372,7 +372,9 @@ bool Vulture::collisions_handler(QList<QGraphicsItem*> collisions) {
         if (typeid(*item) == typeid(Base)) {
 
             move_timer->stop();
-            qDebug() << "EXPLOUIIII!";
+            emit vulture_hit();
+
+            reduces_health(max_health);
             return true;
         }
     }

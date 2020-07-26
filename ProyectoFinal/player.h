@@ -11,16 +11,17 @@ class Player: public QObject, public QGraphicsPixmapItem {
 private:
     QPixmap *pix;
     QTimer *move_timer;
-    bool player_one, freez;
+    bool player_one;
+    short lower_limit;
 
     QRectF boundingRect() const;
 
 public:
     QTimer *delay_timer;
+    bool freez;
     std::array<bool, 4> move_dir;
-    void set_freez(bool _freez) {freez = _freez;};
 
-    Player(short i, short j, bool _player_one = true);
+    Player(short i, short j, bool lower_limit, bool _player_one = true);
     ~Player();
 
 public slots:

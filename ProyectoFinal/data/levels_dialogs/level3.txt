@@ -1,0 +1,18 @@
+:/enemies/resources/images/enemies/mole.png
+Ella es Macarena, una un experta excavador
+topo, dicen que es capaz de aparecer en
+cualquier sitio que desee, por lo que no
+te sorprendas si aparece un agujero cerca
+de tu base, pues eso sólo quiere decir
+que Macarena anda muy cerca.
+
+:/enemies/resources/images/enemies/vulture.png
+Él es Oswaldo, un viejo buitre cascarabias,
+él siempre es directo y si no le agrada algo
+va de inmediato a picotearlo, dicen que por la
+experiencia que le otorgó su edad, es capaz
+de destruir cualquier base de un solo picotazo,
+por lo cual deberás cuidarte de él, pues si no
+cuentas con un salvavidas te puedes ir
+despidiendo de tu misión, a menos que seas lo
+suficientemente rápdio para seguirle el paso.

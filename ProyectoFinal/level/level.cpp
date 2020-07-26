@@ -10,28 +10,54 @@ void Level::keyPressEvent(QKeyEvent *event) {
     else if (event->key() == Qt::Key_Down) player1->move_dir[2] = true;
     else if (event->key() == Qt::Key_Right) player1->move_dir[3] = true;
 
-    else if (event->key() == Qt::Key_W) player2->move_dir[0] = true;
-    else if (event->key() == Qt::Key_A) player2->move_dir[1] = true;
-    else if (event->key() == Qt::Key_S) player2->move_dir[2] = true;
-    else if (event->key() == Qt::Key_D) player2->move_dir[3] = true;
+    else if (two_players and (event->key() == Qt::Key_W)) player2->move_dir[0] = true;
+    else if (two_players and (event->key() == Qt::Key_A)) player2->move_dir[1] = true;
+    else if (two_players and (event->key() == Qt::Key_S)) player2->move_dir[2] = true;
+    else if (two_players and (event->key() == Qt::Key_D)) player2->move_dir[3] = true;
 
-    else if (event->key() == Qt::Key_Escape) {
+    else if (dialoguing and (event->key() == Qt::Key_Return)) next_dialog();
+
+    else if ((event->key() == Qt::Key_P) and pause) emit update_level_progress(1);
+
+    //Si se presiona la tecla Esc, debemos deciride cuando podemos entrar al menú de pausa:
+    //si no estamos en el menú de pausa y no hay información en la pantalla, es decir,
+    //information->scene() es nullptr, entramos al menú; si no estamos en el menú de
+    //pausa pero sí hay información en la pantalla, es decir, information->scene()
+    //no es nulo, NO entramos al menú de pausa; y si estamos en pausa siempre
+    //deberemos poder salir de esta.
+
+    //El tutorial_level es para que no se pueda acceder a la pausa durante el nivel tutorial,
+    //pues desde la pausa se puede salir al menu de niveles, lo cual no es buena idea si no
+    //se ha terminado el tutorial, por lo cual siempre mantendremos esa variable
+
+    else if ((event->key() == Qt::Key_Escape) and (pause or (information->scene() == nullptr)) and !tutorial_level) {
+        if (pause) removeItem(information);
+        else information->display_message(389, 182, "\t\t     PAUSA\n\n"
+                                                    "Presiona Esc de nuevo para volver al juego.\n"
+                                                    "Presiona la tecla P para volver al menú\n"
+                                                    "de niveles.");
+        set_global_freez(!pause);
         pause = !pause;
-
-        set_freez(pause);
-        if (power_up_bool) power_up->set_freez(pause);
-
-        player1->set_freez(pause);
-        if (two_players) player2->set_freez(pause);
     }
-    else if (pause) return;
+
+    //Si los jugadores están quietos, igual debemos actualizar su arreglo move_dir,
+    //esto es para que si los jugadores dejan unidas algunas teclas y se retira
+    //el freez, el juego si reaccione correctamente; por otra parte, debemos
+    //retornar aquí en caso de que los jugadores estén en freez, pues
+    //no podemos permitir que disparen fire balls o coloquen objetos
+    //en el terreno.
+
+    //Notemos que basta preguntar sólo al primer jugador pues él está congelado
+    //si y solo si el segundo también.
+
+    else if (player1->freez) return;
 
     //Qt::Key_Return es el enter cercano a las flechas, Qt::Key_Enter es el del Numeric Keypad.
 
     else if (!player1->delay_timer->isActive() and (event->key() == Qt::Key_Return)) add_fire_ball(player1->x(), player1->y());
-    else if (!player2->delay_timer->isActive() and (event->key() == Qt::Key_Space)) add_fire_ball(player2->x(), player2->y());
+    else if (two_players and !player2->delay_timer->isActive() and (event->key() == Qt::Key_Space)) add_fire_ball(player2->x(), player2->y());
 
-    else if ((event->key() == Qt::Key_Backspace) or (event->key() == Qt::Key_V)) {
+    else if ((event->key() == Qt::Key_Backspace) or (two_players and (event->key() == Qt::Key_V))) {
         if (template_on == 0) addItem(power_template);
         template_on++;
     }
@@ -46,34 +72,50 @@ void Level::keyReleaseEvent(QKeyEvent *event) {
     else if (event->key() == Qt::Key_Down) player1->move_dir[2] = false;
     else if (event->key() == Qt::Key_Right) player1->move_dir[3] = false;
 
-    else if (event->key() == Qt::Key_W) player2->move_dir[0] = false;
-    else if (event->key() == Qt::Key_A) player2->move_dir[1] = false;
-    else if (event->key() == Qt::Key_S) player2->move_dir[2] = false;
-    else if (event->key() == Qt::Key_D) player2->move_dir[3] = false;
+    else if (two_players and (event->key() == Qt::Key_W)) player2->move_dir[0] = false;
+    else if (two_players and (event->key() == Qt::Key_A)) player2->move_dir[1] = false;
+    else if (two_players and (event->key() == Qt::Key_S)) player2->move_dir[2] = false;
+    else if (two_players and (event->key() == Qt::Key_D)) player2->move_dir[3] = false;
 
-    else if (pause) return;
+    //El propósito del siguiente condicional es análogo al que se encuentra en keyPressEvent().
+
+    else if (player1->freez) return;
 
     else if (event->key() == Qt::Key_Backspace) {
         template_on--;
         if (template_on == 0) removeItem(power_template);
         add_rock(player1->y()/60, player1->x()/60);
     }
-    else if (event->key() == Qt::Key_V) {
+    else if (two_players and (event->key() == Qt::Key_V)) {
         template_on--;
         if (template_on == 0) removeItem(power_template);
         add_rock(player2->y()/60, player2->x()/60);
     }
     else if (event->key() == Qt::Key_Shift) add_fluid(player1->y()/60, player1->x()/60);
-    else if (event->key() == Qt::Key_B) add_fluid(player2->y()/60, player2->x()/60);
+    else if (two_players and (event->key() == Qt::Key_B)) add_fluid(player2->y()/60, player2->x()/60);
 }
 
-Level::Level(bool _two_players) : two_players(_two_players) {
+Level::Level(std::string path, bool _two_players, short level_num, short initial_wave, short *_rocks_num,
+             short *_fluids_num, bool *_extra_life, short *health, std::array<std::string, 9> *_terrain_matrix) :
 
+             two_players(_two_players), extra_life(_extra_life), rocks_num(_rocks_num),
+             fluids_num(_fluids_num), terrain_matrix(_terrain_matrix) {
+
+    //(*wave) = 2;
     setSceneRect(0, 0, 779, 599); //780x600 pixeles para que los jugadores se muevan de 15 en 15.
-    setBackgroundBrush(QBrush(QPixmap(":/textures/resources/images/floor_texture.png")));
+    setBackgroundBrush(QBrush(QPixmap(":/levels/resources/images/levels/level" + QString::number(level_num) + "_back.png")));
 
-    if (!get_level_script(2)) qDebug() << "No se abrió el archivo >:(";
+    tutorial_level = (level_num == 0);
+
     next = true;
+
+    enemie = nullptr;
+
+    gameover = false;
+
+    active_timers[0] = false;
+    active_timers[1] = false;
+    active_timers[2] = false;
 
     instructions_timer = new QTimer;
     connect(instructions_timer, &QTimer::timeout, this, &Level::next_instruction);
@@ -82,27 +124,40 @@ Level::Level(bool _two_players) : two_players(_two_players) {
     delay_timer->setSingleShot(true);
     connect(delay_timer, &QTimer::timeout, this, &Level::finish_delay);
 
-    power_up_bool = false;
-
     black_screen = new BlackScreen;
-    //connect();
+    connect(black_screen, &BlackScreen::finish, this, &Level::finish_level);
     addItem(black_screen);
 
     information = new Information(this);
-//    information->display_message(390, 60, QString("Estadisticas:\n"
-//                                                  "\tHabilidad: 1000\n"
-//                                                  "\tConcurrencia: 4200\n"
-//                                                  "\tBelleza: Exquisita\n"
-//                                                  "\n"
-//                                                  "Nota: A+"));
-//    information->setZValue(7);
 
-    terrain = new Terrain(this);
-    display_terrain();
+    if (!get_level_dialogs(path, level_num)) qDebug() << "No se abrió el archivo >:(";
 
-    //Se mide en porcentaje, pero como 100.0, con una cifra decimal.
-    rock_index = -1;
-    fluid_index = -1;
+    if (tutorial_level) {
+        terrain = new Terrain(this, terrain_matrix, true);
+
+        //No importa si viene de otro nivel, pues al final del nivel extra
+        //cargaremos la partida si no es la primera vez que se juego el
+        //tutorial para recuprar tdoo.
+
+        (*health) = 1000;
+        (*extra_life) = true;
+        (*rocks_num) = 0;
+        (*fluids_num) = 0;
+
+        action_timer = new QTimer;
+        connect(action_timer, &QTimer::timeout, this, &Level::check_action);
+    }
+    else {
+        terrain = new Terrain(this, terrain_matrix, tutorial_level);
+        while ((terrain->rocks_num + (*rocks_num)) > 15) (*rocks_num)--;
+
+        display_terrain();
+        action_timer = nullptr;
+
+        if (!get_level_script(path, level_num, initial_wave)) qDebug() << "No se abrió el archivo >:(";
+    }
+
+    action = 0;
 
     initialize_template();
 
@@ -114,90 +169,110 @@ Level::Level(bool _two_players) : two_players(_two_players) {
     freez_timer->setSingleShot(true);
     connect(freez_timer, &QTimer::timeout, this, &Level::defrost);
 
-    display_hud(1000);//Salud inicial de la base.
-    base = new Base(health_bar, 1000);//Salud inicial de la base.
+    display_hud(*health);//Salud inicial de la base.
+
+    lifebuoy = nullptr;
+    if ((*extra_life)) {
+        lifebuoy = new QGraphicsPixmapItem(QPixmap(":/base/resources/images/base/lifebuoy_small.png"));
+        lifebuoy->setOffset(-30, -30);
+        lifebuoy->setPos(390, 270);
+
+        //Le colocamos ese Z value para que esté por encima de la base, pues esta se agrega después,
+        //pero para que esté por debajo de los enemigos, pues estos se agregan depués a la escena.
+
+        lifebuoy->setZValue(2);
+        addItem(lifebuoy);
+    }
+
+    base = new Base(health_bar, health, extra_life, lifebuoy, tutorial_level);//Salud inicial de la base.
+    connect(base, &Base::no_health, this, &Level::no_health);
     addItem(base);
 
-//    enemie = new Snail(-1, 3, this, terrain, 0);
-//    make_connections(enemie);
-//    enemies.append(enemie);
-//    addItem(enemie);
+////    enemie = new Snail(-1, 3, this, terrain, 0);
+////    make_connections(enemie);
+////    enemies.append(enemie);
+////    addItem(enemie);
 
-//    enemie = new Snail(2, -1, this, terrain, 1);
-//    make_connections(enemie);
-//    enemies.append(enemie);
-//    addItem(enemie);
+////    enemie = new Snail(2, -1, this, terrain, 1);
+////    make_connections(enemie);
+////    enemies.append(enemie);
+////    addItem(enemie);
 
-//    enemie = new Snail(9, 4, this, terrain, 2);
-//    make_connections(enemie);
-//    enemies.append(enemie);
-//    addItem(enemie);
+////    enemie = new Snail(9, 4, this, terrain, 2);
+////    make_connections(enemie);
+////    enemies.append(enemie);
+////    addItem(enemie);
 
-//    enemie = new Snail(5, 13, this, terrain, 3);
-//    make_connections(enemie);
-//    enemies.append(enemie);
-//    addItem(enemie);
+////    enemie = new Snail(5, 13, this, terrain, 3);
+////    make_connections(enemie);
+////    enemies.append(enemie);
+////    addItem(enemie);
 
-//    carlos = new Enemy(9, 3, 1, this, terrain, 1);
-//    make_connections(carlos);
-//    enemies.append(carlos);
-//    addItem(carlos);
+////    carlos = new Enemy(9, 3, 1, this, terrain, 1);
+////    make_connections(carlos);
+////    enemies.append(carlos);
+////    addItem(carlos);
 
-//    carlos = new Chamaleon(-1, 6, this, terrain, 1);
-//    make_connections(carlos);
-//    enemies.append(carlos);
-//    addItem(carlos);
+////    carlos = new Chamaleon(-1, 6, this, terrain, 1);
+////    make_connections(carlos);
+////    enemies.append(carlos);
+////    addItem(carlos);
 
-//    carlos = new Mole(9, 4, this, terrain, 2);
-//    make_connections(carlos);
-//    enemies.append(carlos);
-//    addItem(carlos);
+////    carlos = new Mole(9, 4, this, terrain, 2);
+////    make_connections(carlos);
+////    enemies.append(carlos);
+////    addItem(carlos);
 
-//    carlos = new Snail(0, 13, this, terrain, 3);
-//    make_connections(carlos);
-//    enemies.append(carlos);
-//    addItem(carlos);
+////    carlos = new Snail(0, 13, this, terrain, 3);
+////    make_connections(carlos);
+////    enemies.append(carlos);
+////    addItem(carlos);
 
-//    carlos = new Porcupine(9, 12, this, terrain, 4);
-//    make_connections(carlos);
-//    enemies.append(carlos);
-//    addItem(carlos);
+////    carlos = new Porcupine(9, 12, this, terrain, 4);
+////    make_connections(carlos);
+////    enemies.append(carlos);
+////    addItem(carlos);
 
-//    carlos = new Owl(-1, 6, this, terrain, 5);
-//    make_connections(carlos);
-//    enemies.append(carlos);
-//    addItem(carlos);
+////    carlos = new Owl(-1, 6, this, terrain, 5);
+////    make_connections(carlos);
+////    enemies.append(carlos);
+////    addItem(carlos);
 
-//    carlos = new Vulture(9, 4, this, terrain, 6);
-//    make_connections(carlos);
-//    enemies.append(carlos);
-//    addItem(carlos);
+////    carlos = new Vulture(9, 4, this, terrain, 6);
+////    make_connections(carlos);
+////    enemies.append(carlos);
+////    addItem(carlos);
 
-//    terrain->tiles[4][9] = new TerrainObject(540, 240, 1);
-//    terrain->tiles[3][3] = new TerrainObject(180, 180, 1);
-//    terrain->tiles[4][3] = new TerrainObject(180, 240, 1);
-//    terrain->tiles[5][3] = new TerrainObject(180, 300, 1);
+////    terrain->tiles[4][9] = new TerrainObject(540, 240, 1);
+////    terrain->tiles[3][3] = new TerrainObject(180, 180, 1);
+////    terrain->tiles[4][3] = new TerrainObject(180, 240, 1);
+////    terrain->tiles[5][3] = new TerrainObject(180, 300, 1);
 
-//    power_up = new PowerUp(rand()%4, 4);
-//    connect(power_up, &PowerUp::give_power, this, &Level::give_power);
-//    addItem(power_up);
+////    power_up = new PowerUp(rand()%4, 4);
+////    connect(power_up, &PowerUp::give_power, this, &Level::give_power);
+////    addItem(power_up);
 
-    player1 = new Player(5, 5);
-    addItem(player1);
+    power_up = nullptr;
 
-    player2 =  new Player(5, 7, false);
-    addItem(player2);
+    player1 = new Player(5, 5, true);
+    player1->freez = true;
+
+    if (two_players) {
+        player2 =  new Player(5, 7, true, false);
+        player2->freez = true;
+    }
 
     pause = false;
     black_screen->change_opacity(false);
-    instructions_timer->start(500);
+
+    dialoguing = true;
+    next_dialog();
 }
 
 Level::~Level() {
-    //delete carlos;
     delete information;
     delete player1;
-    delete player2;
+    if (two_players) delete player2;
     delete terrain;
     delete health_bar;
     delete freez_timer;
@@ -208,30 +283,33 @@ Level::~Level() {
     delete instructions_timer;
     delete delay_timer;
     delete black_screen;
-    //delete base;
-    //delete power_up;
+    if (lifebuoy != nullptr) delete lifebuoy;
+    delete base;
+    if (power_up != nullptr) delete power_up;
+    if (action_timer != nullptr) delete action_timer;
 }
 
 void Level::give_power(short power_type) {
 
-    power_up_bool = false;
+    power_up = nullptr;
 
     if (power_type == 0) hit_all_enemies();
     else if (power_type == 1) {
-        set_freez(true);
+        set_enemies_freez(true);
         freez_timer->start(5000);
+        active_timers[2] = true;
     }
     else if (power_type == 2) base->increase_health(200);
     else if (power_type == 3) {
-        while (fluid_index < 3) {
-            fluid_index++;
-            addItem(fluid_powers + fluid_index);
+        while ((*fluids_num) < 4) {
+            (*fluids_num)++;
+            addItem(fluid_powers + (*fluids_num) - 1);
         }
     }
     else {
-        while ((rock_index < 3) and ((terrain->rocks_num + (rock_index + 1)) < 15)) {
-            rock_index++;
-            addItem(rock_powers + rock_index);
+        while (((*rocks_num) < 4) and ((terrain->rocks_num + (*rocks_num)) < 15)) {
+            (*rocks_num)++;
+            addItem(rock_powers + (*rocks_num) - 1);
         }
     }
 }
@@ -242,7 +320,8 @@ void Level::remove_enemy(short list_index) {
 }
 
 void Level::defrost() {
-    set_freez(false);
+    set_enemies_freez(false);
+    active_timers[2] = false;
 }
 
 void Level::add_enemie(short type) {
@@ -250,7 +329,7 @@ void Level::add_enemie(short type) {
     short i, j, side = rand()%4;
 
     if (side%2) {
-        i = rand()%8;
+        i = rand()%9;
         j = 7*side - 8;
     }
     else {
@@ -258,7 +337,12 @@ void Level::add_enemie(short type) {
         j = rand()%13;
     }
 
-    if (type == 8) enemie = new Vulture(this, terrain, enemies.size());
+    //La memoria almacenada por enemie se libera cuando se le baja toda la vida.
+
+    if (type == 8) {
+        enemie = new Vulture(this, terrain, enemies.size());
+        connect(enemie, &Enemy::vulture_hit, base, &Base::vulture_hit);
+    }
     else if (type == 7) enemie = new Mole(this, terrain, enemies.size());
     else if (type == 6) enemie = new Chamaleon(i, j, this, terrain, enemies.size());
     else if (type == 5) enemie = new Owl(i, j, this, terrain, enemies.size());
@@ -272,8 +356,6 @@ void Level::add_enemie(short type) {
 
 void Level::add_power_up() {
 
-    power_up_bool = true;
-
     //El rand()%3 es para que sea más probable que salga true que false.
 
     if (enemies.size() > 3) power_up = new PowerUp(rand()%4, rand()%2);
@@ -282,6 +364,8 @@ void Level::add_power_up() {
     else power_up = new PowerUp(rand()%4, 3);
 
     connect(power_up, &PowerUp::give_power, this, &Level::give_power);
+    connect(power_up->display_timer, &QTimer::timeout, this, &Level::remove_power_up);
+    power_up->display_timer->start(15000);
     addItem(power_up);
 }
 
@@ -294,16 +378,25 @@ void Level::next_instruction() {
     //qDebug() << QString::fromUtf8(instruction.c_str());
     if (instruction[0] == 'W') {
 
-        information->display_message(389, 194,  "Oleada " + QString(instruction[1]));
+        //El número de la oleada se aumenta cuando se guarda la partida
+        //y no es la oleada final.
+
+        information->display_message(389, 194, "Oleada " + QString(instruction[1]));
         information->set_display_time(3000);
 
         delay_timer->start(3000);
+        active_timers[1] = true;
+
         instructions_timer->stop();
+        active_timers[0] = false;
     }
     else if (instruction[0] == 'S') {
         //qDebug() << "STOP" << std::stoi(instruction.substr(1));
         delay_timer->start(std::stoi(instruction.substr(1)));
+        active_timers[1] = true;
+
         instructions_timer->stop();
+        active_timers[0] = false;
     }
     else if (instruction[0] == 'E') {
         if (next) {
@@ -326,31 +419,80 @@ void Level::next_instruction() {
         else if (enemies.isEmpty()) {
             next = true;
 
-            if (instruction[1] == '1') terrain->clean_fluid();
-
-            information->display_message(389, 194,  "¡Fin de la Oleada!");
-            information->set_display_time(3000);
+            //if (instruction[1] == '1') terrain->clean_fluid();
+            if (instruction[1] == '0') {
+                terrain->update_terrain_matrix(terrain_matrix);
+                emit update_level_progress(2);
+                information->display_message(389, 194, "¡Fin de la Oleada!");
+                information->set_display_time(3000);
+            }
+            else information->display_message(389, 194, "Nivel Superado");
 
             delay_timer->start(3000);
+            active_timers[1] = true;
+
             instructions_timer->stop();
+            active_timers[0] = false;
         }
     }
     else {
         black_screen->change_opacity(true);
         instructions_timer->stop();
-        qDebug() << "Finish Level";
+        active_timers[0] = false;
     }
 
     if (next) script.pop();
 }
 
 void Level::finish_delay() {
-    instructions_timer->start(500);
+
+    if (gameover) black_screen->change_opacity(true);
+    else {
+        instructions_timer->start(500);
+        active_timers[0] = true;
+        active_timers[1] = false;
+    }
+}
+
+void Level::finish_level() {
+    emit update_level_progress((gameover?0:3));
+}
+
+void Level::no_health() {
+
+    gameover = true;
+    set_global_freez(true);
+    information->display_message(389, 194, "La base ha sido destruida");
+
+    //El timer delay_timer activará la pantalla negra, la cual posteriormente
+    //activará el slot de finish_level, el cual emitirá la señal de
+    //update_level_progress con un valor de 0 pues gameover
+    //está en true.
+
+    delay_timer->start(3000);
+    active_timers[1] = true;
+}
+
+void Level::check_action() {
+    if (((action == 0) and enemies.isEmpty()) or
+        ((action == 1) and (power_up == nullptr) and ((*fluids_num) < 4)) or
+        ((action == 2) and (power_up == nullptr) and ((*rocks_num) < 4))) {
+
+        action_timer->stop();
+
+        player1->freez = true;
+        if (two_players) player2->freez = true;
+
+        dialoguing = true;
+        action++;
+
+        next_dialog();
+    }
 }
 
 void Level::display_terrain() {
 
-    for (short i = 0; i < 10; i++) for (short j = 0; j < 13; j++) {
+    for (short i = 0; i < 9; i++) for (short j = 0; j < 13; j++) {
         if (terrain->tiles[i][j] != nullptr) addItem(terrain->tiles[i][j]);
     }
 
@@ -400,7 +542,7 @@ void Level::display_hud(short initial_health) {
     addItem(health_bar);
 
     QGraphicsPixmapItem *pix_map = new QGraphicsPixmapItem;
-    pix_map->setPixmap(QPixmap(":/images/resources/images/hud.png"));
+    pix_map->setPixmap(QPixmap(":/levels/resources/images/levels/hud.png"));
     pix_map->setPos(0, 540);
     pix_map->setZValue(5);
     addItem(pix_map);
@@ -410,7 +552,7 @@ void Level::display_hud(short initial_health) {
         rock_powers[i].setPixmap(QPixmap(":/power_ups/resources/images/power_ups/rock_power.png"));
         rock_powers[i].setPos(20 + 50*i, 555);
         rock_powers[i].setZValue(5);
-        if (i <= rock_index) addItem(rock_powers + i);
+        if (i < (*rocks_num)) addItem(rock_powers + i);
     }
 
     fluid_powers = new QGraphicsPixmapItem[4];
@@ -418,7 +560,7 @@ void Level::display_hud(short initial_health) {
         fluid_powers[i].setPixmap(QPixmap(":/power_ups/resources/images/power_ups/fluid_power.png"));
         fluid_powers[i].setPos(730 - 50*i, 555);
         fluid_powers[i].setZValue(5);
-        if (i <= fluid_index) addItem(fluid_powers + i);
+        if (i < (*fluids_num)) addItem(fluid_powers + i);
     }
 }
 
@@ -454,7 +596,7 @@ void Level::make_connections(Enemy *enemy) {
     connect(this, &Level::update_index, enemy, &Enemy::update_index);
 }
 
-void Level::set_freez(bool freez) {
+void Level::set_enemies_freez(bool freez) {
 
     base->set_vulnerable(!freez);
     for (short i = 0; i < enemies.size(); i++) {
@@ -473,7 +615,7 @@ void Level::initialize_template() {
     template_on = 0;
 
     power_template = new QGraphicsPixmapItem;
-    power_template->setPixmap(QPixmap(":/interface/resources/images/interface/available.png"));
+    power_template->setPixmap(QPixmap(":/levels/resources/images/levels/available.png"));
     power_template->setPos(180, 120);
     power_template->setOpacity(0.6);
     power_template->setZValue(0);
@@ -481,7 +623,7 @@ void Level::initialize_template() {
 
 void Level::add_rock(short i, short j) {
 
-    if (rock_index == -1) return;
+    if ((*rocks_num) == 0) return;
 
     //Verificamos que sea una de las baldosas donde se pueden colocar
     //las rocas.
@@ -527,8 +669,8 @@ void Level::add_rock(short i, short j) {
         terrain->tiles[i][j] = new TerrainObject(i, j, 1);
         addItem(terrain->tiles[i][j]);
 
-        removeItem(rock_powers + rock_index);
-        rock_index--;
+        removeItem(rock_powers + (*rocks_num) - 1);
+        (*rocks_num)--;
 
         terrain->rocks_num++;
     }
@@ -536,14 +678,14 @@ void Level::add_rock(short i, short j) {
 
 void Level::add_fluid(short i, short j) {
 
-    if (fluid_index == -1) return;
+    if ((*fluids_num) == 0) return;
     else if ((i == 4) and (j == 6)) return;
     else if (terrain->tiles[i][j] == nullptr) {
         terrain->tiles[i][j] = new TerrainObject(i, j, 3);
         addItem(terrain->tiles[i][j]);
 
-        removeItem(fluid_powers + fluid_index);
-        fluid_index--;
+        removeItem(fluid_powers + (*fluids_num) - 1);
+        (*fluids_num)--;
     }
     else if (terrain->tiles[i][j]->get_type() == 2) {
         removeItem(terrain->tiles[i][j]);
@@ -552,8 +694,8 @@ void Level::add_fluid(short i, short j) {
         terrain->tiles[i][j] = new TerrainObject(i, j, 3);
         addItem(terrain->tiles[i][j]);
 
-        removeItem(fluid_powers + fluid_index);
-        fluid_index--;
+        removeItem(fluid_powers + (*fluids_num) - 1);
+        (*fluids_num)--;
     }
 
     //Simplemente salimo si hay un fluido colocado por los jugadores
@@ -561,10 +703,166 @@ void Level::add_fluid(short i, short j) {
 
 }
 
-bool Level::get_level_script(short initial_wave) {
+void Level::set_global_freez(bool freez) {
+
+    //Permite detener el juego justo donde está, para luego poder
+    //retormarlo justo como estaba. A exceción de Information.
+
+    set_enemies_freez(freez);
+    if (power_up != nullptr) power_up->set_freez(freez);
+
+    player1->freez = freez;
+    if (two_players) player2->freez = freez;
+
+    if (freez) {
+        if (active_timers[0]) {
+            remainings[0] = instructions_timer->remainingTime();
+            instructions_timer->stop();
+        }
+        if (active_timers[1]) {
+            remainings[1] = delay_timer->remainingTime();
+            delay_timer->stop();
+        }
+        if (active_timers[2]) {
+            remainings[2] = freez_timer->remainingTime();
+            freez_timer->stop();
+        }
+    }
+    else {
+        if (active_timers[0]) {
+            instructions_timer->start(remainings[0]);
+            active_timers[0] = true;
+        }
+        if (active_timers[1]) {
+            delay_timer->start(remainings[1]);
+            active_timers[1] = true;
+        }
+        if (active_timers[2]) {
+            freez_timer->start(remainings[2]);
+            active_timers[2] = true;
+        }
+    }
+}
+
+bool Level::get_level_dialogs(std::string path, short level_num) {
+
+    bool next_line = true;
+    std::string line;
+    //std::fstream file(path + "levels_dialogs/level0.txt", std::ios::in);
+    std::fstream file(path + "levels_dialogs/level" + char(level_num + 48) + ".txt", std::ios::in);
+    if (file.is_open()) {
+        while (next_line) {
+
+            getline(file, pre_dialog);
+
+            //Tenemos seguridad de que por lo menos hay una línea en el texto.
+
+            text = "";
+            getline(file, line);
+
+            while (next_line and (line != "")) {
+                text.append(line);
+                text.push_back('\n');
+                if (!getline(file, line)) next_line = false;
+            }
+
+            //Borramos el último salto de línea.
+
+            text.append("\nPresiona Enter para continuar ->");
+
+            dialog[0] = pre_dialog;
+            dialog[1] = text;
+            dialogs.push(dialog);
+        }
+
+        file.close();
+        return true;
+    }
+    else return false;
+}
+
+void Level::next_dialog() {
+
+    if (dialogs.empty() and tutorial_level) black_screen->change_opacity(true);
+    else if (dialogs.empty()) {
+
+        dialoguing = false;
+
+        player1->freez = false;
+        addItem(player1);
+        if (two_players) {
+            player2->freez = false;
+            addItem(player2);
+        }
+
+        instructions_timer->start(500);
+        active_timers[0] = true;
+
+        next_instruction();
+    }
+    else {
+        dialog = dialogs.front();
+        if (dialog[0] == "na") information->display_message(389, 20, QString::fromUtf8(dialog[1].c_str()));
+        else if (dialog[0] == "acción") {
+            if (action == 0) {
+                removeItem(information);
+
+                player1->freez = false;
+                addItem(player1);
+                if (two_players) {
+                    player2->freez = false;
+                    addItem(player2);
+                }
+
+                add_enemie(0);
+                add_enemie(0);
+
+                dialoguing = false;
+                action_timer->start(50);
+            }
+            else if (action == 1) {
+
+                removeItem(information);
+
+                player1->freez = false;
+                if (two_players) player2->freez = false;
+
+                power_up = new PowerUp(rand()%4, 3);
+                connect(power_up, &PowerUp::give_power, this, &Level::give_power);
+                addItem(power_up);
+                dialoguing = false;
+                action_timer->start(50);
+            }
+            else {
+
+                removeItem(information);
+
+                player1->freez = false;
+                if (two_players) player2->freez = false;
+
+                power_up = new PowerUp(rand()%4, 4);
+                connect(power_up, &PowerUp::give_power, this, &Level::give_power);
+                addItem(power_up);
+                dialoguing = false;
+                action_timer->start(50);
+            }
+        }
+        else information->display_message(389, 100, QString::fromUtf8(dialog[1].c_str()), QString::fromUtf8(dialog[0].c_str()));
+        dialogs.pop();
+    }
+}
+
+void Level::remove_power_up() {
+    if (power_up != nullptr) {
+        delete power_up;
+        power_up = nullptr;
+    }
+}
+
+bool Level::get_level_script(std::string path, short level_num, short initial_wave) {
 
     bool current_game = false;
-    std::fstream file("../ProyectoFinal/data/levels_scripts/level1.txt", std::ios::in);
+    std::fstream file(path + "levels_scripts/" + (two_players?'1':'0') + "level" + char(level_num + 48) + ".txt", std::ios::in);
     if (file.is_open()) {
         while (getline(file, instruction)) {
 
@@ -575,12 +873,19 @@ bool Level::get_level_script(short initial_wave) {
             }
         }
         file.close();
+
+        //Le bajamos uno para que cuando se comiencen a ejecutar las
+        //instrucciones se compense.
+
         return true;
     }
     else return false;
 }
 
 void Level::add_fire_ball(short x, short y) {
+
+    //La memoria de la fire ball se libera cuando ella sola se destruye.
+
     fire_ball = new FireBall(x, y);
     addItem(fire_ball);
     //Tiene que ser después de que se agregó a la escena,

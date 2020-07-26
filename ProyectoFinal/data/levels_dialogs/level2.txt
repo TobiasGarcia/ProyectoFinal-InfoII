@@ -1,0 +1,19 @@
+:/enemies/resources/images/enemies/owl.png
+Ella es María, es una lechuza muy perspicaz
+por lo que sabe que utilziar las patas para
+moverse por el mapa es una mala idea debido
+al pegamento y las rocas, por lo cual irá
+volando directo hacia tu base, pasando por
+encima de cualquier obstáculo que le
+coloques en medio.
+
+:/enemies/resources/images/enemies/chamaleon.png
+Ella es Susana, una camaleón que se sabe
+camuflar muy bien, cada cierto tiempo
+se hará invisible o visible y es conocida
+porque cuando se esconde, no solo la dejas
+de ver, sino que dicen que es capaz de
+esquivar cualquier ataque que le lancen,
+además de que no le gustan las rocas, por
+lo que si se hace invisible y choca con una
+se irá rápidamente para otro lugar.

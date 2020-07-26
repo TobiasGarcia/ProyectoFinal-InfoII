@@ -26,7 +26,7 @@ public:
 public slots:
     void move();
 signals:
-    void level_selected();
+    void finish();
 };
 
 #endif // NEEDLE_H
