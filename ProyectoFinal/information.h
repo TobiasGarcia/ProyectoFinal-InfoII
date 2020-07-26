@@ -18,12 +18,14 @@ private:
     short width, height;
     QGraphicsScene *target_scene;
     QGraphicsTextItem *text;
+    QGraphicsPixmapItem *pix;
 public:
     Information(QGraphicsScene *_target_scene);
     ~Information();
 
     void set_display_time(unsigned long long int millis);
     void display_message(short x, short y, QString message);
+    void display_message(short x, short y, QString message, QString image_path);
 public slots:
     void remove();
 };

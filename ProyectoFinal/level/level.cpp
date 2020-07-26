@@ -15,6 +15,8 @@ void Level::keyPressEvent(QKeyEvent *event) {
     else if (two_players and (event->key() == Qt::Key_S)) player2->move_dir[2] = true;
     else if (two_players and (event->key() == Qt::Key_D)) player2->move_dir[3] = true;
 
+    else if (dialoguing and (event->key() == Qt::Key_Return)) next_dialog();
+
     else if ((event->key() == Qt::Key_P) and pause) emit update_level_progress(1);
 
     //Si se presiona la tecla Esc, debemos deciride cuando podemos entrar al menú de pausa:
@@ -24,7 +26,11 @@ void Level::keyPressEvent(QKeyEvent *event) {
     //no es nulo, NO entramos al menú de pausa; y si estamos en pausa siempre
     //deberemos poder salir de esta.
 
-    else if ((event->key() == Qt::Key_Escape) and (pause or (information->scene() == nullptr))) {
+    //El tutorial_level es para que no se pueda acceder a la pausa durante el nivel tutorial,
+    //pues desde la pausa se puede salir al menu de niveles, lo cual no es buena idea si no
+    //se ha terminado el tutorial, por lo cual siempre mantendremos esa variable
+
+    else if ((event->key() == Qt::Key_Escape) and (pause or (information->scene() == nullptr)) and !tutorial_level) {
         if (pause) removeItem(information);
         else information->display_message(389, 182, "\t\t     PAUSA\n\n"
                                                     "Presiona Esc de nuevo para volver al juego.\n"
@@ -97,9 +103,10 @@ Level::Level(std::string path, bool _two_players, short level_num, short initial
 
     //(*wave) = 2;
     setSceneRect(0, 0, 779, 599); //780x600 pixeles para que los jugadores se muevan de 15 en 15.
-    setBackgroundBrush(QBrush(QPixmap(":/textures/resources/images/floor_texture.png")));
+    setBackgroundBrush(QBrush(QPixmap(":/levels/resources/images/levels/level" + QString::number(level_num) + "_back.png")));
 
-    if (!get_level_script(path, level_num, initial_wave)) qDebug() << "No se abrió el archivo >:(";
+    tutorial_level = (level_num == 0);
+
     next = true;
 
     enemie = nullptr;
@@ -122,12 +129,35 @@ Level::Level(std::string path, bool _two_players, short level_num, short initial
     addItem(black_screen);
 
     information = new Information(this);
-//    information->display_message(390, 60, QString("GALAXY LACTERS"));
 
-    terrain = new Terrain(this, terrain_matrix);
-    while ((terrain->rocks_num + (*rocks_num)) > 15) (*rocks_num)--;
+    if (!get_level_dialogs(path, level_num)) qDebug() << "No se abrió el archivo >:(";
 
-    display_terrain();
+    if (tutorial_level) {
+        terrain = new Terrain(this, terrain_matrix, true);
+
+        //No importa si viene de otro nivel, pues al final del nivel extra
+        //cargaremos la partida si no es la primera vez que se juego el
+        //tutorial para recuprar tdoo.
+
+        (*health) = 1000;
+        (*extra_life) = true;
+        (*rocks_num) = 0;
+        (*fluids_num) = 0;
+
+        action_timer = new QTimer;
+        connect(action_timer, &QTimer::timeout, this, &Level::check_action);
+    }
+    else {
+        terrain = new Terrain(this, terrain_matrix, tutorial_level);
+        while ((terrain->rocks_num + (*rocks_num)) > 15) (*rocks_num)--;
+
+        display_terrain();
+        action_timer = nullptr;
+
+        if (!get_level_script(path, level_num, initial_wave)) qDebug() << "No se abrió el archivo >:(";
+    }
+
+    action = 0;
 
     initialize_template();
 
@@ -143,14 +173,18 @@ Level::Level(std::string path, bool _two_players, short level_num, short initial
 
     lifebuoy = nullptr;
     if ((*extra_life)) {
-        lifebuoy = new QGraphicsPixmapItem(QPixmap(":/images/resources/images/lifebuoy_small.png"));
+        lifebuoy = new QGraphicsPixmapItem(QPixmap(":/base/resources/images/base/lifebuoy_small.png"));
         lifebuoy->setOffset(-30, -30);
         lifebuoy->setPos(390, 270);
-        lifebuoy->setZValue(3);
+
+        //Le colocamos ese Z value para que esté por encima de la base, pues esta se agrega después,
+        //pero para que esté por debajo de los enemigos, pues estos se agregan depués a la escena.
+
+        lifebuoy->setZValue(2);
         addItem(lifebuoy);
     }
 
-    base = new Base(health_bar, health, extra_life, lifebuoy);//Salud inicial de la base.
+    base = new Base(health_bar, health, extra_life, lifebuoy, tutorial_level);//Salud inicial de la base.
     connect(base, &Base::no_health, this, &Level::no_health);
     addItem(base);
 
@@ -221,17 +255,18 @@ Level::Level(std::string path, bool _two_players, short level_num, short initial
     power_up = nullptr;
 
     player1 = new Player(5, 5, true);
-    addItem(player1);
+    player1->freez = true;
 
     if (two_players) {
         player2 =  new Player(5, 7, true, false);
-        addItem(player2);
+        player2->freez = true;
     }
 
     pause = false;
     black_screen->change_opacity(false);
-    instructions_timer->start(500);
-    active_timers[0] = true;
+
+    dialoguing = true;
+    next_dialog();
 }
 
 Level::~Level() {
@@ -251,6 +286,7 @@ Level::~Level() {
     if (lifebuoy != nullptr) delete lifebuoy;
     delete base;
     if (power_up != nullptr) delete power_up;
+    if (action_timer != nullptr) delete action_timer;
 }
 
 void Level::give_power(short power_type) {
@@ -328,6 +364,8 @@ void Level::add_power_up() {
     else power_up = new PowerUp(rand()%4, 3);
 
     connect(power_up, &PowerUp::give_power, this, &Level::give_power);
+    connect(power_up->display_timer, &QTimer::timeout, this, &Level::remove_power_up);
+    power_up->display_timer->start(15000);
     addItem(power_up);
 }
 
@@ -435,6 +473,23 @@ void Level::no_health() {
     active_timers[1] = true;
 }
 
+void Level::check_action() {
+    if (((action == 0) and enemies.isEmpty()) or
+        ((action == 1) and (power_up == nullptr) and ((*fluids_num) < 4)) or
+        ((action == 2) and (power_up == nullptr) and ((*rocks_num) < 4))) {
+
+        action_timer->stop();
+
+        player1->freez = true;
+        if (two_players) player2->freez = true;
+
+        dialoguing = true;
+        action++;
+
+        next_dialog();
+    }
+}
+
 void Level::display_terrain() {
 
     for (short i = 0; i < 9; i++) for (short j = 0; j < 13; j++) {
@@ -487,7 +542,7 @@ void Level::display_hud(short initial_health) {
     addItem(health_bar);
 
     QGraphicsPixmapItem *pix_map = new QGraphicsPixmapItem;
-    pix_map->setPixmap(QPixmap(":/images/resources/images/hud.png"));
+    pix_map->setPixmap(QPixmap(":/levels/resources/images/levels/hud.png"));
     pix_map->setPos(0, 540);
     pix_map->setZValue(5);
     addItem(pix_map);
@@ -560,7 +615,7 @@ void Level::initialize_template() {
     template_on = 0;
 
     power_template = new QGraphicsPixmapItem;
-    power_template->setPixmap(QPixmap(":/interface/resources/images/interface/available.png"));
+    power_template->setPixmap(QPixmap(":/levels/resources/images/levels/available.png"));
     power_template->setPos(180, 120);
     power_template->setOpacity(0.6);
     power_template->setZValue(0);
@@ -686,6 +741,121 @@ void Level::set_global_freez(bool freez) {
             freez_timer->start(remainings[2]);
             active_timers[2] = true;
         }
+    }
+}
+
+bool Level::get_level_dialogs(std::string path, short level_num) {
+
+    bool next_line = true;
+    std::string line;
+    //std::fstream file(path + "levels_dialogs/level0.txt", std::ios::in);
+    std::fstream file(path + "levels_dialogs/level" + char(level_num + 48) + ".txt", std::ios::in);
+    if (file.is_open()) {
+        while (next_line) {
+
+            getline(file, pre_dialog);
+
+            //Tenemos seguridad de que por lo menos hay una línea en el texto.
+
+            text = "";
+            getline(file, line);
+
+            while (next_line and (line != "")) {
+                text.append(line);
+                text.push_back('\n');
+                if (!getline(file, line)) next_line = false;
+            }
+
+            //Borramos el último salto de línea.
+
+            text.append("\nPresiona Enter para continuar ->");
+
+            dialog[0] = pre_dialog;
+            dialog[1] = text;
+            dialogs.push(dialog);
+        }
+
+        file.close();
+        return true;
+    }
+    else return false;
+}
+
+void Level::next_dialog() {
+
+    if (dialogs.empty() and tutorial_level) black_screen->change_opacity(true);
+    else if (dialogs.empty()) {
+
+        dialoguing = false;
+
+        player1->freez = false;
+        addItem(player1);
+        if (two_players) {
+            player2->freez = false;
+            addItem(player2);
+        }
+
+        instructions_timer->start(500);
+        active_timers[0] = true;
+
+        next_instruction();
+    }
+    else {
+        dialog = dialogs.front();
+        if (dialog[0] == "na") information->display_message(389, 20, QString::fromUtf8(dialog[1].c_str()));
+        else if (dialog[0] == "acción") {
+            if (action == 0) {
+                removeItem(information);
+
+                player1->freez = false;
+                addItem(player1);
+                if (two_players) {
+                    player2->freez = false;
+                    addItem(player2);
+                }
+
+                add_enemie(0);
+                add_enemie(0);
+
+                dialoguing = false;
+                action_timer->start(50);
+            }
+            else if (action == 1) {
+
+                removeItem(information);
+
+                player1->freez = false;
+                if (two_players) player2->freez = false;
+
+                power_up = new PowerUp(rand()%4, 3);
+                connect(power_up, &PowerUp::give_power, this, &Level::give_power);
+                addItem(power_up);
+                dialoguing = false;
+                action_timer->start(50);
+            }
+            else {
+
+                removeItem(information);
+
+                player1->freez = false;
+                if (two_players) player2->freez = false;
+
+                power_up = new PowerUp(rand()%4, 4);
+                connect(power_up, &PowerUp::give_power, this, &Level::give_power);
+                addItem(power_up);
+                dialoguing = false;
+                action_timer->start(50);
+            }
+        }
+        else information->display_message(389, 100, QString::fromUtf8(dialog[1].c_str()), QString::fromUtf8(dialog[0].c_str()));
+        dialogs.pop();
+    }
+}
+
+void Level::remove_power_up() {
+    if (power_up != nullptr) {
+        delete power_up;
+        power_up = nullptr;
     }
 }
 

@@ -6,8 +6,8 @@ FireBall::FireBall(short x, short y) {
     erase = false;
 
     pix = new QPixmap[2];
-    pix[0] = QPixmap(":/images/resources/images/fire_ball0.png");
-    pix[1] = QPixmap(":/images/resources/images/fire_ball1.png");
+    pix[0] = QPixmap(":/players/resources/images/players/fire_ball0.png");
+    pix[1] = QPixmap(":/players/resources/images/players/fire_ball1.png");
 
     setPos(x - 17.5, y - 17.5);
     setPixmap(pix[0]);

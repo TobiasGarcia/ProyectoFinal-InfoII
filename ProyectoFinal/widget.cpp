@@ -15,15 +15,15 @@ Widget::Widget(QWidget *parent)
     ui->game_gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     QPalette palette, palette2;
-    palette.setBrush(QPalette::Background, QPixmap(":/images/resources/images/main_menu.png"));
+    palette.setBrush(QPalette::Background, QPixmap(":/graphic_interface/resources/images/graphic_interface/main_menu.png"));
     ui->stacked_w->widget(0)->setAutoFillBackground(true);
     ui->stacked_w->widget(0)->setPalette(palette);
 
-    palette.setBrush(QPalette::Background, QPixmap(":/images/resources/images/new_game.png"));
+    palette.setBrush(QPalette::Background, QPixmap(":/graphic_interface/resources/images/graphic_interface/new_game.png"));
     ui->stacked_w->widget(1)->setAutoFillBackground(true);
     ui->stacked_w->widget(1)->setPalette(palette);
 
-    palette.setBrush(QPalette::Background, QPixmap(":/images/resources/images/load_game.png"));
+    palette.setBrush(QPalette::Background, QPixmap(":/graphic_interface/resources/images/graphic_interface/load_game.png"));
     ui->stacked_w->widget(2)->setAutoFillBackground(true);
     ui->stacked_w->widget(2)->setPalette(palette);
 

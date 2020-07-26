@@ -222,7 +222,7 @@ Mole::Mole(QGraphicsScene *_level, Terrain *_terrain, short _list_index) :
     if (random_tile < 3) tile_pixels = tiles2pixels(rand()%3 + 3, 4);
     else tile_pixels = tiles2pixels(rand()%3 + 3, 8);
 
-    hole = new QGraphicsPixmapItem(QPixmap(":/images/resources/images/bitten.png"));
+    hole = new QGraphicsPixmapItem(QPixmap(":/base/resources/images/base/bitten.png"));
     hole->setPos(tile_pixels[0] - 11, tile_pixels[1] - 11);
     level->addItem(hole);
 

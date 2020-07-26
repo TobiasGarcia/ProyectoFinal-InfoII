@@ -33,6 +33,7 @@ private:
     QPainterPath shape() const;
 
 public:
+    QTimer *display_timer;
     void emit_give_power();
     PowerUp(short _path_type, short _power_type);
     ~PowerUp();

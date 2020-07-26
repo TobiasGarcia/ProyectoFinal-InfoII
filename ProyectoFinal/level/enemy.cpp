@@ -261,6 +261,7 @@ void Enemy::initialize() {
         spd = 35;
         max_health = 600;
         pix = new QPixmap(":/enemies/resources/images/enemies/snail.png");
+        *pix = pix->transformed(QTransform().scale(0.5, 0.5));
     }
     else if (type == 4) {
         //40 x 50 pixeles;

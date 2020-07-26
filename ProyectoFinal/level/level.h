@@ -39,7 +39,7 @@ private:
     //se debe retirar la plantialla, de otro modo es porque hay algún jugador que
     //la necesita.
 
-    bool next, pause, two_players, *extra_life, active_timers[3], gameover;
+    bool next, pause, two_players, *extra_life, active_timers[3], gameover, dialoguing, tutorial_level;
 
     //Active timeres tiene bool sobre si los timers están activos o no:
     //0: instructions_timer
@@ -49,15 +49,17 @@ private:
     //Análogo para remainings.
 
     Information *information;
-    short *rocks_num, *fluids_num, template_on, enemie_count, max_enemies, remainings[3];
+    short *rocks_num, *fluids_num, template_on, enemie_count, max_enemies, remainings[3], action;
     PowerUp *power_up;
     QList<Enemy*> enemies;
     QGraphicsPixmapItem *rock_powers, *fluid_powers, *power_template, *lifebuoy;
-    QTimer *freez_timer, *instructions_timer, *delay_timer;
+    QTimer *freez_timer, *instructions_timer, *delay_timer, *action_timer;
     QList<QGraphicsItem*> rock_ghost_collisions;
 
-    std::string instruction;
+    std::string instruction, pre_dialog, text;
+    std::array<std::string, 2> dialog;
     std::queue<std::string> script;
+    std::queue<std::array<std::string, 2>> dialogs;
     std::array<std::string, 9> *terrain_matrix;
 
     //La variable ghost_rock es utilizada para revisar si la zona donde se
@@ -80,6 +82,10 @@ private:
     void add_rock(short i, short j);
     void add_fluid(short i, short j);
     void set_global_freez(bool freez);
+    bool get_level_dialogs(std::string path, short level_num);
+    void next_dialog();
+    void set_up_tutorial_level();
+    void remove_power_up();
 
 public:
     Level(std::string path, bool _two_players, short level_num, short initial_wave, short *_rocks_num,
@@ -94,6 +100,7 @@ public slots:
     void finish_delay();
     void finish_level();
     void no_health();
+    void check_action();
 
 signals:
     void update_index(short removed_index);

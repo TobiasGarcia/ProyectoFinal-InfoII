@@ -6,8 +6,8 @@ QRectF Player::boundingRect() const {
 
 Player::Player(short i, short j, bool level, bool _player_one) : player_one(_player_one) {
 
-    if (player_one) pix = new QPixmap(":/images/resources/images/blue_scope.png");
-    else pix = new QPixmap(":/images/resources/images/purple_scope.png");
+    if (player_one) pix = new QPixmap(":/players/resources/images/players/blue_scope.png");
+    else pix = new QPixmap(":/players/resources/images/players/purple_scope.png");
 
     setPos(30 + 60*j, 30 + 60*i);
     setOffset(-15, -15);

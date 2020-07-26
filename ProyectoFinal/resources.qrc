@@ -1,21 +1,4 @@
 <RCC>
-    <qresource prefix="/images">
-        <file>resources/images/rock.png</file>
-        <file>resources/images/fluid.png</file>
-        <file>resources/images/snail_fluid.png</file>
-        <file>resources/images/blue_scope.png</file>
-        <file>resources/images/fire_ball0.png</file>
-        <file>resources/images/fire_ball1.png</file>
-        <file>resources/images/purple_scope.png</file>
-        <file>resources/images/hud.png</file>
-        <file>resources/images/base.png</file>
-        <file>resources/images/bitten.png</file>
-        <file>resources/images/normal.png</file>
-        <file>resources/images/main_menu.png</file>
-        <file>resources/images/new_game.png</file>
-        <file>resources/images/load_game.png</file>
-        <file>resources/images/lifebuoy_small.png</file>
-    </qresource>
     <qresource prefix="/enemies">
         <file>resources/images/enemies/chamaleon.png</file>
         <file>resources/images/enemies/enemy0.png</file>
@@ -35,12 +18,6 @@
         <file>resources/images/power_ups/power4.png</file>
         <file>resources/images/power_ups/fluid_power.png</file>
         <file>resources/images/power_ups/rock_power.png</file>
-    </qresource>
-    <qresource prefix="/interface">
-        <file>resources/images/interface/available.png</file>
-    </qresource>
-    <qresource prefix="/textures">
-        <file>resources/images/floor_texture.png</file>
     </qresource>
     <qresource prefix="/minigame">
         <file>resources/images/minigame/ball.png</file>
@@ -62,5 +39,33 @@
         <file>resources/images/levels_menu/lifebuoy.png</file>
         <file>resources/images/levels_menu/trophy.png</file>
         <file>resources/images/levels_menu/locked.png</file>
+    </qresource>
+    <qresource prefix="/base">
+        <file>resources/images/base/base.png</file>
+        <file>resources/images/base/bitten.png</file>
+        <file>resources/images/base/lifebuoy_small.png</file>
+        <file>resources/images/base/normal.png</file>
+    </qresource>
+    <qresource prefix="/levels">
+        <file>resources/images/levels/available.png</file>
+        <file>resources/images/levels/level1_back.png</file>
+        <file>resources/images/levels/fluid.png</file>
+        <file>resources/images/levels/hud.png</file>
+        <file>resources/images/levels/rock.png</file>
+        <file>resources/images/levels/snail_fluid.png</file>
+        <file>resources/images/levels/level0_back.png</file>
+        <file>resources/images/levels/level2_back.png</file>
+        <file>resources/images/levels/level3_back.png</file>
+    </qresource>
+    <qresource prefix="/graphic_interface">
+        <file>resources/images/graphic_interface/load_game.png</file>
+        <file>resources/images/graphic_interface/main_menu.png</file>
+        <file>resources/images/graphic_interface/new_game.png</file>
+    </qresource>
+    <qresource prefix="/players">
+        <file>resources/images/players/blue_scope.png</file>
+        <file>resources/images/players/fire_ball0.png</file>
+        <file>resources/images/players/fire_ball1.png</file>
+        <file>resources/images/players/purple_scope.png</file>
     </qresource>
 </RCC>

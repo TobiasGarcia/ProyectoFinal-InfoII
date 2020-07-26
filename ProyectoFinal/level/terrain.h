@@ -23,7 +23,7 @@ public:
     //void clean_fluid();
     void update_terrain_matrix(std::array<std::string, 9> *terrain_matrix);
 
-    Terrain(QGraphicsScene *_level, std::array<std::string, 9> *terrain_matrix);
+    Terrain(QGraphicsScene *_level, std::array<std::string, 9> *terrain_matrix, bool tutorial_level);
     ~Terrain();
 };
 

@@ -93,6 +93,9 @@ PowerUp::PowerUp(short _path_type, short _power_type) : path_type(_path_type), p
     if (path_type != 3) connect(move_timer, &QTimer::timeout, this, &PowerUp::move);
     else connect(move_timer, &QTimer::timeout, this, &PowerUp::lemniscate_move);
 
+    display_timer = new QTimer;
+    display_timer->setSingleShot(true);
+
     freez = false;
     move_timer->start(50);
 }
@@ -100,6 +103,7 @@ PowerUp::PowerUp(short _path_type, short _power_type) : path_type(_path_type), p
 PowerUp::~PowerUp() {
     delete pix;
     delete move_timer;
+    delete display_timer;
 }
 
 void PowerUp::move() {

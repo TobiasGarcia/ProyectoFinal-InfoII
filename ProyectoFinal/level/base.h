@@ -11,14 +11,15 @@ class Base: public QObject, public QGraphicsPixmapItem {
 
 private:
     QGraphicsPixmapItem *lifebuoy;
-    bool vulnerable, *extra_life;
+    bool vulnerable, *extra_life, tutorial_level;
     QGraphicsRectItem *health_bar;
     QPixmap *pix;
     short *health;
     QTimer *hurt_timer;
 
 public:
-    Base(QGraphicsRectItem *_health_bar, short *_health, bool *_extra_life, QGraphicsPixmapItem *_lifebuoy);
+    Base(QGraphicsRectItem *_health_bar, short *_health, bool *_extra_life,
+         QGraphicsPixmapItem *_lifebuoy, bool _tutorial_level);
     ~Base();
     QGraphicsPixmapItem *center;
     void increase_health(short increment);

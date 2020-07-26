@@ -26,12 +26,12 @@ void Game::create_new_game(std::string password) {
     winner = false;
 
     data.push_back(two_players?'1':'0');
-    data.append("000100\n\n");
+    data.append("000000\n\n");
 
     rocks_num = 0;
     fluids_num = 0;
     extra_life = 0;
-    levels_waves[0] = 1;
+    levels_waves[0] = 0;
     levels_waves[1] = 0;
     levels_waves[2] = 0;
     healths[0] = 1000;
@@ -129,9 +129,25 @@ Game::Game(std::string _path, QGraphicsView *_game_gv, std::string _game_id,
     if (password != "") create_new_game(password);
     else load_game();
 
-    levels_menu = new LevelsMenu(two_players, rocks_num, fluids_num, extra_life, levels_waves, winner);
-    connect(levels_menu, &LevelsMenu::level_selected, this, &Game::level_selceted);
-    game_gv->setScene(levels_menu);
+    if (levels_waves[0] == 0) {
+
+        //Sí se acaba de crear la cuenta, es decir, no se ha desbloqueado el primer nivel (levels_waves[0] == 0),
+        //no comenzamos en el menú de niveles sino en el nivel tutorial.
+
+        //Le pasamos los argumentos del primer nivel, pues esto no afecta ya que el constructor de la
+        //clase Level realiza los cambios necesarios en caso de ser nivel tutorial.
+
+        current_level = 0;
+        level = new Level(path, two_players, current_level, levels_waves[0],
+                          &rocks_num, &fluids_num, &extra_life, healths, &(terrain_matrices[0]));
+        connect(level, &Level::update_level_progress, this, &Game::update_level_progress);
+        game_gv->setScene(level);
+    }
+    else {
+        levels_menu = new LevelsMenu(two_players, rocks_num, fluids_num, extra_life, levels_waves, winner);
+        connect(levels_menu, &LevelsMenu::level_selected, this, &Game::level_selceted);
+        game_gv->setScene(levels_menu);
+    }
 }
 
 void Game::level_selceted(short level_num) {
@@ -140,15 +156,24 @@ void Game::level_selceted(short level_num) {
     if (level_num == -1) emit exit_game();
     else {
         current_level = level_num;
-        if (level_num == 0) qDebug() << "Esto no está listo aún.";
-        else {
 
+        if (current_level == 0) {
+
+            //Le pasamos los argumentos del primer nivel, pues esto no afecta ya que el constructor de la
+            //clase Level realiza los cambios necesarios en caso de ser nivel tutorial.
+
+            level = new Level(path, two_players, current_level, levels_waves[0],
+                              &rocks_num, &fluids_num, &extra_life, healths, &(terrain_matrices[0]));
+            connect(level, &Level::update_level_progress, this, &Game::update_level_progress);
+            game_gv->setScene(level);
+        }
+        else {
             //Como terrain_matrices es un std::array y no un array de la forma [],
             //para pasar la dirección de memoria de alguno de sus elemetnos
             //hay que utilizar &(terrain_matrices[i]), en lugar de
             //simplemente (terrain_matrices + i).
 
-            level = new Level(path, two_players, level_num, levels_waves[level_num - 1],
+            level = new Level(path, two_players, current_level, levels_waves[level_num - 1],
                               &rocks_num, &fluids_num, &extra_life, (healths + (level_num - 1)),
                               &(terrain_matrices[level_num - 1]));
             connect(level, &Level::update_level_progress, this, &Game::update_level_progress);
@@ -162,23 +187,25 @@ void Game::update_level_progress(short progress_type) {
     if (progress_type == 3) {
         delete level;
 
-        //Como terrain_matrices es un std::array y no un array de la forma [],
-        //para pasar la dirección de memoria de alguno de sus elemetnos
-        //hay que utilizar &(terrain_matrices[i]), en lugar de
-        //simplemente (terrain_matrices + i).
+        //Si no es el nivel tutorial, limpiamos el terreno, en caso contrario,
+        //cargamos la partida para recuperar el estado anterior.
 
-        clear_terrain(&(terrain_matrices[current_level - 1]));
-        levels_waves[current_level - 1] = 1;
-        healths[current_level - 1] = 1000;
+        if (current_level != 0) {
+            //Como terrain_matrices es un std::array y no un array de la forma [],
+            //para pasar la dirección de memoria de alguno de sus elemetnos
+            //hay que utilizar &(terrain_matrices[i]), en lugar de
+            //simplemente (terrain_matrices + i).
+
+            clear_terrain(&(terrain_matrices[current_level - 1]));
+            levels_waves[current_level - 1] = 1;
+            healths[current_level - 1] = 1000;
+        }
+        else load_game();
 
         //Desbloqueamos el siguiente nivel
 
         if ((current_level < 3) and (levels_waves[current_level] == 0)) levels_waves[current_level] = 1;
-        else if (current_level == 3) {
-            winner = true;
-            //NO OLVIDAR GUARDAR EL JUEGO CUANDO LO TERMINEN.
-            qDebug() << "¡Has terminado el juego!";
-        }
+        else if (current_level == 3) winner = true;
 
         minigame = new Minigame(two_players, &rocks_num, &fluids_num, &extra_life);
         connect(minigame, &Minigame::minigame_finished, this, &Game::minigame_finished);

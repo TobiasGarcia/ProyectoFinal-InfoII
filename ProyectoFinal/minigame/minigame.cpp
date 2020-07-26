@@ -45,7 +45,7 @@ void Minigame::fail() {
     claw->setOffset(-33, 0);
     claw_close = true;
 
-    message = "             ¡Tiempo Fuera!";
+    message = "¡Tiempo Fuera!";
 
     if (two_players) message += "\nEnter o V para continuar ->";
     else message += "\nEnter para continuar ->";

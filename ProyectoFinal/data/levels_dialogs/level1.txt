@@ -1,0 +1,15 @@
+:/enemies/resources/images/enemies/snail.png
+Él es Armando el caracol, no lo subestimes,
+a pesar de su aspecto, el rastro azul que deja
+le permite a él y a sus amigos moverse mucho
+más rápido por el mapa, no lo dejes deambular
+mucho, porque te puede dejar todo pintado de
+azul.
+
+:/enemies/resources/images/enemies/porcupine.png
+Él es Andrés el puercospín, es muy impaciente,
+por lo que irá directamente hacia tu base sin
+importarle las rocas que le coloques en el
+camino, pues de todas formas él es famoso
+porque luego de tomar clases de artes marciales,
+¡No hay roca que resista sus golpes!.

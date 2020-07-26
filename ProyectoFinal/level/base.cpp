@@ -1,19 +1,22 @@
 #include "base.h"
 #include <QDebug>
 
-Base::Base(QGraphicsRectItem *_health_bar, short *_health, bool *_extra_life, QGraphicsPixmapItem *_lifebuoy) :
-    lifebuoy(_lifebuoy), extra_life(_extra_life), health_bar(_health_bar), health(_health) {
+Base::Base(QGraphicsRectItem *_health_bar, short *_health, bool *_extra_life,
+           QGraphicsPixmapItem *_lifebuoy, bool _tutorial_level) :
+
+           lifebuoy(_lifebuoy), extra_life(_extra_life), tutorial_level(_tutorial_level),
+           health_bar(_health_bar), health(_health) {
 
     vulnerable = true;
 
-    pix = new QPixmap(":/images/resources/images/base.png");
+    pix = new QPixmap(":/base/resources/images/base/base.png");
     setPos(360, 240);
     setPixmap(*pix);
     setZValue(0);
 
     pix = new QPixmap[2];
-    pix[0] = QPixmap(":/images/resources/images/normal.png");
-    pix[1] = QPixmap(":/images/resources/images/bitten.png");
+    pix[0] = QPixmap(":/base/resources/images/base/normal.png");
+    pix[1] = QPixmap(":/base/resources/images/base/bitten.png");
 
     center = new QGraphicsPixmapItem(pix[0], this);
     center->setPos(19, 19);
@@ -40,9 +43,15 @@ void Base::bitten() {
         (*health) -= 10;
 
         if (((*health) < 300) and (*extra_life)) {
-            scene()->removeItem(lifebuoy);
+
+            //No permitimos que en el nivel tutorial se pierda.
+
+            if (!tutorial_level) {
+                scene()->removeItem(lifebuoy);
+                (*extra_life) = false;
+            }
+
             hurt_timer->start(500);
-            (*extra_life) = false;
             (*health) = 1000;
         }
         else if ((*health) == 0) {
