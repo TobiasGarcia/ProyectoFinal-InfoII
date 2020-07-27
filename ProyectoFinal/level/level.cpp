@@ -91,15 +91,15 @@ void Level::keyReleaseEvent(QKeyEvent *event) {
         if (template_on == 0) removeItem(power_template);
         add_rock(player2->y()/60, player2->x()/60);
     }
-    else if (event->key() == Qt::Key_Shift) add_fluid(player1->y()/60, player1->x()/60);
-    else if (two_players and (event->key() == Qt::Key_B)) add_fluid(player2->y()/60, player2->x()/60);
+    else if (event->key() == Qt::Key_Shift) add_glue(player1->y()/60, player1->x()/60);
+    else if (two_players and (event->key() == Qt::Key_B)) add_glue(player2->y()/60, player2->x()/60);
 }
 
 Level::Level(std::string path, bool _two_players, short level_num, short initial_wave, short *_rocks_num,
-             short *_fluids_num, bool *_extra_life, short *health, std::array<std::string, 9> *_terrain_matrix) :
+             short *_glues_num, bool *_extra_life, short *health, std::array<std::string, 9> *_terrain_matrix) :
 
              two_players(_two_players), extra_life(_extra_life), rocks_num(_rocks_num),
-             fluids_num(_fluids_num), terrain_matrix(_terrain_matrix) {
+             glues_num(_glues_num), terrain_matrix(_terrain_matrix) {
 
     //(*wave) = 2;
     setSceneRect(0, 0, 779, 599); //780x600 pixeles para que los jugadores se muevan de 15 en 15.
@@ -133,7 +133,7 @@ Level::Level(std::string path, bool _two_players, short level_num, short initial
     if (!get_level_dialogs(path, level_num)) qDebug() << "No se abrió el archivo >:(";
 
     if (tutorial_level) {
-        terrain = new Terrain(this, terrain_matrix, true);
+        terrain = new Terrain(this);
 
         //No importa si viene de otro nivel, pues al final del nivel extra
         //cargaremos la partida si no es la primera vez que se juego el
@@ -142,13 +142,13 @@ Level::Level(std::string path, bool _two_players, short level_num, short initial
         (*health) = 1000;
         (*extra_life) = true;
         (*rocks_num) = 0;
-        (*fluids_num) = 0;
+        (*glues_num) = 0;
 
         action_timer = new QTimer;
         connect(action_timer, &QTimer::timeout, this, &Level::check_action);
     }
     else {
-        terrain = new Terrain(this, terrain_matrix, tutorial_level);
+        terrain = new Terrain(this, terrain_matrix);
         while ((terrain->rocks_num + (*rocks_num)) > 15) (*rocks_num)--;
 
         display_terrain();
@@ -277,7 +277,7 @@ Level::~Level() {
     delete health_bar;
     delete freez_timer;
     delete[] rock_powers;
-    delete[] fluid_powers;
+    delete[] glue_powers;
     delete power_template;
     delete ghost_rock;
     delete instructions_timer;
@@ -301,9 +301,9 @@ void Level::give_power(short power_type) {
     }
     else if (power_type == 2) base->increase_health(200);
     else if (power_type == 3) {
-        while ((*fluids_num) < 4) {
-            (*fluids_num)++;
-            addItem(fluid_powers + (*fluids_num) - 1);
+        while ((*glues_num) < 4) {
+            (*glues_num)++;
+            addItem(glue_powers + (*glues_num) - 1);
         }
     }
     else {
@@ -419,7 +419,7 @@ void Level::next_instruction() {
         else if (enemies.isEmpty()) {
             next = true;
 
-            //if (instruction[1] == '1') terrain->clean_fluid();
+            //if (instruction[1] == '1') terrain->clean_glue();
             if (instruction[1] == '0') {
                 terrain->update_terrain_matrix(terrain_matrix);
                 emit update_level_progress(2);
@@ -475,7 +475,7 @@ void Level::no_health() {
 
 void Level::check_action() {
     if (((action == 0) and enemies.isEmpty()) or
-        ((action == 1) and (power_up == nullptr) and ((*fluids_num) < 4)) or
+        ((action == 1) and (power_up == nullptr) and ((*glues_num) < 4)) or
         ((action == 2) and (power_up == nullptr) and ((*rocks_num) < 4))) {
 
         action_timer->stop();
@@ -555,12 +555,12 @@ void Level::display_hud(short initial_health) {
         if (i < (*rocks_num)) addItem(rock_powers + i);
     }
 
-    fluid_powers = new QGraphicsPixmapItem[4];
+    glue_powers = new QGraphicsPixmapItem[4];
     for (short i = 0; i < 4; i++) {
-        fluid_powers[i].setPixmap(QPixmap(":/power_ups/resources/images/power_ups/fluid_power.png"));
-        fluid_powers[i].setPos(730 - 50*i, 555);
-        fluid_powers[i].setZValue(5);
-        if (i < (*fluids_num)) addItem(fluid_powers + i);
+        glue_powers[i].setPixmap(QPixmap(":/power_ups/resources/images/power_ups/glue_power.png"));
+        glue_powers[i].setPos(730 - 50*i, 555);
+        glue_powers[i].setZValue(5);
+        if (i < (*glues_num)) addItem(glue_powers + i);
     }
 }
 
@@ -676,16 +676,16 @@ void Level::add_rock(short i, short j) {
     }
 }
 
-void Level::add_fluid(short i, short j) {
+void Level::add_glue(short i, short j) {
 
-    if ((*fluids_num) == 0) return;
+    if ((*glues_num) == 0) return;
     else if ((i == 4) and (j == 6)) return;
     else if (terrain->tiles[i][j] == nullptr) {
         terrain->tiles[i][j] = new TerrainObject(i, j, 3);
         addItem(terrain->tiles[i][j]);
 
-        removeItem(fluid_powers + (*fluids_num) - 1);
-        (*fluids_num)--;
+        removeItem(glue_powers + (*glues_num) - 1);
+        (*glues_num)--;
     }
     else if (terrain->tiles[i][j]->get_type() == 2) {
         removeItem(terrain->tiles[i][j]);
@@ -694,11 +694,11 @@ void Level::add_fluid(short i, short j) {
         terrain->tiles[i][j] = new TerrainObject(i, j, 3);
         addItem(terrain->tiles[i][j]);
 
-        removeItem(fluid_powers + (*fluids_num) - 1);
-        (*fluids_num)--;
+        removeItem(glue_powers + (*glues_num) - 1);
+        (*glues_num)--;
     }
 
-    //Simplemente salimo si hay un fluido colocado por los jugadores
+    //Simplemente salimo si hay un glueo colocado por los jugadores
     //o una roca.
 
 }
@@ -847,7 +847,7 @@ void Level::next_dialog() {
                 action_timer->start(50);
             }
         }
-        else information->display_message(389, 100, QString::fromUtf8(dialog[1].c_str()), QString::fromUtf8(dialog[0].c_str()));
+        else information->display_message(389, 120, QString::fromUtf8(dialog[1].c_str()), QString::fromUtf8(dialog[0].c_str()));
         dialogs.pop();
     }
 }

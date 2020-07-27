@@ -3,17 +3,17 @@
 
 #include <QGraphicsScene>
 #include <QFontDatabase>
-#include "player.h"
+#include "player/player.h"
 #include "level/terrain.h"
 #include "level/terrainobject.h"
 #include "level/enemy.h"
-#include "fireball.h"
+#include "player/fireball.h"
 #include "level/base.h"
 #include "level/powerup.h"
 #include <QKeyEvent>
-#include "information.h"
+#include "game/information.h"
 #include "level/special_enemies.h"
-#include "blackscreen.h"
+#include "game/blackscreen.h"
 #include <fstream>
 #include <queue>
 
@@ -33,7 +33,7 @@ private:
     Player *player1, *player2;
 
     //La variable tamplate_on[] servirá para determinar cuando colocar la plantilla
-    //para poder colocar las rocas o los fluidos. Cuando un jugador presiona la tecla
+    //para poder colocar las rocas o los glueos. Cuando un jugador presiona la tecla
     //para colocar una roca por ejemplo, se le suma uno a la primera posición, de esta
     //forma es sólo cuando el valor almacenado en la primera posición es cero cuando
     //se debe retirar la plantialla, de otro modo es porque hay algún jugador que
@@ -49,10 +49,10 @@ private:
     //Análogo para remainings.
 
     Information *information;
-    short *rocks_num, *fluids_num, template_on, enemie_count, max_enemies, remainings[3], action;
+    short *rocks_num, *glues_num, template_on, enemie_count, max_enemies, remainings[3], action;
     PowerUp *power_up;
     QList<Enemy*> enemies;
-    QGraphicsPixmapItem *rock_powers, *fluid_powers, *power_template, *lifebuoy;
+    QGraphicsPixmapItem *rock_powers, *glue_powers, *power_template, *lifebuoy;
     QTimer *freez_timer, *instructions_timer, *delay_timer, *action_timer;
     QList<QGraphicsItem*> rock_ghost_collisions;
 
@@ -80,7 +80,7 @@ private:
     void set_enemies_freez(bool freez);
     void initialize_template();
     void add_rock(short i, short j);
-    void add_fluid(short i, short j);
+    void add_glue(short i, short j);
     void set_global_freez(bool freez);
     bool get_level_dialogs(std::string path, short level_num);
     void next_dialog();
@@ -88,10 +88,12 @@ private:
     void remove_power_up();
 
 public:
-    Level(std::string path, bool _two_players, short level_num, short initial_wave, short *_rocks_num,
-          short *_fluids_num, bool *_extra_life, short *health, std::array<std::string, 9> *terrain_matrix);
+    Level(std::string path, bool _two_players, short level_num, short initial_wave = 1,
+          short *_rocks_num = nullptr, short *_glues_num = nullptr, bool *_extra_life = nullptr,
+          short *health = nullptr, std::array<std::string, 9> *terrain_matrix  = nullptr);
     ~Level();
     Terrain *terrain;
+
 public slots:
     void give_power(short power_type);
     void remove_enemy(short list_index);

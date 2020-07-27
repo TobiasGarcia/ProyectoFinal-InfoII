@@ -73,7 +73,7 @@ void LevelsMenu::keyReleaseEvent(QKeyEvent *event) {
     else if (two_players and (event->key() == Qt::Key_D)) player2->move_dir[3] = false;
 }
 
-LevelsMenu::LevelsMenu(bool _two_players, short rocks_num, short fluids_num, bool extra_life,
+LevelsMenu::LevelsMenu(bool _two_players, short rocks_num, short glues_num, bool extra_life,
     short *_levels_waves, bool winner) : levels_waves(_levels_waves), two_players(_two_players) {
 
     setSceneRect(0, 0, 779, 599);
@@ -86,8 +86,8 @@ LevelsMenu::LevelsMenu(bool _two_players, short rocks_num, short fluids_num, boo
         addItem(graph_pix);
     }
 
-    for (short i = 0; i < fluids_num; i++) {
-        graph_pix = new QGraphicsPixmapItem(QPixmap(":/power_ups/resources/images/power_ups/fluid_power.png"));
+    for (short i = 0; i < glues_num; i++) {
+        graph_pix = new QGraphicsPixmapItem(QPixmap(":/power_ups/resources/images/power_ups/glue_power.png"));
         graph_pix->setPos(28 + 48*i, 503);
         addItem(graph_pix);
     }

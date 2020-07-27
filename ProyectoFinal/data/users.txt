@@ -9,3 +9,6 @@ Mora:mora
 Marce:sd
 Morci:lo
 Terminado:casa
+asdasd:as
+Harry:potter
+Terminados:casa

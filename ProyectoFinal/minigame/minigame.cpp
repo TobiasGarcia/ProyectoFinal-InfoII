@@ -114,8 +114,8 @@ void Minigame::drop_ball() {
     state++;
 }
 
-Minigame::Minigame(short _two_players, short *_rocks_num, short *_fluids_num, bool *_extra_life) :
-    rocks_num(_rocks_num), fluids_num(_fluids_num), two_players(_two_players), extra_life(_extra_life) {
+Minigame::Minigame(short _two_players, short *_rocks_num, short *_glues_num, bool *_extra_life) :
+    rocks_num(_rocks_num), glues_num(_glues_num), two_players(_two_players), extra_life(_extra_life) {
 
     setSceneRect(0, 0, 779, 599);
     setBackgroundBrush(QBrush(QPixmap(":/minigame/resources/images/minigame/minigame_background.png")));
@@ -256,12 +256,12 @@ void Minigame::win() {
     }
     else if (ball->get_rebounds() < 2) message += "   Ya tienes una vida extra\n";
 
-    short won_rocks = fmin(4 - (*rocks_num), 2), won_fluids = fmin(4 - (*fluids_num), 2);
+    short won_rocks = fmin(4 - (*rocks_num), 2), won_glues = fmin(4 - (*glues_num), 2);
 
-    if (won_fluids == 0) message += "   Ya tienes 4 pegamentos\n";
+    if (won_glues == 0) message += "   Ya tienes 4 pegamentos\n";
     else {
         message += "   Pegamento x ";
-        message.push_back(char(won_fluids + 48));
+        message.push_back(char(won_glues + 48));
         message += "\n";
     }
 
@@ -277,7 +277,7 @@ void Minigame::win() {
     if (two_players) message += "\nEnter o V para continuar ->";
     else message += "\nEnter para continuar ->";
 
-    (*fluids_num) += won_fluids;
+    (*glues_num) += won_glues;
     (*rocks_num) += won_rocks;
 
     information->display_message(389, 150, message);

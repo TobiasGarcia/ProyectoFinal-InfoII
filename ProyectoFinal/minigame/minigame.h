@@ -7,8 +7,8 @@
 #include <QGraphicsPixmapItem>
 #include <math.h>
 #include <minigame/ball.h>
-#include <information.h>
-#include <blackscreen.h>
+#include <game/information.h>
+#include <game/blackscreen.h>
 
 class Minigame: public QGraphicsScene {
 
@@ -18,7 +18,7 @@ private:
     BlackScreen *black_screen;
     QString message;
     Ball *ball;
-    short state, *rocks_num, *fluids_num;
+    short state, *rocks_num, *glues_num;
     double time, ang_frecuency, gamma, phase, amp, k, b, m, T;
     QTimer *claw_move_timer, *delay_timer;
     bool two_players, claw_close, *extra_life;
@@ -32,7 +32,7 @@ private:
     void drop_ball();
 
 public:
-    Minigame(short _two_players, short *_rocks_num, short *_fluids_num, bool *_extra_life);
+    Minigame(short _two_players, short *_rocks_num, short *_glues_num, bool *_extra_life);
     ~Minigame();
 public slots:
     void claw_move();

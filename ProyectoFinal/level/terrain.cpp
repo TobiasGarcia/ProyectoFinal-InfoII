@@ -1,7 +1,7 @@
 #include "terrain.h"
 #include <QDebug>
 
-//void Terrain::clean_fluid() {
+//void Terrain::clean_glue() {
 //    for (short i = 0; i < 9; i++) {
 //        for (short j = 0; j < 13; j++) {
 //            if ((tiles[i][j] != nullptr) and (tiles[i][j]->get_type() != 1)) {
@@ -22,25 +22,23 @@ void Terrain::update_terrain_matrix(std::array<std::string, 9> *terrain_matrix) 
     }
 }
 
-Terrain::Terrain(QGraphicsScene *_level, std::array<std::string, 9> *terrain_matrix, bool tutorial_level) :
-                 level(_level) {
+Terrain::Terrain(QGraphicsScene *_level) : level(_level){
+    rocks_num = 0;
+    for (short i = 0; i < 9; i++) {
+        for (short j = 0; j < 13; j++) tiles[i][j] = nullptr;
+    }
+}
+
+Terrain::Terrain(QGraphicsScene *_level, std::array<std::string, 9> *terrain_matrix) : level(_level) {
 
     rocks_num = 0;
-
-    if (tutorial_level) {
-        for (short i = 0; i < 9; i++) {
-            for (short j = 0; j < 13; j++) tiles[i][j] = nullptr;
-        }
-    }
-    else {
-        for (short i = 0; i < 9; i++) {
-            for (short j = 0; j < 13; j++) {
-                if ((*terrain_matrix)[i][j] != '0') {
-                    tiles[i][j] = new TerrainObject(i, j, short((*terrain_matrix)[i][j]) - 48);
-                    if ((*terrain_matrix)[i][j] == '1') rocks_num++;
-                }
-                else tiles[i][j] = nullptr;
+    for (short i = 0; i < 9; i++) {
+        for (short j = 0; j < 13; j++) {
+            if ((*terrain_matrix)[i][j] != '0') {
+                tiles[i][j] = new TerrainObject(i, j, short((*terrain_matrix)[i][j]) - 48);
+                if ((*terrain_matrix)[i][j] == '1') rocks_num++;
             }
+            else tiles[i][j] = nullptr;
         }
     }
 }

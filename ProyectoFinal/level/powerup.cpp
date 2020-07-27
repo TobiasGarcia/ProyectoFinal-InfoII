@@ -120,6 +120,8 @@ void PowerUp::move() {
 
 void PowerUp::lemniscate_move() {
 
+    if (freez) return;
+
     //Como dibujamos cada 0.05 segundos, al discretizar la derivada del ángulo
     //debemos multiplicar por esos 0.05 segundos que es el intervalo de tiempo,
     //sin embargo, utilizamos 0.06 en su lugar para compensar el tiempo que

@@ -4,10 +4,10 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 #include <QKeyEvent>
-#include "player.h"
-#include "fireball.h"
+#include "player/player.h"
+#include "player/fireball.h"
 #include "levels_menu/needle.h"
-#include "blackscreen.h"
+#include "game/blackscreen.h"
 
 class LevelsMenu: public QGraphicsScene {
 
@@ -25,7 +25,7 @@ private:
     void keyReleaseEvent(QKeyEvent *event);
 
 public:
-    LevelsMenu(bool _two_players, short rocks_num, short fluids_num, bool extra_life,
+    LevelsMenu(bool _two_players, short rocks_num, short glues_num, bool extra_life,
                short *_levels_waves, bool winner);
     ~LevelsMenu();
 public slots:

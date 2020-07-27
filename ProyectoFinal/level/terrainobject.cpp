@@ -7,11 +7,11 @@ TerrainObject::TerrainObject(short i, short j, short _type) : type(_type) {
         *pix = pix->transformed(QTransform().translate(-30, -30).rotate(90*(rand()%4)).translate(30, 30));
     }
     else if (type == 2) {
-        pix = new QPixmap(":/levels/resources/images/levels/snail_fluid.png");
+        pix = new QPixmap(":/levels/resources/images/levels/snail_glue.png");
         *pix = pix->transformed(QTransform().translate(-30, -30).rotate(90*(rand()%4)).translate(30, 30));
     }
     else if (type == 3) {
-        pix = new QPixmap(":/levels/resources/images/levels/fluid.png");
+        pix = new QPixmap(":/levels/resources/images/levels/glue.png");
         *pix = pix->transformed(QTransform().translate(-30, -30).rotate(90*(rand()%4)).translate(30, 30));
     }
 

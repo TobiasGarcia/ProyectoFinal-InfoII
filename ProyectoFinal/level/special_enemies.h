@@ -5,9 +5,9 @@
 
 class Snail: public Enemy {
 private:
-    TerrainObject *fluid;
+    TerrainObject *glue;
 
-    void add_fluid();
+    void add_glue();
     bool collisions_handler(QList<QGraphicsItem*> collisions);
 public:
     Snail(short i, short j, QGraphicsScene *_level, Terrain *_terrain, short _list_index) :

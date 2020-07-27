@@ -1,11 +1,11 @@
 #include "special_enemies.h"
 #include <QDebug>
 
-void Snail::add_fluid() {
+void Snail::add_glue() {
     short i = y()/60, j = x()/60;
 
     //Es suficiente con verificar que no sea nulo pues este método no se llamará
-    //sobre fluido de caracol y nunca estará sobre una roca.
+    //sobre glueo de caracol y nunca estará sobre una roca.
 
     if (terrain->tiles[i][j] != nullptr) {
         level->removeItem(terrain->tiles[i][j]);
@@ -20,7 +20,7 @@ bool Snail::collisions_handler(QList<QGraphicsItem*> collisions) {
 
     //Retornamos true si necesitamos dejar de ejecutar el slot move().
 
-    bool in_fluid = false;
+    bool in_glue = false;
     for (short i = 0; i < collisions.size(); i++) {
         QGraphicsItem *item = collisions[i];
         if (typeid(*item) == typeid(TerrainObject)) {
@@ -32,9 +32,9 @@ bool Snail::collisions_handler(QList<QGraphicsItem*> collisions) {
             }
 
             //No hay problema con el retorno porque para llegar hasta una roca
-            //ya se debe haber puesto el fluido.
+            //ya se debe haber puesto el glueo.
 
-            else if (terrain_object->get_type() == 2) in_fluid = true;
+            else if (terrain_object->get_type() == 2) in_glue = true;
         }
         else if (typeid(*item) == typeid(Base)) {
             move_timer->stop();
@@ -46,16 +46,16 @@ bool Snail::collisions_handler(QList<QGraphicsItem*> collisions) {
             bite_timer->start(1000);
 
             //No hay problema con el retorno porque para llegar hasta la base
-            //ya se debe haber puesto el fluido.
+            //ya se debe haber puesto el glueo.
 
             return true;
         }
     }
 
     //Tenemos que asegurarnos de que esté dentro del rectángulo para que no se
-    //coloquen fluidos por fuera de la pantalla.
+    //coloquen glueos por fuera de la pantalla.
 
-    if (!in_fluid and QRect(0, 0, 780, 540).contains(x(), y(), false)) add_fluid();
+    if (!in_glue and QRect(0, 0, 780, 540).contains(x(), y(), false)) add_glue();
     return false;
 }
 
