@@ -137,7 +137,7 @@ void Chamaleon::camouflage() {
 
     if (visible) {
         visible = false;
-        level->removeItem(this);
+        if (scene() != nullptr) level->removeItem(this);
     }
     else {
         visible = true;
@@ -148,7 +148,7 @@ void Chamaleon::camouflage() {
 void Chamaleon::rock_collision() {
 
     visible = false;
-    level->removeItem(this);
+    if (scene() != nullptr) level->removeItem(this);
 
     short random_tile = rand()%16, tile[2];
 

@@ -1,6 +1,10 @@
 #include "blackscreen.h"
 #include <QDebug>
 
+//--------------------------------------------------------------------
+//--------Mencionar que la mayor parte de la documentación se encuentra dentro de los .cpp y no en los .h.
+//------------------------------------------------------------------------------------------
+
 BlackScreen::BlackScreen() {
 
     setRect(0, 0, 779, 599);

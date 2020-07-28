@@ -20,10 +20,6 @@ Player::Player(short i, short j, bool level, bool _player_one) : player_one(_pla
     else lower_limit = 585;
 
     move_dir.fill(false);
-
-    delay_timer = new QTimer;
-    delay_timer->setSingleShot(true);
-
     freez = false;
 
     move_timer = new QTimer;
@@ -33,7 +29,6 @@ Player::Player(short i, short j, bool level, bool _player_one) : player_one(_pla
 
 Player::~Player() {
     delete pix;
-    delete delay_timer;
     delete move_timer;
 }
 

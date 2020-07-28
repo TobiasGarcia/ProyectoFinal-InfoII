@@ -24,6 +24,7 @@ Widget::Widget(QWidget *parent)
     //por lo cual en la variable path debe ir la ruta hasta esta con un '/' al final.
 
     path = "../ProyectoFinal/data/";
+    //path = "data/";
 
     srand(time(nullptr));
     two_players = false;
@@ -269,7 +270,7 @@ bool Widget::check_txt_files(bool &game_data_exists, std::string game_id) {
     //                        El primer número del nombre (1 o 0) indica si son las instrucciones
     //                        para el modo multijugador o el de un solo jugador respectivamente,
     //                        luego sigue la palabra level y por último el número del
-    //                        nivel (de 0 a 3), ejemplo: 0level1.txt.
+    //                        nivel (de 1 a 3), ejemplo: 0level2.txt.
 
     //data/levels_dialogs/ -- Múltiples archivos .txt, uno por cada nivel. Estos archivos almacenan
     //                        los diálogos que se le presentarán al usuario al inicio de cada nivel,
@@ -283,17 +284,22 @@ bool Widget::check_txt_files(bool &game_data_exists, std::string game_id) {
     else file.close();
 
     for (short i = 0; i < 4; i++) {
-        file.open(path + "levels_scripts/0level" + char(i + 48) + ".txt");
-        if (!file.is_open()) return false;
-        else file.close();
-
-        file.open(path + "levels_scripts/1level" + char(i + 48) + ".txt");
-        if (!file.is_open()) return false;
-        else file.close();
 
         file.open(path + "levels_dialogs/level" + char(i + 48) + ".txt");
         if (!file.is_open()) return false;
         else file.close();
+
+        //El condicional es necesario pues no existen los archivos 0level0.txt ni 1level.txt.
+
+        if (i != 0) {
+            file.open(path + "levels_scripts/0level" + char(i + 48) + ".txt");
+            if (!file.is_open()) return false;
+            else file.close();
+
+            file.open(path + "levels_scripts/1level" + char(i + 48) + ".txt");
+            if (!file.is_open()) return false;
+            else file.close();
+        }
     }
 
     //Como mencionamos antes, si game_data_exists es true, es porque debemos verificar la existencia

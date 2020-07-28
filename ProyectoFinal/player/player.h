@@ -17,7 +17,6 @@ private:
     QRectF boundingRect() const;
 
 public:
-    QTimer *delay_timer;
     bool freez;
     std::array<bool, 4> move_dir;
 

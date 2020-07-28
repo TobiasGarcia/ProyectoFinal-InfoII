@@ -54,8 +54,8 @@ void LevelsMenu::keyPressEvent(QKeyEvent *event) {
 
     //Qt::Key_Return es el enter cercano a las flechas, Qt::Key_Enter es el del Numeric Keypad.
 
-    else if (!player1->delay_timer->isActive() and (event->key() == Qt::Key_Return)) add_fire_ball(player1->x(), player1->y());
-    else if (two_players and !player2->delay_timer->isActive() and (event->key() == Qt::Key_Space)) add_fire_ball(player2->x(), player2->y());
+    else if ((event->key() == Qt::Key_Return)) add_fire_ball(player1->x(), player1->y());
+    else if (two_players and (event->key() == Qt::Key_Space)) add_fire_ball(player2->x(), player2->y());
 }
 
 void LevelsMenu::keyReleaseEvent(QKeyEvent *event) {

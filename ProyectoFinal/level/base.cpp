@@ -40,6 +40,7 @@ void Base::increase_health(short increment) {
 
 void Base::bitten() {
     if (vulnerable) {
+
         (*health) -= 10;
 
         if (((*health) < 300) and (*extra_life)) {

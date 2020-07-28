@@ -51,15 +51,6 @@ Enemy::Enemy(short i, short j, short _type, QGraphicsScene *_level, Terrain *_te
     move_timer->start(50);
 }
 
-Enemy::~Enemy() {
-    delete pix;
-    delete delay_timer;
-    delete move_timer;
-    delete bite_timer;
-    delete health_on_timer;
-    delete[] health_bar;
-}
-
 void Enemy::initialize_timers() {
 
     //Inicializamos los timers.
@@ -122,6 +113,7 @@ void Enemy::define_personality() {
         spd = 30;
         max_health = 500;
         pix = new QPixmap(":/enemies/resources/images/enemies/enemy0.png");
+        *pix = pix->transformed(QTransform().scale(0.5, 0.5));
     }
     else if (type == 1) {
         //40 x 50 pixeles;
@@ -139,6 +131,7 @@ void Enemy::define_personality() {
         spd = 40;
         max_health = 300;
         pix = new QPixmap(":/enemies/resources/images/enemies/enemy2.png");
+        *pix = pix->transformed(QTransform().scale(0.5, 0.5));
     }
     else if (type == 3) {
         //40 x 50 pixeles;
@@ -153,17 +146,19 @@ void Enemy::define_personality() {
         //40 x 50 pixeles;
         width_half = 20;
         height_half = 25;
-        spd = 35;
+        spd = 40;
         max_health = 300;
         pix = new QPixmap(":/enemies/resources/images/enemies/porcupine.png");
+        *pix = pix->transformed(QTransform().scale(0.5, 0.5));
     }
     else if (type == 5) {
         //40 x 50 pixeles;
         width_half = 20;
         height_half = 25;
-        spd = 30;
-        max_health = 300;
+        spd = 35;
+        max_health = 500;
         pix = new QPixmap(":/enemies/resources/images/enemies/owl.png");
+        *pix = pix->transformed(QTransform().scale(0.5, 0.5));
     }
     else if (type == 6) {
         //40 x 50 pixeles;
@@ -172,6 +167,7 @@ void Enemy::define_personality() {
         spd = 25;
         max_health = 700;
         pix = new QPixmap(":/enemies/resources/images/enemies/chamaleon.png");
+        *pix = pix->transformed(QTransform().scale(0.5, 0.5));
     }
     else if (type == 7) {
         //40 x 50 pixeles;
@@ -180,6 +176,7 @@ void Enemy::define_personality() {
         spd = 25;
         max_health = 300;
         pix = new QPixmap(":/enemies/resources/images/enemies/mole.png");
+        *pix = pix->transformed(QTransform().scale(0.5, 0.5));
     }
     else {
         //40 x 50 pixeles;
@@ -188,7 +185,17 @@ void Enemy::define_personality() {
         spd = 140;
         max_health = 500;
         pix = new QPixmap(":/enemies/resources/images/enemies/vulture.png");
+        *pix = pix->transformed(QTransform().scale(0.5, 0.5));
     }
+}
+
+Enemy::~Enemy() {
+    delete pix;
+    delete delay_timer;
+    delete move_timer;
+    delete bite_timer;
+    delete health_on_timer;
+    delete[] health_bar;
 }
 
 void Enemy::reduces_health(short hit) {

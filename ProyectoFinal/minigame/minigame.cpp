@@ -9,9 +9,9 @@ void Minigame::keyPressEvent(QKeyEvent *event) {
     else if ((event->key() == Qt::Key_Return) and (state == 3)) second_chance();
     else if ((event->key() == Qt::Key_Return) and !two_players and (state == 5)) drop_ball();
     else if ((event->key() == Qt::Key_Return) and (state == 7)) black_screen->change_opacity(true);
-    else if (two_players and (event->key() == Qt::Key_V) and (state == 3)) second_chance();
-    else if (two_players and (event->key() == Qt::Key_V) and (state == 5)) drop_ball();
-    else if (two_players and (event->key() == Qt::Key_V) and (state == 7)) black_screen->change_opacity(true);
+    else if (two_players and (event->key() == Qt::Key_Space) and (state == 3)) second_chance();
+    else if (two_players and (event->key() == Qt::Key_Space) and (state == 5)) drop_ball();
+    else if (two_players and (event->key() == Qt::Key_Space) and (state == 7)) black_screen->change_opacity(true);
 }
 
 //void Minigame::display_walls() {
@@ -45,10 +45,8 @@ void Minigame::fail() {
     claw->setOffset(-33, 0);
     claw_close = true;
 
-    message = "¡Tiempo Fuera!";
-
-    if (two_players) message += "\nEnter o V para continuar ->";
-    else message += "\nEnter para continuar ->";
+    if (two_players) message = "                    ¡Tiempo Fuera!\nEnter o Espacio para continuar ->";
+    else message = "         ¡Tiempo Fuera!\nEnter para continuar ->";
 
     information->display_message(389, 250, message);
     state++;
@@ -76,8 +74,8 @@ void Minigame::second_chance() {
     ang_frecuency = sqrt(k/m);
 
     if (two_players) {
-        message = "     Segunda Oportunidad\n"
-                  "Segundo Jugador (Tecla V)";
+        message = "            Segunda Oportunidad\n"
+                  "Segundo Jugador (Tecla Espacio)";
     }
     else message = "Segunda Oportunidad";
 
@@ -141,12 +139,12 @@ Minigame::Minigame(short _two_players, short *_rocks_num, short *_glues_num, boo
     information = new Information(this);
 
     if (two_players) {
-        message = "                  MINIJUEGO\n"
+        message = "                    MINIJUEGO\n"
                   "             ¡Dale al Objetivo!\n"
                   "Primer Jugador (Tecla Enter)";
     }
     else {
-        message = "      MINIJUEGO\n"
+        message = "        MINIJUEGO\n"
                   "¡Dale al Objetivo!";
     }
 
@@ -228,8 +226,6 @@ void Minigame::claw_move() {
     //Sumamos de 0.05 porque dibujamos cada 0.05 segundos,
     //más 0.02 para compensar tiempos de cálculos.
 
-    qDebug() << claw_move_timer->isActive();
-
     time += 0.06;
     if ((claw_close) and (time > T)) time -= T;
 
@@ -246,7 +242,7 @@ void Minigame::win() {
     claw->setOffset(-33, 0);
     claw_close = true;
 
-    message = "     ¡MISIÓN CUMPLIDA!\n"
+    message = "      ¡MISIÓN CUMPLIDA!\n"
                       "\n"
                       "Recompensas obtenidas:\n";
 
@@ -274,7 +270,7 @@ void Minigame::win() {
 
     message += "\nNúmero de Rebotes: " + QString::number(ball->get_rebounds());
 
-    if (two_players) message += "\nEnter o V para continuar ->";
+    if (two_players) message += "\nEnter o Espacio para continuar ->";
     else message += "\nEnter para continuar ->";
 
     (*glues_num) += won_glues;
