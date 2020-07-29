@@ -23,6 +23,9 @@ Widget::Widget(QWidget *parent)
     //Todos los txt con información que necesita el juego se encuentran en la carpeta data,
     //por lo cual en la variable path debe ir la ruta hasta esta con un '/' al final.
 
+    //La primer ruta es para el modo Debug, mientras que la segunda es utilizada cuando
+    //el proyecto es compilado de modo Release.
+
     path = "../ProyectoFinal/data/";
     //path = "data/";
 
@@ -74,6 +77,7 @@ void Widget::labels_styles() {
     ui->pass_lb->setStyleSheet(style_sheet);
     ui->pass2_lb->setStyleSheet(style_sheet);
     ui->info_lb->setStyleSheet(style_sheet);
+    ui->mode_lb->setStyleSheet(style_sheet);
 
     ui->id_log_lb->setStyleSheet(style_sheet);
     ui->pass_log_lb->setStyleSheet(style_sheet);

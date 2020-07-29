@@ -1135,6 +1135,9 @@ void Level::keyPressEvent(QKeyEvent *event) {
     //En caso de que estemos mostrando un diálogo en la pantalla, es decir, dialoguing es true,
     //llamamos el método next_dialog() para continuar con el siguiente diálogo.
 
+    //NOTA: Qt::Key_Return corresponde a la tecla Enter, la que está más cerca a las flechas del teclado,
+    //Qt::Key_Enter corresponde al Enter del Numeric Keypad.
+
     else if (dialoguing and (event->key() == Qt::Key_Return)) next_dialog();
 
     //En caso de que nos encontremos en el menú de pausa, es decir, pause es true,
@@ -1191,7 +1194,7 @@ void Level::keyPressEvent(QKeyEvent *event) {
     //En caso de que los jugadores no estén congelados (su atributo freez esté en false) y presionen la tecla
     //para atacar (Enter, o Espacio en caso del segundo jugador), llamamos el método add_fire_ball().
 
-    //NOTA: Qt::Key_Return corresponde a la tecla Enter, la que está más cerca a las flechas del teclado,
+    //Recordemos que la tecla para el Enter cercano a las flechas corresponde a Qt::Key_Return,
     //Qt::Key_Enter corresponde al Enter del Numeric Keypad.
 
     else if ((event->key() == Qt::Key_Return)) add_fire_ball(player1->x(), player1->y());

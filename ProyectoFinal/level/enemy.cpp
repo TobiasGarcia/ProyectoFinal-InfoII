@@ -15,7 +15,7 @@ Enemy::Enemy(short i, short j, short _type, QGraphicsScene *_level, Terrain *_te
 
     //Las capas son las siguientes:
 
-    //0:--------Las plantillas de los power up.
+    //0 ---La plantilla para colocar las rocas.
     //1:-----Los obejtos del terreno y la base.
     //2:--------------------------Los enemigos.
     //3:-------------------------Los power ups.
