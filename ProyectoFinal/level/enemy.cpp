@@ -3,6 +3,13 @@
 Enemy::Enemy(short i, short j, short _type, QGraphicsScene *_level, Terrain *_terrain, short _list_index) :
              type(_type), terrain(_terrain), level(_level), list_index(_list_index) {
 
+    //Las variables i y j indican en cual casilla se colocará al enemigo (ver documentación del método
+    //set_targets() de esta clase); la variable _type correspode al tipo de enemigo (ver documentación
+    //del método define_personality() de esta clase); el puntero level apunta al nivel desde donde
+    //se está creando al enemigo; el puntero terrain apunta a el objeto de clase Terrain
+    //correspondiente al nivel; _list_index indica el índice en que se encontrará
+    //ubicado este enemigo dentro de la QList enemies de la clase Level.
+
     //Utilizamos el método define_personality() para definir la caracteristicas propias del enemigo que dependen
     //del valor de type, para más información dirigirse al método define_personality().
 
@@ -15,7 +22,7 @@ Enemy::Enemy(short i, short j, short _type, QGraphicsScene *_level, Terrain *_te
 
     //Las capas son las siguientes:
 
-    //0 ---La plantilla para colocar las rocas.
+    //0:---La plantilla para colocar las rocas.
     //1:-----Los obejtos del terreno y la base.
     //2:--------------------------Los enemigos.
     //3:-------------------------Los power ups.
@@ -107,7 +114,6 @@ void Enemy::define_personality() {
     //Definimos las caracteristicas que definene al enemigo según su tipo.
 
     if (type == 0) {
-        //36 x 36 pixeles;
         width_half = 18;
         height_half = 18;
         spd = 30;
@@ -116,7 +122,6 @@ void Enemy::define_personality() {
         *pix = pix->transformed(QTransform().scale(0.5, 0.5));
     }
     else if (type == 1) {
-        //40 x 50 pixeles;
         width_half = 20;
         height_half = 25;
         spd = 25;
@@ -127,7 +132,7 @@ void Enemy::define_personality() {
     else if (type == 2) {
         //40 x 50 pixeles;
         width_half = 20;
-        height_half = 25;
+        height_half = 30;
         spd = 40;
         max_health = 300;
         pix = new QPixmap(":/enemies/resources/images/enemies/enemy2.png");
@@ -135,7 +140,7 @@ void Enemy::define_personality() {
     }
     else if (type == 3) {
         //40 x 50 pixeles;
-        width_half = 20;
+        width_half = 14;
         height_half = 25;
         spd = 35;
         max_health = 600;
@@ -144,8 +149,8 @@ void Enemy::define_personality() {
     }
     else if (type == 4) {
         //40 x 50 pixeles;
-        width_half = 20;
-        height_half = 25;
+        width_half = 15;
+        height_half = 22;
         spd = 40;
         max_health = 300;
         pix = new QPixmap(":/enemies/resources/images/enemies/porcupine.png");
@@ -769,7 +774,7 @@ void Enemy::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     Q_UNUSED(widget);
 
     //La siguiente sentencia es con el propósito de que se mantenga una buena resolución al realizar rotaciones
-    //de la imágden del enemigo, pues sin esta, al rotar la imágen la resolución bajaba mucho.
+    //de la imágen del enemigo, pues sin esta, al rotar la imágen la resolución bajaba mucho.
 
     painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     painter->drawPixmap(-width_half, -height_half, *pix);
@@ -783,9 +788,9 @@ QPainterPath Enemy::shape() const {
     QPainterPath path;
     if (type == 0) path.addEllipse(QRect(7-width_half, 1-height_half, 22, 34));
     else if (type == 1) path.addRect(QRect(4-width_half, 2-height_half, 32, 36));
-    else if (type == 2) path.addRect(QRect(4-width_half, 2-height_half, 32, 36));
-    else if (type == 3) path.addRect(QRect(4-width_half, 2-height_half, 32, 36));
-    else if (type == 4) path.addRect(QRect(4-width_half, 2-height_half, 32, 36));
+    else if (type == 2) path.addRect(QRect(7-width_half, -height_half, 20, 46));
+    else if (type == 3) path.addRect(QRect(1-width_half, -height_half, 24, 50));
+    else if (type == 4) path.addRect(QRect(2-width_half, 1-height_half, 26, 39));
     else if (type == 5) path.addRect(QRect(4-width_half, 2-height_half, 32, 36));
     else if (type == 6) path.addRect(QRect(4-width_half, 2-height_half, 32, 36));
     else if (type == 7) path.addRect(QRect(4-width_half, 2-height_half, 32, 36));

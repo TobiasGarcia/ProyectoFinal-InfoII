@@ -44,6 +44,7 @@ private:
 
 public:
     Chamaleon(short i, short j, QGraphicsScene *_level, Terrain *_terrain, short _list_index);
+    ~Chamaleon();
 
 public slots:
     void camouflage();
@@ -56,6 +57,7 @@ private:
 public:
     QTimer *dig_timer;
     Mole(QGraphicsScene *_level, Terrain *_terrain, short _list_index);
+    ~Mole();
 public slots:
     void spawn();
 };

@@ -68,15 +68,15 @@ protected:
     QGraphicsScene *level;
     short list_index, spd, max_health;
 
-    void update_target();
-    QVector2D tiles2pixels(short i, short j);
     void recalculate_initial_tile(short tile[2]);
+    QVector2D tiles2pixels(short i, short j);
+    void set_targets(short i, short j);
+    void update_target();
 
     //Estos tres métodos son declarados utilizando la palabra reservada virtual para poder reimplementarlos
     //dentro de las clases que heredan Enemy.
 
     virtual void rock_collision();
-    virtual void set_targets(short i, short j);
     virtual bool collisions_handler(QList<QGraphicsItem*> collisions);
 
 public:
@@ -87,7 +87,10 @@ public:
     void set_freez(bool _freez) {freez = _freez;};
 
     Enemy(short i, short j, short _type, QGraphicsScene *_level, Terrain *_terrain, short _list_index);
-    ~Enemy();
+
+    //Colocamos el destructor como virtual pues utilizaremos clases que heredan a la clase Enemy.
+
+    virtual ~Enemy();
 
 public slots:
 
@@ -111,6 +114,7 @@ signals:
     //Vulture que hereda Enemy.
 
     void vulture_hit();
+
 };
 
 #endif // ENEMY_H

@@ -29,9 +29,11 @@ private:
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
 
+    void display_hud(short rocks_num, short glues_num, bool extra_life, bool winner);
     void display_powers(short rocks_num, short glues_num);
     void display_levels();
-    void display_hud(short rocks_num, short glues_num, bool extra_life, bool winner);
+
+    void initialize_objects();
 
 public:
     LevelsMenu(bool _two_players, short rocks_num, short glues_num, bool extra_life,

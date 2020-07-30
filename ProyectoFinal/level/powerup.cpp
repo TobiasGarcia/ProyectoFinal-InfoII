@@ -2,6 +2,11 @@
 
 PowerUp::PowerUp(short _path_type, short _power_type) : path_type(_path_type), power_type(_power_type) {
 
+    //_path_type indica el tipo de trayectoria que debe seguir el power up, para más inforamción consultar
+    //la documentación del método define_parameters() de esta clase; _power_type indica el tipo de power
+    //up que se brindará al usuario cuando este sea destruido, para más información consultar la
+    //documentación del método give_power() de la clase Level.
+
     pix = new QPixmap(":/power_ups/resources/images/power_ups/power" + QString::number(power_type) + ".png");
 
     setOffset(-11, -11);

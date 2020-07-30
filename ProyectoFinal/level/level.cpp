@@ -6,6 +6,19 @@ Level::Level(std::string path, bool _two_players, short level_num, short initial
              rocks_num(_rocks_num), glues_num(_glues_num), two_players(_two_players), extra_life(_extra_life),
              terrain_matrix(_terrain_matrix) {
 
+    //La variable path es utilizada para poder llegar hasta la carpeta data, a la cual necesitan acceder
+    //varios métodos de esta clase; la variable _two_players indica si el juego se encuentra en modo
+    //de un solo jugador o multijugador; la variable level_num indica el número del nivel, o 0 en
+    //caso de ser el tutorial; la variable initial_wave indica la oleada donde se retoma el
+    //nivel; la variable _rocks_num es un puntero al número de rocas con las que cuenta el
+    //el jugador en su partida; análogo en el caso de _glues_num pero para las cargas de
+    //pegamento; el puntero _extra_life apunta a un bool que indica si el jugador cuenta
+    //o no con una vida extra; health apunta a la salud de la base con que se retoma el
+    //nivel; _terrain_matrix apunta a la matriz de terreno del nivel.
+
+    //Los punteros son utilizados para que desde la clase Level se puedan modificar los valores de las
+    //variables que definen el estado de la partida y que son administrados desde la clase Game.
+
     //Colocamos una escena de 780 x 600 piexeles, recordemos que como empezamos desde el pixel cero,
     //los últimos deben ser 779 y 599. Colocamos la imágen de fondo dependiendo del número del nivel,
     //las imágenes están en el siguiente formato: levelN_back.png, donde N es el número del nivel,
@@ -1099,7 +1112,7 @@ void Level::no_health() {
 
 void Level::keyPressEvent(QKeyEvent *event) {
 
-    //Esta método se encarga de procesar las teclas presionadas en el teclado por el juegador.
+    //Esta método se encarga de procesar las teclas presionadas por el jugador.
 
     if (event->isAutoRepeat()) return;
 
@@ -1195,7 +1208,7 @@ void Level::keyPressEvent(QKeyEvent *event) {
     //para atacar (Enter, o Espacio en caso del segundo jugador), llamamos el método add_fire_ball().
 
     //Recordemos que la tecla para el Enter cercano a las flechas corresponde a Qt::Key_Return,
-    //Qt::Key_Enter corresponde al Enter del Numeric Keypad.
+    //Qt::Key_Enter es utilizado para el Enter del Numeric Keypad.
 
     else if ((event->key() == Qt::Key_Return)) add_fire_ball(player1->x(), player1->y());
     else if (two_players and (event->key() == Qt::Key_Space)) add_fire_ball(player2->x(), player2->y());
@@ -1220,7 +1233,7 @@ void Level::keyPressEvent(QKeyEvent *event) {
 
 void Level::keyReleaseEvent(QKeyEvent *event) {
 
-    //Este método se encarga de procesar las teclas que los jugadores dejan de presionar.
+    //Este método se encarga de procesar las teclas que el jugador deja de presionar.
 
     if (event->isAutoRepeat()) return;
 

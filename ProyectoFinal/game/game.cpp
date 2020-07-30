@@ -5,6 +5,11 @@ Game::Game(std::string _path, QGraphicsView *_game_gv, std::string _game_id,
 
            game_gv(_game_gv), path(_path), game_id(_game_id), two_players(_two_players) {
 
+    //La variable path almacena la ruta hasta la carpeta data, a la cual deben acceder varios métodos de esta
+    //clase; el puntero _game_gv apunta al QGraphicsView de la interfaz gráfica; _game_id almacena el nombre
+    //de la partida; password la respectiva contraseña de la partida, o "" en caso de que se esté cargando
+    //la partida; _two_players indica si el juego se encuentra en modo de un solo jugador o multijugador.
+
     //Para reconocer si se está cargando o creando una nuva partida, utilizamos la variable
     //password que, como desde la interfaz gráfica habíamos verificado que no estuviera
     //vacía cuando se creara una partida nueva, si ésta lo está, es porque en realidad

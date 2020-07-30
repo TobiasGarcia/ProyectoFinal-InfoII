@@ -3,6 +3,13 @@
 LevelsMenu::LevelsMenu(bool _two_players, short rocks_num, short glues_num, bool extra_life,
     short *_levels_waves, bool winner) : levels_waves(_levels_waves), two_players(_two_players) {
 
+    //_two_players indica si el juego está en modo multijugador o de un solo jugador; rocks_num indica la cantidad
+    //de rocas que posee el jugador; glues_num indica la cantidad de cargas de pegamento que posee el jugador;
+    //extra_life indica si el jugador cuenta con una vida extra o no; _levels_waves es un arreglo donde se
+    //almacena la oleada en la que se retoma cada uno de los tres niveles, la correspondencia dentro los
+    //niveles y los índices es la siguiente: 0 para el primer nivel, 1 para el segundo y 2 para el
+    //tercero; winner indica si el jugador ha superado en esta partida todos los niveles.
+
     setSceneRect(0, 0, 779, 599);
     setBackgroundBrush(QBrush(QPixmap(":/levels_menu/resources/images/levels_menu/backgorund.png")));
 
@@ -167,7 +174,7 @@ void LevelsMenu::keyPressEvent(QKeyEvent *event) {
 
 void LevelsMenu::keyReleaseEvent(QKeyEvent *event) {
 
-    //Este método se encarga de procesar las teclas que los jugadores dejan de presionar.
+    //Este método se encarga de procesar las teclas que el jugador dejan de presionar.
 
     if (event->isAutoRepeat()) return;
 

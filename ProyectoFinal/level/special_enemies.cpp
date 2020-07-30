@@ -212,6 +212,10 @@ Chamaleon::Chamaleon(short i, short j, QGraphicsScene *_level, Terrain *_terrain
     camouflage_timer->start(3000);
 }
 
+Chamaleon::~Chamaleon() {
+    delete camouflage_timer;
+}
+
 Mole::Mole(QGraphicsScene *_level, Terrain *_terrain, short _list_index) :
     Enemy(0, -1, 7, _level, _terrain, _list_index) {
 
@@ -234,6 +238,10 @@ Mole::Mole(QGraphicsScene *_level, Terrain *_terrain, short _list_index) :
     connect(dig_timer, &QTimer::timeout, this, &Mole::spawn);
 
     dig_timer->start(1000);
+}
+
+Mole::~Mole() {
+    delete dig_timer;
 }
 
 void Mole::spawn() {
