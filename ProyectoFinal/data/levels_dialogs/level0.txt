@@ -153,11 +153,12 @@ hace que se mueva bastante lento, pero por su
 gran pelaje resulta ser muy resistente.
 
 :/enemies/resources/images/enemies/enemy2.png
-Él es Charlie, la iguana, es bastante
-curioso por lo que tratará de mordisquear
-tu base para ver a que sabe, es bastante
-ágil, pero un tanto asustadizo, por lo
-cual no te costará mucho deshacerte de él.
+Él es Charlie, la langosta, es bastante
+curioso por lo que tratará de partir tu
+base con sus pinzas para ver qué contiene,
+es bastante ágil, pero un tanto asustadizo,
+por lo cual no te costará mucho deshacerte
+de él.
 
 na
 Un último detalle, desde el cuartel general

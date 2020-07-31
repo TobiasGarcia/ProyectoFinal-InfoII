@@ -40,7 +40,7 @@ private:
     QPixmap *pix;
     QTimer *move_timer;
     bool straight_line, freez;
-    short spd, path_type, power_type;
+    short spd, path_type, power_type, remaining;
 
     //NOTA: La variable spd será la rapidez con que se moverá el power up, en pixeles por segundo.
 
@@ -77,7 +77,7 @@ public:
     QTimer *display_timer;
 
     void emit_give_power();
-    void set_freez(bool _freez) {freez = _freez;};
+    void set_freez(bool _freez);
 
     PowerUp(short _path_type, short _power_type);
     ~PowerUp();

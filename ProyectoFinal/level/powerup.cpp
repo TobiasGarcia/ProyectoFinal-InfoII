@@ -274,6 +274,20 @@ void PowerUp::emit_give_power() {
     emit give_power(power_type);
 }
 
+void PowerUp::set_freez(bool _freez) {
+
+    //Este método actualiza el valor de la variable freez para congelar o descongelar al
+    //power up, además de detener o reanudar el timer display_timer.
+
+    freez = _freez;
+
+    if (freez) {
+        remaining = display_timer->remainingTime();
+        display_timer->stop();
+    }
+    else display_timer->start(remaining);
+}
+
 QPainterPath PowerUp::shape() const{
 
     //Mediante esta reimplementación de método shape(), le colocamos la forma
