@@ -7,9 +7,9 @@ mucho, porque te puede dejar todo pintado de
 azul.
 
 :/enemies/resources/images/enemies/porcupine.png
-Él es Andrés el puercospín, es muy impaciente,
-por lo que irá directamente hacia tu base sin
+Él es Andrés, una vaca que ha tomado clases
+de artes marciales, es muy impaciente, por lo
+que irá directamente hacia tu base sin
 importarle las rocas que le coloques en el
 camino, pues de todas formas él es famoso
-porque luego de tomar clases de artes marciales,
-¡No hay roca que resista sus golpes!.
+porque no hay roca que resista sus golpes.

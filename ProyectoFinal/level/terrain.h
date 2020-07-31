@@ -2,29 +2,39 @@
 #define TERRAIN_H
 
 #include <array>
-#include "level/terrainobject.h"
+
 #include <QGraphicsScene>
 
-//Clase Terrain para que pueda tener sus propios métodos.
+#include "level/terrainobject.h"
+
+//Esta clase es posee muy poco código, pero resulta muy útil para estructurar el programa
+//y dividir las tareas. Modela una forma de almacenar los objetos de la clase
+//TerrainObjet que se agregan al terreno del mapa.
 
 class Terrain {
 private:
     QGraphicsScene *level;
-public:
-    //0: Nada
-    //1: Roca
-    //2: Caracol
-    //3: Fluido
 
-    //Público porque hay que sumarle y leer el valor.
+public:
+
+    //La variable rocks_num indica la cantidad de rocas que se encuentran en el terreno,
+    //como necesitamos modificarla y leerla desde fuera de la clase, la colocamos
+    //como atributo público.
 
     short rocks_num;
+
+    //La matriz tiles almacenará los punteros hacia los objetos de la clase TerrainObjet
+    //los cuales se encontrarán en el mapa, utilizamos el contenedor array pues la
+    //matriz de las casillas del mapa siempre tiene un tamaño fijo.
+
     std::array<std::array<TerrainObject*, 13>, 10> tiles;
-    //void clean_fluid();
+
     void update_terrain_matrix(std::array<std::string, 9> *terrain_matrix);
 
-    Terrain(QGraphicsScene *_level, std::array<std::string, 9> *terrain_matrix, bool tutorial_level);
+    Terrain(QGraphicsScene *_level);
+    Terrain(QGraphicsScene *_level, std::array<std::string, 9> *terrain_matrix);
     ~Terrain();
+
 };
 
 #endif // TERRAIN_H

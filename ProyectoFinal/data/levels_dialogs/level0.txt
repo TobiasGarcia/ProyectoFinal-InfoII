@@ -129,7 +129,7 @@ Como puedes ver, conseguir acertar a las
 mejoras puede resultar difícil, por lo
 cual al final de cada misión le permitimos
 a nuestros pilotos particiar de un
-pequeño juego, en dodne pueden ganar
+pequeño juego, en donde pueden ganar
 recompensas como salvavidas o mejoras
 para su proxima misión.
 
@@ -147,18 +147,18 @@ mucho de tamaño, es bastante carismático,
 aunque tenga tantas paticas.
 
 :/enemies/resources/images/enemies/enemy1.png
-Ella es Deisy, una oveja que ahora es tan
-peluda que apenas puede ver por donde camina,
-lo que hace que se mueva bastante lento,
-pero por su gran pelaje resulta ser muy
-resistente.
+Ella es Deisy, una oveja que ahora es tan peluda
+que apenas puede ver por donde camina, lo que
+hace que se mueva bastante lento, pero por su
+gran pelaje resulta ser muy resistente.
 
 :/enemies/resources/images/enemies/enemy2.png
-Él es Charlie, la iguana, es bastante
-curioso por lo que tratará de mordisquear
-tu base para ver a que sabe, es bastante
-ágil, pero un tanto asustadizo, por lo
-cual no te costará mucho deshacerte de él.
+Él es Charlie, la langosta, es bastante
+curioso por lo que tratará de partir tu
+base con sus pinzas para ver qué contiene,
+es bastante ágil, pero un tanto asustadizo,
+por lo cual no te costará mucho deshacerte
+de él.
 
 na
 Un último detalle, desde el cuartel general
@@ -167,7 +167,13 @@ sistema de autoguardado, por lo que nuestros
 pilotos no debe preocuparse por eso.
 
 na
+Tu progreso se guarda cuando superas
+una oleada, o al final de una misión; si
+deseas tomar un respiro durante una
+ferviente batalla puedes presionar Esc.
+
+na
 Listo, creo que eso es todo piloto, recuerda
-que el fúturo de nuestro viejo hogar, el
-planeta Tierra, depende de tí:
-¡Te deseo la mejor de las suertes!.
+que el futuro de nuestro viejo hogar, el
+planeta Tierra, depende de ti:
+        ¡Te deseo la mejor de las suertes!

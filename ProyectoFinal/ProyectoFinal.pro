@@ -16,10 +16,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    blackscreen.cpp \
-    fireball.cpp \
-    game.cpp \
-    information.cpp \
+    game/blackscreen.cpp \
+    game/game.cpp \
+    game/information.cpp \
     level/base.cpp \
     level/enemy.cpp \
     level/level.cpp \
@@ -32,14 +31,14 @@ SOURCES += \
     main.cpp \
     minigame/ball.cpp \
     minigame/minigame.cpp \
-    player.cpp \
+    player/fireball.cpp \
+    player/player.cpp \
     widget.cpp
 
 HEADERS += \
-    blackscreen.h \
-    fireball.h \
-    game.h \
-    information.h \
+    game/blackscreen.h \
+    game/game.h \
+    game/information.h \
     level/base.h \
     level/enemy.h \
     level/level.h \
@@ -51,7 +50,8 @@ HEADERS += \
     levels_menu/needle.h \
     minigame/ball.h \
     minigame/minigame.h \
-    player.h \
+    player/fireball.h \
+    player/player.h \
     widget.h
 
 FORMS += \
@@ -64,3 +64,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     resources.qrc
+
+RC_ICONS = galaxy_lacters.ico

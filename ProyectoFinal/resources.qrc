@@ -9,6 +9,7 @@
         <file>resources/images/enemies/porcupine.png</file>
         <file>resources/images/enemies/snail.png</file>
         <file>resources/images/enemies/vulture.png</file>
+        <file>resources/images/enemies/hole.png</file>
     </qresource>
     <qresource prefix="/power_ups">
         <file>resources/images/power_ups/power0.png</file>
@@ -16,7 +17,7 @@
         <file>resources/images/power_ups/power2.png</file>
         <file>resources/images/power_ups/power3.png</file>
         <file>resources/images/power_ups/power4.png</file>
-        <file>resources/images/power_ups/fluid_power.png</file>
+        <file>resources/images/power_ups/glue_power.png</file>
         <file>resources/images/power_ups/rock_power.png</file>
     </qresource>
     <qresource prefix="/minigame">
@@ -49,10 +50,10 @@
     <qresource prefix="/levels">
         <file>resources/images/levels/available.png</file>
         <file>resources/images/levels/level1_back.png</file>
-        <file>resources/images/levels/fluid.png</file>
+        <file>resources/images/levels/glue.png</file>
         <file>resources/images/levels/hud.png</file>
         <file>resources/images/levels/rock.png</file>
-        <file>resources/images/levels/snail_fluid.png</file>
+        <file>resources/images/levels/snail_glue.png</file>
         <file>resources/images/levels/level0_back.png</file>
         <file>resources/images/levels/level2_back.png</file>
         <file>resources/images/levels/level3_back.png</file>
