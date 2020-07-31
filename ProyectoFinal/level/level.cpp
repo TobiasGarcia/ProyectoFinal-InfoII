@@ -493,6 +493,11 @@ Level::~Level() {
     if (lifebuoy != nullptr) delete lifebuoy;
     if (power_up != nullptr) delete power_up;
     if (two_players) delete player2;
+
+    for (short i = 0; i < enemies.size(); i++) {
+        if (enemies[i]->scene() != nullptr) removeItem(enemies[i]);
+        delete enemies[i];
+    }
 }
 
 void Level::next_dialog() {

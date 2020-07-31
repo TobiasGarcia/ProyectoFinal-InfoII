@@ -71,7 +71,6 @@ private:
     QTimer *camouflage_timer;
 
     void rock_collision();
-    //bool collisions_handler(QList<QGraphicsItem*> collisions);
 
 public:
     Chamaleon(short i, short j, QGraphicsScene *_level, Terrain *_terrain, short _list_index);

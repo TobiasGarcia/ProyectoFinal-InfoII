@@ -36,7 +36,7 @@ Enemy::Enemy(short i, short j, short _type, QGraphicsScene *_level, Terrain *_te
 
     //La variable freez representará cuando el enemigo se puede mover y cuando no, false para moverse y true
     //para permanecer estático; la variable defeated y health_bar_on son explicadas dentro del método
-    //reduces_health(); la variable heatlh lleva la cuenta de cuanta vida le queda al enemigo.
+    //reduces_health(); la variable health lleva la cuenta de cuanta vida le queda al enemigo.
 
     freez = false;
     defeated = false;
@@ -130,7 +130,6 @@ void Enemy::define_personality() {
         *pix = pix->transformed(QTransform().scale(0.5, 0.5));
     }
     else if (type == 2) {
-        //40 x 50 pixeles;
         width_half = 23;
         height_half = 30;
         spd = 40;
@@ -139,7 +138,6 @@ void Enemy::define_personality() {
         *pix = pix->transformed(QTransform().scale(0.5, 0.5));
     }
     else if (type == 3) {
-        //40 x 50 pixeles;
         width_half = 14;
         height_half = 25;
         spd = 35;
@@ -148,7 +146,6 @@ void Enemy::define_personality() {
         *pix = pix->transformed(QTransform().scale(0.5, 0.5));
     }
     else if (type == 4) {
-        //40 x 50 pixeles;
         width_half = 20;
         height_half = 25;
         spd = 40;
@@ -157,7 +154,6 @@ void Enemy::define_personality() {
         *pix = pix->transformed(QTransform().scale(0.5, 0.5));
     }
     else if (type == 5) {
-        //40 x 50 pixeles;
         width_half = 28;
         height_half = 25;
         spd = 35;
@@ -166,7 +162,6 @@ void Enemy::define_personality() {
         *pix = pix->transformed(QTransform().scale(0.5, 0.5));
     }
     else if (type == 6) {
-        //40 x 50 pixeles;
         width_half = 20;
         height_half = 25;
         spd = 25;
@@ -175,7 +170,6 @@ void Enemy::define_personality() {
         *pix = pix->transformed(QTransform().scale(0.5, 0.5));
     }
     else if (type == 7) {
-        //40 x 50 pixeles;
         width_half = 20;
         height_half = 25;
         spd = 25;
@@ -184,7 +178,6 @@ void Enemy::define_personality() {
         *pix = pix->transformed(QTransform().scale(0.5, 0.5));
     }
     else {
-        //40 x 50 pixeles;
         width_half = 28;
         height_half = 25;
         spd = 140;
@@ -205,7 +198,7 @@ Enemy::~Enemy() {
 
 void Enemy::reduces_health(short hit) {
 
-    //Este método se encarga de reducirle la salud al enemigo cuando este es atacado, además de colocar
+    //Este método se encarga de reducirle la salud del enemigo cuando este es atacado, además de colocar
     //su barra de vida para que se puede ver cuanta salud le resta.
 
     //Primero restamos el valor de hit a la salud actual del enemigo, en caso de que esta resta resulte en un
@@ -241,13 +234,14 @@ void Enemy::reduces_health(short hit) {
 
         //Por último, si la salud del enemigo ha llegado a 0, emitimos la señal remove_enemy() con el índice de la
         //posición dentro de la QList enemies de la clase Level (ver documentación de la clase Level),
-        //correspondiente al enemigo que lanza la señal.
+        //correspondiente al enemigo que emitió la señal.
 
         emit remove_enemy(list_index);
 
         //El siguiente condicional es para, el muy particular caso, en que el jugador toma el power up para
         //atacar a todos los enemigos justo cuando este enemigo especificamente se agregó a la QList enemies
-        //de Level, pero aún no se ha agregado a la escena y este perdió toda su salud por el power up.
+        //de la clase Level, pero aún no se ha agregado a la escena y este perdió toda su salud
+        //por el power up.
 
         if (scene() != NULL) level->removeItem(this);
 
@@ -267,7 +261,7 @@ void Enemy::reduces_health(short hit) {
         //En este orden de ideas, la variable defeated le indica al slot health_off() que además de reitrar la
         //barra de salud del enemigo, también lo elimine. La sentencia freez = true es necesaria pues ocurre
         //que cuando el enemigo es retirado de la escena, como aún no se ha eliminado, la barra de vida se
-        //sigue moviendo, por lo cual mediante la variable freez lo detenemos.
+        //sigue moviendo, por lo cual mediante la variable freez la detenemos.
 
         defeated = true;
         freez = true;
@@ -276,7 +270,7 @@ void Enemy::reduces_health(short hit) {
 
 void Enemy::health_off() {
 
-    //Colocamos health_bar_on en false y removemos la barra de salude del enemigo de la escena; en caso de que
+    //Colocamos health_bar_on en false y removemos la barra de salud del enemigo de la escena; en caso de que
     //la varible defeated se encuentre en true, debemos eliminar al enemigo pues este ha sido derrotado.
 
     health_bar_on = false;
@@ -323,8 +317,8 @@ void Enemy::set_targets(short i, short j) {
     //es posible que no exista por lo menos una entrada disponible.
 
     //Luego de identificar una entrada, se pasa al proceso de los pasos intermedios, el cual consiste simplemente
-    //en agregar los targets que requiera el enemigo para llegar hasta la hilera exterior más cercana a la
-    //entrada.
+    //en agregar los targets que requiera el enemigo para llegar hasta la hilera exterior (ver documentaicón del
+    //método middle_steps() para conocer la definición de hilera exterior) más cercana a la entrada encontrada.
 
     //Y finalmente, se llega a la etapa de entrada, en donde se agregan 3 targets finales para que el enemigo
     //pueda pasar la frontera de rocas.
@@ -334,8 +328,9 @@ void Enemy::set_targets(short i, short j) {
     //su camino mediante una roca?, exiten dos escenarios, el primero es cuando el enemigo está muy cerca del
     //lugar donde se colocará la roca, en este escenario simplemente no le permitimos al usuario colocar la roca
     //para que no le caiga encima al enemigo, por otro lado, si este no se encuentra cerca de donde se quiere
-    //colocar la roca, permitimos que el usuario la coloque y dentro del slot move(), cuando detectamos la
-    //colisión con la roca, simplemente devolvemos un poco al enemigo hacia atrás y recalculamos los targets.
+    //colocar la roca, permitimos que el usuario la coloque y dentro del método collisions_handler(), cuando
+    //detectamos la colisión con la roca, simplemente devolvemos un poco al enemigo hacia atrás y
+    //recalculamos los targets.
 
     //La variable gap es utilizada para facilitar el proceso de entrada; el arreglo probe, almacenará el orden en
     //que se sondearán las hileras, los valores que almacena y las direcciones tiene la siguiente correspondencia:
@@ -347,9 +342,9 @@ void Enemy::set_targets(short i, short j) {
 
     short gap[4] = {1, 0, -1, 0}, tile[2], probe[4];
 
-    //A continuación llenamos los valores de probe según la posición inicial el enemigo, recordemos que como estos
-    //aparecen fuera de la pantalla, las variables i y j pueden tomar valores desde -1 hasta 9 para i, y desde -1
-    //hasta 13 para j.
+    //A continuación llenamos los valores de probe según la posición inicial del enemigo, recordemos que como
+    //estos aparecen fuera de la pantalla, las variables i y j pueden tomar valores desde -1 hasta 9 para i,
+    //y desde -1 hasta 13 para j.
 
     if ((i == -1) or (i == 9)) {
         probe[0] = (i + 1)/5;
@@ -363,21 +358,23 @@ void Enemy::set_targets(short i, short j) {
     probe[2] = (probe[1] + 2)%4;
     probe[3] = (probe[0] + 2)%4;
 
-    //Según donde encontremos una entrada, utilziamos gap para terminar
-    //de ajustar la forma en que el enemigo va a entrar.
-
     //Luego de llenar probe, utilizamos un ciclo para testear cada hilera mediante el método entrance_exists(),
-    //el cual, en caso de haber encontrado una entrada, almacena la casilla de esta dentro del arreglo tile;
-    //cuando encontramos la entrada, mediante el método middle_steps() calculamos los pasos intermedios para
-    //que el enemigo pueda acercarse a la hilera donde está la entrada, el valor de k indica en cual de las
-    //direcciones de probe se haya esta última; para finalizar, con la ayuda de gap, agregamos los últimos
-    //targets correspondientes al proceso de entrada; recordemos que en esta última situación probe[k]
-    //representa la hilera donde se encuentra la entrada. Este proceso puede parecer muy abstracto,
-    //pero cuando se le sigue el flujo con calma resulta ser bastante intuitivo.
+    //el cual, en caso de haber encontrado una entrada, almacena la casilla de esta dentro del arreglo tile y
+    //retorna true; cuando encontramos la entrada, mediante el método middle_steps() calculamos los pasos
+    //intermedios para que el enemigo pueda colocarse sobre la hilera exterior más cercana a la entrada,
+    //el valor de k indica en cual de las direcciones de probe se haya esta última; para finalizar, con
+    //la ayuda de gap, agregamos los últimos targets correspondientes al proceso de entrada, recordemos
+    //que en esta última situación probe[k] representa el lado donde se encuentra la hilera exterior
+    //más cercana a la entrada. Este proceso puede parecer muy abstracto, pero cuando se le sigue el
+    //flujo con calma resulta ser bastante intuitivo.
 
     for (short k = 0; k < 4; k++) {
         if (entrance_exists(probe[k], tile)) {
             middle_steps(k, probe);
+
+            //Según donde encontremos una entrada, utilziamos gap para terminar
+            //de ajustar la forma en que el enemigo va a entrar.
+
             targets.enqueue(tiles2pixels(tile[0] - gap[probe[k]], tile[1] + gap[(probe[k] + 1)%4]));
             targets.enqueue(tiles2pixels(tile[0] + gap[probe[k]], tile[1] - gap[(probe[k] + 1)%4]));
             targets.enqueue(tiles2pixels(4, 6));
@@ -395,18 +392,18 @@ bool Enemy::entrance_exists(short side, short tile[2]) {
     //Puesto que me parecía que programar a los enemigos para que cuando hubieran varias entradas en una misma
     //hilera, escogiesen la más cercada, era algo muy predecible, haciendo que el juego no fuera tan entretenido,
     //por lo cual, en caso de que hayan varias entradas por una misma hilera, escogemos una al azar. Para este
-    //propósito utilizamos el vector entrances_index, en el cual almacenamos indices correspondientes a entradas
+    //propósito utilizamos el vector entrances_index, en el cual almacenamos índices correspondientes a entradas
     //de la misma hilera, para que al final nos quedemos con alguno de ellos de forma aleatoria.
 
     short index;
     QVector<short> entrances_index;
 
     //Por una hilera de rocas como máximo pueden haber 5 entradas, por lo cual le indicamos al vector
-    //entrances_index que reserve memoria para no más de 5 entradas. Notemos que aunque sabemso que no
+    //entrances_index que reserve memoria para no más de 5 elementos. Notemos que aunque sabemso que no
     //serán más de 5 entradas, es preferible utilizar un vector a un array, pues como tomaremos un elemento
-    //aleatorio de este, en caso de utilizar un array nos tocaría utilizar una variable adicional para llevar
-    //la cuenta de cuantos índices hemos agregado, que en el caso del vector, basta simplemente llamar al
-    //método size().
+    //aleatorio de este, en caso de utilizar un array nos tocaría implementar una variable adicional para llevar
+    //la cuenta de cuantos índices hemos agregado, para no tomar valores basura por haber creado el arreglo,
+    //mientras que en el caso del vector, basta simplemente llamar al método size().
 
     entrances_index.reserve(5);
 
@@ -414,12 +411,12 @@ bool Enemy::entrance_exists(short side, short tile[2]) {
     //estos casos deben recibir un tratamiento diferente pues por ejemplo en las hileras de los costados,
     //el índice variable es la i mientras que j es 3 o 9, por otra parte en las hileras de arriba o abajo,
     //el índice variable es j, mientras que i es 2 o 6; para esto utilizamos el siguiente condicional, pues
-    //los lados impares corresponden a los cotados mientras que los pares a arriba o abajo.
+    //los lados impares corresponden a los costados mientras que los pares a arriba o abajo.
 
     if (side%2) {
 
-        //Como vamos por los costados, el índice fijo es j, cuyo valor 3 o 9, el cual es almacenado
-        //en la variable index.
+        //Como vamos por los costados, el índice fijo es j, cuyo valor es 3 o 9 (pues side sólo puede ser
+        //1 o 3 dentro de este condicional), el cual es almacenado en la variable index.
 
         index = 3*side;
         for (short i = 3; i < 6; i++) {
@@ -427,14 +424,15 @@ bool Enemy::entrance_exists(short side, short tile[2]) {
             //Si en terrain hay un puntero a nulo o hay un objeto diferente de una roca, es porque esa casilla
             //es una entrada váilda.
 
-            //NOTA: Ver documentación de la clase terrain para una explicación del porqué almacena punteros.
+            //NOTA: Ver documentación de la clase terrain para entender el significado de los puneros
+            //de la matriz tiles.
 
             if ((terrain->tiles[i][index] == nullptr)
              or (terrain->tiles[i][index]->get_type() != 1)) entrances_index.push_back(i);
         }
 
         //Luego del anterior ciclo, si entrances_index continua estando vacío, es porque la hilera en cuestión
-        //no contaba con entradas, por lo cual retornamos false, o elegimos una entrada al azar en caso de que
+        //no contaba con entradas, por lo cual retornamos false; o elegimos una entrada al azar en caso de que
         //si existan, y retornamos true.
 
         if (entrances_index.isEmpty()) return false;
@@ -446,8 +444,8 @@ bool Enemy::entrance_exists(short side, short tile[2]) {
     }
     else {
 
-        //Como vamos por arriba o abajo, el índice fijo es i, cuyo valor 2 o 6, el cual es almacenado
-        //en la variable index.
+        //Como vamos por arriba o abajo, el índice fijo es i, cuyo valor es 2 o 6 (pues side sólo puede ser 0 o 2
+        //dentro de este else), el cual es almacenado en la variable index.
 
         //El proceso es análogo al de las hileras de los costados.
 
@@ -468,7 +466,7 @@ bool Enemy::entrance_exists(short side, short tile[2]) {
 
 void Enemy::middle_steps(short k, short probe[4]) {
 
-    //Este método se encarga de agregar los targets intermedios para que el enemigo pueda llagar hasta la hilera
+    //Este método se encarga de agregar los targets intermedios para que el enemigo pueda llegar hasta la hilera
     //exterior más cercana a la entrada, entiéndase por hilera exterior a las que poseen la letra 'E' en la
     //siguiente figura:
 
@@ -490,7 +488,7 @@ void Enemy::middle_steps(short k, short probe[4]) {
     //sondeó.
 
     //Si k es 0, es porque la entrada está justo en la hilera del frente del enemigo, por lo cual
-    //no hay que ayudarle para llegar hasta la hilera exterior más cercana.
+    //no hay que ayudarle para llegar hasta la hilera exterior más cercana a la entrada.
 
     if (k == 0) return;
 
@@ -501,7 +499,8 @@ void Enemy::middle_steps(short k, short probe[4]) {
     else if (k == 2) targets.enqueue(tiles2pixels(sides2point(probe[0], probe[2])));
 
     //Y en caso de que k sea 3, es porque la entrada fue encontrada en la hilera del lado opuesto del mapa,
-    //por lo cual hace falta agregar dos pasos intermedios para llegar hasta la hilera exterior más cercana.
+    //por lo cual hace falta agregar dos pasos intermedios para llegar hasta la hilera exterior más
+    //cercana a la entrada.
 
     else {
         targets.enqueue(tiles2pixels(sides2point(probe[0], probe[1])));
@@ -552,7 +551,7 @@ QPoint Enemy::sides2point(short side1, short side2) {
 
 void Enemy::update_target() {
 
-    //Este método modifica la dirección en que se mueve el enemigo, para colocarla en dirección del target del
+    //Este método modifica la dirección en que se mueve el enemigo, para colocarlo en dirección del target del
     //frente de la queue targets, además de rotar la imágen del enemigo para colocarla en esa dirección.
 
     //Calculamos la dirección que se debe seguir para llegar hasta el target, posteriormente normalizamos ese
@@ -638,7 +637,7 @@ bool Enemy::collisions_handler(QList<QGraphicsItem*> collisions) {
 void Enemy::move() {
 
     //Este slot es activado por move_timer cada 50 milisegundos, su propósito es modificar la posición del enemigo
-    //dentro de la escena según se vector velocidad, para darle movimiento.
+    //dentro de la escena según su vector velocidad, para darle movimiento.
 
     //Como se mencionó en el contructor, que la variable freez se encuenre en true significa que el enemigo debe
     //permanecer estático, por lo cual, no debemos hacer nada dentro de este slot.
@@ -741,7 +740,7 @@ void Enemy::finish_delay() {
 
 QVector2D Enemy::tiles2pixels(short i, short j) {
 
-    //Recibe los indides de una de las casillas de la matriz del terreno del nivel. Retorna la posición en pixeles
+    //Recibe los índides de una de las casillas de la matriz del terreno del nivel. Retorna la posición en pixels
     //del centro de esa casilla según el sistema de coordenadas de la escena.
 
     return QVector2D(29 + 60*j, 29 + 60*i);

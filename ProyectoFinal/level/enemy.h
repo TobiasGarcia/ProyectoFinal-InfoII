@@ -93,7 +93,7 @@ public:
 
 public slots:
 
-    //El siguiente es declarado utilizando la palabra reservada virtual para poder reimplementarlo
+    //El siguiente slot es declarado utilizando la palabra reservada virtual para poder reimplementarlo
     //dentro de una de las clases que heredan Enemy.
 
     virtual void move();
