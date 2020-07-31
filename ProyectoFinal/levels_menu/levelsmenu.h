@@ -12,6 +12,8 @@
 #include "player/fireball.h"
 #include "player/player.h"
 
+//Esta clase modela el menú para que el jugador pueda escoger los niveles.
+
 class LevelsMenu: public QGraphicsScene {
 
     Q_OBJECT

@@ -523,7 +523,7 @@ void Level::next_dialog() {
 
         if (dialog[0] == "na") information->display_message(389, 20, QString::fromUtf8(dialog[1].c_str()));
         else if (dialog[0] == "acción") wait_for_user_action();
-        else information->display_message(389, 120, QString::fromUtf8(dialog[1].c_str()), QString::fromUtf8(dialog[0].c_str()));
+        else information->display_message(389, 135, QString::fromUtf8(dialog[1].c_str()), QString::fromUtf8(dialog[0].c_str()));
 
         dialogs.pop();
     }
@@ -1350,11 +1350,11 @@ void Level::add_rock(short i, short j) {
         for (short i = 0; i < rock_ghost_collisions.size(); i++) {
             item = rock_ghost_collisions[i];
 
-            //No hace comparar contra todas las clases de enemigos, en realidad estos tres son los únicos que
+            //No hace comparar contra todas las clases de enemigos, en realidad estos cuatro son los únicos que
             //podrían llegar a entrometerse.
 
             if ((typeid(*item) == typeid(Enemy)) or (typeid(*item) == typeid(Snail))
-             or (typeid(*item) == typeid(Chamaleon))) {
+             or (typeid(*item) == typeid(Porcupine)) or (typeid(*item) == typeid(Chamaleon))) {
 
                 //En caso de que el objeto ghost_rock colisione con alguno de ellos retornamos pues
                 //no podemos colocar la roca.

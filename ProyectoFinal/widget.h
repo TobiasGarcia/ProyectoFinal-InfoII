@@ -3,12 +3,27 @@
 
 #include <vector>
 #include <fstream>
+
 #include <QWidget>
 
 #include "game/game.h"
 #include "level/level.h"
 #include "minigame/minigame.h"
 #include "levels_menu/levelsmenu.h"
+
+//NOTA SOBRE COMPATIBILIDAD: Este proyecto fue desarrollado y se comprobó su buen funcionamiento bajo el
+//sistema operativo Windows 10. Las teclas utilizadas son las que Qt detecta como las siguientes:
+
+//Letras: W, A, S, D, V, B, P.
+//Las cuatro flechas del teclado.
+//La tecla Enter cercana a las flechas del teclado.
+//La tecla Esapcio.
+//La tecla para borrar, la que se encuentra arriba de la tecla Enter.
+//La tecla Shift Derecho.
+//La tecla Esc.
+
+//NOTA SOBRE LA DOCUMENTACIÓN: La mayor parte de la documentación se encuentra dentro de los .cpp,
+//aunque también hay muchos comentarios en los .h.
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }

@@ -5,6 +5,8 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 
+//Esta clase modela la base que los jugadores deben defender para superar el nivel.
+
 class Base: public QObject, public QGraphicsPixmapItem {
 
     Q_OBJECT

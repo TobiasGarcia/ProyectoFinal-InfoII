@@ -131,7 +131,7 @@ void Enemy::define_personality() {
     }
     else if (type == 2) {
         //40 x 50 pixeles;
-        width_half = 20;
+        width_half = 23;
         height_half = 30;
         spd = 40;
         max_health = 300;
@@ -149,8 +149,8 @@ void Enemy::define_personality() {
     }
     else if (type == 4) {
         //40 x 50 pixeles;
-        width_half = 15;
-        height_half = 22;
+        width_half = 20;
+        height_half = 25;
         spd = 40;
         max_health = 300;
         pix = new QPixmap(":/enemies/resources/images/enemies/porcupine.png");
@@ -158,7 +158,7 @@ void Enemy::define_personality() {
     }
     else if (type == 5) {
         //40 x 50 pixeles;
-        width_half = 20;
+        width_half = 28;
         height_half = 25;
         spd = 35;
         max_health = 500;
@@ -185,7 +185,7 @@ void Enemy::define_personality() {
     }
     else {
         //40 x 50 pixeles;
-        width_half = 20;
+        width_half = 28;
         height_half = 25;
         spd = 140;
         max_health = 500;
@@ -788,12 +788,12 @@ QPainterPath Enemy::shape() const {
     QPainterPath path;
     if (type == 0) path.addEllipse(QRect(7-width_half, 1-height_half, 22, 34));
     else if (type == 1) path.addRect(QRect(4-width_half, 2-height_half, 32, 36));
-    else if (type == 2) path.addRect(QRect(7-width_half, -height_half, 20, 46));
-    else if (type == 3) path.addRect(QRect(1-width_half, -height_half, 24, 50));
-    else if (type == 4) path.addRect(QRect(2-width_half, 1-height_half, 26, 39));
-    else if (type == 5) path.addRect(QRect(4-width_half, 2-height_half, 32, 36));
+    else if (type == 2) path.addEllipse(QRect(13-width_half, 13-height_half, 22, 47));
+    else if (type == 3) path.addEllipse(QRect(1-width_half, -height_half, 24, 50));
+    else if (type == 4) path.addRect(QRect(4-width_half, 2-height_half, 32, 36));
+    else if (type == 5) path.addRect(QRect(14-width_half, 2-height_half, 27, 37));
     else if (type == 6) path.addRect(QRect(4-width_half, 2-height_half, 32, 36));
     else if (type == 7) path.addRect(QRect(4-width_half, 2-height_half, 32, 36));
-    else path.addRect(QRect(4-width_half, 2-height_half, 32, 36));
+    else path.addRect(QRect(14-width_half, 2-height_half, 27, 37));
     return path;
 }

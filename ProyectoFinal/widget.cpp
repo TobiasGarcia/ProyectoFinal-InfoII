@@ -12,6 +12,7 @@ Widget::Widget(QWidget *parent)
 
     layout()->setMargin(0);
     setFixedSize(782, 602);
+    setWindowTitle("Galaxy Lacters");
 
     //Retiramos las scroll bars del QGraphicsView.
 

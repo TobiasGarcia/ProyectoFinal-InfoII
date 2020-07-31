@@ -9,6 +9,7 @@
         <file>resources/images/enemies/porcupine.png</file>
         <file>resources/images/enemies/snail.png</file>
         <file>resources/images/enemies/vulture.png</file>
+        <file>resources/images/enemies/hole.png</file>
     </qresource>
     <qresource prefix="/power_ups">
         <file>resources/images/power_ups/power0.png</file>

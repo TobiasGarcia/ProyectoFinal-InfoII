@@ -20,6 +20,8 @@
 #include "level/enemy.h"
 #include "level/base.h"
 
+//Esta clase modelará los niveles del juego.
+
 class Level: public QGraphicsScene {
 
     Q_OBJECT

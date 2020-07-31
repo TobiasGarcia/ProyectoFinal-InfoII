@@ -7,6 +7,8 @@
 #include <QVector2D>
 #include <QGraphicsPixmapItem>
 
+//Esta clase modela la pelota que es utilizada durante el minijuego.
+
 class Ball: public QObject, public QGraphicsPixmapItem {
 
     Q_OBJECT

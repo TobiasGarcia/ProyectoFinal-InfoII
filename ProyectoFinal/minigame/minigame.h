@@ -13,6 +13,9 @@
 
 #include <minigame/ball.h>
 
+//Esta clase modela el minijuego del que se le permite participar al jugador al final
+//de cada nivel, o el tutorial.
+
 class Minigame: public QGraphicsScene {
 
     Q_OBJECT

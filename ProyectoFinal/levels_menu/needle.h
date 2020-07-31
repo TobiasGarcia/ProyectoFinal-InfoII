@@ -7,6 +7,8 @@
 #include <QPainter>
 #include <QTimer>
 
+//Esta clase modela la aguja de la brújula del menú de niveles.
+
 class Needle: public QObject, public QGraphicsPixmapItem {
 
     Q_OBJECT

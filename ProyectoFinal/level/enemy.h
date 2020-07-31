@@ -13,19 +13,13 @@
 #include "level/terrain.h"
 #include "level/base.h"
 
+//Esta clase modelará los enemigos del juego.
 
 class Enemy: public QObject, public QGraphicsPixmapItem {
 
     Q_OBJECT
 
 private:
-
-    //La variable dir almacena la dirección en la que el enemigo se está moviendo, en este caso no utilizamos
-    //la noción de vector como simples arreglos de dos elemetnos, sino como una forma de identificar una
-    //dirección junto con una magnitud.
-
-    QVector2D dir;
-
     bool defeated;
     QTimer *health_on_timer;
 
@@ -51,6 +45,12 @@ protected:
     //La sección de protected es para los atributos que se utilizan dentro de métodos de
     //las clases que heredan Enemy.
 
+    //La variable dir almacena la dirección en la que el enemigo se está moviendo, en este caso no utilizamos
+    //la noción de vector como simples arreglos de dos elemetnos, sino como una forma de identificar una
+    //dirección junto con una magnitud.
+
+    QVector2D dir, speed, speed_aux;
+
     //Para el movimiento de los enemigos utilizamos un sistema de objetivos (targets), los cuales no son más
     //que objetos de clase QVector2D, a los cuales el enemigo se va a ir dirigiendo en línea recta, y cuando
     //alcanza el primero, lo eliminamos del contenedor y dirigimos al enemigo hacia el siguiente. Como se
@@ -58,7 +58,6 @@ protected:
     //es una queue, pero para facilitar la compatibilidad con los QVector2D utilizamos QQueue.
 
     QQueue<QVector2D> targets;
-    QVector2D speed, speed_aux;
 
     QTimer *move_timer, *delay_timer;
     QGraphicsRectItem *health_bar;

@@ -1,23 +1,29 @@
 #ifndef FIREBALL_H
 #define FIREBALL_H
 
-#include <QGraphicsPixmapItem>
 #include <QTimer>
-#include "level/enemy.h"
-#include "level/powerup.h"
+#include <QGraphicsPixmapItem>
+
 #include "level/special_enemies.h"
+#include "level/powerup.h"
+#include "level/enemy.h"
+
+//Esta clase modela las bolas de fuego que lanza el jugador para atacar a los enemigos.
 
 class FireBall: public QObject, public QGraphicsPixmapItem {
 
     Q_OBJECT
 
 private:
-    bool erase;
     QPixmap *pix;
     QTimer *update_timer;
     QList<QGraphicsItem*> collisions;
+
+    bool erase;
+
     QRectF boundingRect() const;
     QPainterPath shape() const;
+
 public:
     FireBall(short x, short y);
     ~FireBall();
@@ -26,6 +32,7 @@ public:
 
 public slots:
     void update();
+
 };
 
 #endif // FIREBALL_H

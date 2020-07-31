@@ -7,6 +7,8 @@
 #include <QPainter>
 #include <QGraphicsPixmapItem>
 
+//Esta clase modelará los power ups que se le pueden otorgar al jugador.
+
 class PowerUp: public QObject, public QGraphicsPixmapItem {
 
     Q_OBJECT
